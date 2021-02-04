@@ -24,8 +24,13 @@ app.disable('Server');
 /* LOAD MYSQL DB */
 require('./config/dbConfig');
 
-app.use(bodyParser.json({ limit: '50mb' })); // support json encoded bodies
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true })); // support encoded bodies
+app.use(bodyParser.json({
+  limit: '50mb'
+})); // support json encoded bodies
+app.use(bodyParser.urlencoded({
+  limit: '50mb',
+  extended: true
+})); // support encoded bodies
 
 /* using middleware */
 app.use(function (req, res, next) {
@@ -79,8 +84,8 @@ server.on('error', onError);
 server.on('listening', onListening);
 
 /*
-  * Listen to all http response here
-*/
+ * Listen to all http response here
+ */
 function InterceptorForAllResponse(req, res, next) {
   var oldSend = res.send;
   res.send = function (data) {
@@ -95,7 +100,12 @@ app.use(InterceptorForAllResponse);
 //------------------------------------------- ROUTES ----------------------------------------------//
 app.use('/api', apiRouter); // API Routes
 app.use('/admin', adminRoutes); // ADMIN Routes
-app.use('/', function(req,res){res.send({"status":200,"message":"App Running Successfully"});}); // Root Route (FOR TESTING)
+app.use('/', function (req, res) {
+  res.send({
+    "status": 200,
+    "message": "App Running Successfully"
+  });
+}); // Root Route (FOR TESTING)
 //------------------------------------------- ROUTES ----------------------------------------------//
 
 // catch 404 and forward to error handler
@@ -136,9 +146,9 @@ function normalizePort(val) {
  */
 function onListening() {
   var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
+  var bind = typeof addr === 'string' ?
+    'pipe ' + addr :
+    'port ' + addr.port;
   console.log('Listening on', bind);
 }
 
@@ -150,9 +160,9 @@ function onError(error) {
     throw error;
   }
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+  var bind = typeof port === 'string' ?
+    'Pipe ' + port :
+    'Port ' + port;
 
   // handle specific listen errors with friendly messages
   switch (error.code) {
