@@ -6,7 +6,10 @@ var path = require('path');
 require('dotenv').config();
 
 /* ENVIROMENT SET TO DEVELOPMENT */
-// process.env.ENVIRONMENT = 'development';
+process.env.ENVIRONMENT = 'development';
+
+/* ENVIROMENT SET TO PRODUCTION */
+// process.env.ENVIRONMENT = 'production';
 
 /* SET NODE JS PROJECT ROOT DIRECTORY TO ENVIROMENT VARIABLE */
 // process.env.NODE_BASE_PATH = path.dirname(require.main.filename || process.mainModule.filename);
@@ -41,22 +44,10 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 global.constants = require(global.appPath + '/config/constants');
 
 // Initialize the events
-// require(global.appPath + '/helpers/events')(app)
+require(global.appPath + '/helpers/events')(app)
 
 var apiRouter = require('./routes/apiRoutes');
 var adminRoutes = require('./routes/adminRoutes');
-
-if (process.env.IS_ALLOW_SENTRY == "true") {
-  // The error handler must be before any other error middleware and after all controllers
-  app.use(Sentry.Handlers.errorHandler());
-  // Optional fallthrough error handler
-  app.use(function onError(error, req, res, next) {
-    // The error id is attached to `res.sentry` to be returned
-    // and optionally displayed to the user for support.
-    res.statusCode = 500;
-    res.json({ status: 0, message: "Some Problem Occurred. Our Developer have been notified about the issue and will get it solve soon" });
-  });
-}
 
 /**
  * Get port from environment and store in Express.
@@ -83,7 +74,6 @@ if ((process.env.ENVIRONMENT == 'development') && fs.existsSync(process.env.SSL_
 /**
  * Listen on provided port, on all network interfaces.
  */
-
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
@@ -105,7 +95,7 @@ app.use(InterceptorForAllResponse);
 //------------------------------------------- ROUTES ----------------------------------------------//
 app.use('/api', apiRouter); // API Routes
 app.use('/admin', adminRoutes); // ADMIN Routes
-app.use('/', function(req,res){res.send({"status":200});}); // Root Route (FOR TESTING)
+app.use('/', function(req,res){res.send({"status":200,"message":"App Running Successfully"});}); // Root Route (FOR TESTING)
 //------------------------------------------- ROUTES ----------------------------------------------//
 
 // catch 404 and forward to error handler
@@ -128,7 +118,6 @@ app.use(function (err, req, res, next) {
 /**
  * Normalize a port into a number, string, or false.
  */
-
 function normalizePort(val) {
   var port = parseInt(val, 10);
   if (isNaN(port)) {
@@ -145,7 +134,6 @@ function normalizePort(val) {
 /**
  * Event listener for HTTP server "listening" event.
  */
-
 function onListening() {
   var addr = server.address();
   var bind = typeof addr === 'string'
@@ -157,7 +145,6 @@ function onListening() {
 /**
  * Event listener for HTTP server "error" event.
  */
-
 function onError(error) {
   if (error.syscall !== 'listen') {
     throw error;
