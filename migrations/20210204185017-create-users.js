@@ -21,7 +21,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       dob: {
-        type: Sequelize.DATE
+        type: Sequelize.STRING
       },
       country_id: {
         type: Sequelize.INTEGER

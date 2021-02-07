@@ -7,5 +7,8 @@ npx sequelize migration:create --name name_of_your_migration
 ## RUN migration
 npx sequelize db:migrate
 
+## GENERATE SEEDER
+npx sequelize-cli seed:generate --name demo-user
+
 ## RUNNING Seeder
 npx sequelize-cli db:seed:all
