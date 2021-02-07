@@ -109,58 +109,6 @@ module.exports.registerUser = (req, res) => {
 
 /*
 |------------------------------------------------ 
-| API name          :  verifyOTP
-| Response          :  Respective response message in JSON format
-| Logic             :  Verify OTP
-| Request URL       :  BASE_URL/api/verify-otp
-| Request method    :  POST
-| Author            :  Suman Rana
-|------------------------------------------------
-*/
-module.exports.verifyOTP = (req, res) => {
-    (async() => {
-        let purpose = "Verify OTP";
-        try{
-            let body = req.body;
-            let whereData = {
-                otp: body.otp,
-                email: body.email
-            }
-            let checkOTP = await userRepositories.findOne(whereData)
-
-            if(checkOTP) {
-                let updateData = await userRepositories.update({ id: checkOTP.id }, { otp: null });
-
-                return res.status(200).send({
-                    status: 200,
-                    msg: responseMessages.validOTP,
-                    data: {},
-                    purpose: purpose
-                })
-            }
-            else{
-                return res.status(500).send({
-                    status: 500,
-                    msg: responseMessages.invalidOTP,
-                    data: {},
-                    purpose: purpose
-                })
-            }
-        }
-        catch(e) {
-            console.log("Verify OTP ERROR : ", e);
-            return res.status(500).send({
-                status: 500,
-                msg: responseMessages.serverError,
-                data: {},
-                purpose: purpose
-            })
-        }
-    })()
-}
-
-/*
-|------------------------------------------------ 
 | API name          :  userLogin
 | Response          :  Respective response message in JSON format
 | Logic             :  User Login
@@ -208,6 +156,58 @@ module.exports.userLogin = (req, res) => {
         }
         catch(e) {
             console.log("User Login ERROR : ", e);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  verifyOTP
+| Response          :  Respective response message in JSON format
+| Logic             :  Verify OTP
+| Request URL       :  BASE_URL/api/verify-otp
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.verifyOTP = (req, res) => {
+    (async() => {
+        let purpose = "Verify OTP";
+        try{
+            let body = req.body;
+            let whereData = {
+                otp: body.otp,
+                email: body.email
+            }
+            let checkOTP = await userRepositories.findOne(whereData)
+
+            if(checkOTP) {
+                let updateData = await userRepositories.update({ id: checkOTP.id }, { otp: null });
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.validOTP,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+            else{
+                return res.status(500).send({
+                    status: 500,
+                    msg: responseMessages.invalidOTP,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(e) {
+            console.log("Verify OTP ERROR : ", e);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,
