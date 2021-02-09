@@ -27,10 +27,10 @@ module.exports.sendMail = (messageData) => {
         mailTransport.sendMail(message, function(err, info) {
             if (err) {
                 console.log("MAIL ERROR : ", err);
-                resolve(false);
+                reject(err);
             } else {
                 console.log("INFO : ", info);
-                resolve(true)
+                resolve(true);
             }
         });
     })

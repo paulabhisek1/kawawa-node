@@ -27,6 +27,10 @@ const md5 = require('md5');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
 
+// ################################ Globals ################################ //
+const jwtOptionsAccess = global.constants.jwtAccessTokenOptions;
+const jwtOptionsRefresh = global.constants.jwtRefreshTokenOptions;
+
 /*
 |------------------------------------------------ 
 | API name          :  registerUser
@@ -46,7 +50,6 @@ module.exports.registerUser = (req, res) => {
 
             if(userCount == 0) {
                 let userData;
-                // const otpValue = Math.floor(1000 + Math.random() * 9000);
                 await sequelize.transaction(async (t) => {
                     let createUserData = {
                         full_name: body.full_name,
@@ -57,7 +60,6 @@ module.exports.registerUser = (req, res) => {
                         profile_image: `/uploads/profile_images/default_image.png`,
                         country_id: body.country_id,
                         login_type: 'system',
-                        // otp: otpValue,
                     }
 
                     userData = await userRepositories.create(createUserData, t);
@@ -70,9 +72,6 @@ module.exports.registerUser = (req, res) => {
                 delete userData.otp_status;
                 delete userData.is_active;
                 
-
-                let jwtOptionsAccess = global.constants.jwtAccessTokenOptions;
-                let jwtOptionsRefresh = global.constants.jwtRefreshTokenOptions;
                 let accessToken = jwt.sign({ user_id: userData.id, email: userData.email }, jwtOptionsAccess.secret, jwtOptionsAccess.options);
                 let refreshToken = jwt.sign({ user_id: userData.id, email: userData.email }, jwtOptionsRefresh.secret, jwtOptionsRefresh.options);
 
@@ -168,6 +167,130 @@ module.exports.userLogin = (req, res) => {
 
 /*
 |------------------------------------------------ 
+| API name          :  socialLogin
+| Response          :  Respective response message in JSON format
+| Logic             :  Social Login
+| Request URL       :  BASE_URL/api/social-login
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.socialLogin = (req, res) => {
+    (async()=>{
+        let purpose = "Social Login";
+        try{
+            let body = req.body;
+            let userDetails = await userRepositories.findOne({ email: body.email });
+            if(userDetails) {
+                let accessToken = jwt.sign({ user_id: userDetails.id, email: userDetails.email }, jwtOptionsAccess.secret, jwtOptionsAccess.options);
+                let refreshToken = jwt.sign({ user_id: userDetails.id, email: userDetails.email }, jwtOptionsRefresh.secret, jwtOptionsRefresh.options);
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.loginSuccess,
+                    data: {
+                        access_token: accessToken,
+                        refresh_token: refreshToken
+                    },
+                    purpose: purpose
+                })
+            }
+            else{
+                let createUserData = {
+                    full_name: body.full_name,
+                    email: body.email,
+                    mobile_no: body.mobile_no ? body.mobile_no : null,
+                    password: md5(body.password),
+                    dob: body.dob ? body.dob : null,
+                    profile_image: body.profile_image ? body.profile_image : null,
+                    login_type: body.login_type,
+                }
+
+                let userData = await userRepositories.create(createUserData);
+                let accessToken = jwt.sign({ user_id: userData.id, email: userData.email }, jwtOptionsAccess.secret, jwtOptionsAccess.options);
+                let refreshToken = jwt.sign({ user_id: userData.id, email: userData.email }, jwtOptionsRefresh.secret, jwtOptionsRefresh.options);
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.loginSuccess,
+                    data: {
+                        access_token: accessToken,
+                        refresh_token: refreshToken
+                    },
+                    purpose: purpose
+                })
+            }
+        }
+        catch(e) {
+            console.log("Social Login ERROR : ", e);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  forgotPassword
+| Response          :  Respective response message in JSON format
+| Logic             :  Forgot Password
+| Request URL       :  BASE_URL/api/forgot-password
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.forgotPassword = (req, res) => {
+    (async()=>{
+        let purpose = "Forgot Password"
+        try{
+            let body = req.body;
+            let userDetails = await userRepositories.findOne({ email: body.email });
+
+            if(!userDetails) {
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.invalidUser,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+
+            const otpValue = Math.floor(1000 + Math.random() * 9000);
+            let updateData = await userRepositories.update({ id: userDetails.id }, { otp: otpValue });
+
+            if(updateData[0] == 1) {
+                let mailData = {
+                    toEmail: userDetails.email,
+                    subject: 'Forgot Password',
+                    html: `<p>Your OTP is <b>${otpValue}</b></p>`
+                }
+                await commonFunction.sendMail(mailData);
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.otpSendMessgae,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+            console.log("UPDATE : ", updateData);
+        }
+        catch(e) {
+            console.log("Forgot Password ERROR : ", e);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
 | API name          :  verifyOTP
 | Response          :  Respective response message in JSON format
 | Logic             :  Verify OTP
@@ -188,8 +311,6 @@ module.exports.verifyOTP = (req, res) => {
             let checkOTP = await userRepositories.findOne(whereData)
 
             if(checkOTP) {
-                let updateData = await userRepositories.update({ id: checkOTP.id }, { otp: null });
-
                 return res.status(200).send({
                     status: 200,
                     msg: responseMessages.validOTP,
@@ -208,6 +329,64 @@ module.exports.verifyOTP = (req, res) => {
         }
         catch(e) {
             console.log("Verify OTP ERROR : ", e);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  resetPassword
+| Response          :  Respective response message in JSON format
+| Logic             :  Reset Password
+| Request URL       :  BASE_URL/api/reset-password
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.resetPassword = (req, res) => {
+    (async()=>{
+        let purpose = "Reset Password";
+        try{
+            let body = req.body;
+            let userDetails = await userRepositories.findOne({ otp: body.otp });
+
+            if(userDetails) {
+                let updateData = await userRepositories.update({ id: userDetails.id }, { password: md5(body.password), otp: null });
+
+                if(updateData[0] == 1) {
+                    return res.status(200).send({
+                        status: 200,
+                        msg: responseMessages.resetPass,
+                        data: {},
+                        purpose: purpose
+                    })
+                }
+                else{
+                    return res.status(500).send({
+                        status: 500,
+                        msg: responseMessages.serverError,
+                        data: {},
+                        purpose: purpose
+                    })
+                }
+            }
+            else{
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.invalidOTP,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(e) {
+            console.log("Reset Password ERROR : ", e);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,
