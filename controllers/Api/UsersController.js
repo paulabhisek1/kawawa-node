@@ -185,15 +185,24 @@ module.exports.socialLogin = (req, res) => {
             let body = req.body;
             let userDetails = await userRepositories.findOne({ email: body.email });
             if (userDetails) {
+
+                delete userData.password;
+                delete userData.login_type;
+                delete userData.otp;
+                delete userData.otp_expire_time;
+                delete userData.otp_status;
+                delete userData.is_active;
+
                 let accessToken = jwt.sign({ user_id: userDetails.id, email: userDetails.email }, jwtOptionsAccess.secret, jwtOptionsAccess.options);
                 let refreshToken = jwt.sign({ user_id: userDetails.id, email: userDetails.email }, jwtOptionsRefresh.secret, jwtOptionsRefresh.options);
+
+                userData['access_token'] = accessToken;
+                userData['refresh_token'] = refreshToken;
+
                 return res.status(200).send({
                     status: 200,
                     msg: responseMessages.loginSuccess,
-                    data: {
-                        access_token: accessToken,
-                        refresh_token: refreshToken
-                    },
+                    data: userData,
                     purpose: purpose
                 })
             } else {
