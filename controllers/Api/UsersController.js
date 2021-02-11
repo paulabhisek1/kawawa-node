@@ -203,7 +203,7 @@ module.exports.socialLogin = (req, res) => {
                     mobile_no: body.mobile_no ? body.mobile_no : null,
                     password: md5(body.password),
                     dob: body.dob ? body.dob : null,
-                    profile_image: body.profile_image ? body.profile_image : null,
+                    profile_image: body.profile_image ? body.profile_image : `/uploads/profile_images/default_image.png`,
                     login_type: body.login_type,
                 }
 
