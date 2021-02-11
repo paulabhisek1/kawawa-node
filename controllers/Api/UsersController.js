@@ -208,15 +208,24 @@ module.exports.socialLogin = (req, res) => {
                 }
 
                 let userData = await userRepositories.create(createUserData);
+
+                delete userData.password;
+                delete userData.login_type;
+                delete userData.otp;
+                delete userData.otp_expire_time;
+                delete userData.otp_status;
+                delete userData.is_active;
+
                 let accessToken = jwt.sign({ user_id: userData.id, email: userData.email }, jwtOptionsAccess.secret, jwtOptionsAccess.options);
                 let refreshToken = jwt.sign({ user_id: userData.id, email: userData.email }, jwtOptionsRefresh.secret, jwtOptionsRefresh.options);
+
+                userData['access_token'] = accessToken;
+                userData['refresh_token'] = refreshToken;
+
                 return res.status(200).send({
                     status: 200,
                     msg: responseMessages.loginSuccess,
-                    data: {
-                        access_token: accessToken,
-                        refresh_token: refreshToken
-                    },
+                    data: userData,
                     purpose: purpose
                 })
             }
