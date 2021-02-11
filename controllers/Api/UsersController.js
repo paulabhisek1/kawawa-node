@@ -318,8 +318,8 @@ module.exports.verifyOTP = (req, res) => {
                     purpose: purpose
                 })
             } else {
-                return res.status(500).send({
-                    status: 500,
+                return res.status(403).send({
+                    status: 403,
                     msg: responseMessages.invalidOTP,
                     data: {},
                     purpose: purpose
