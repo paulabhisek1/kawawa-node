@@ -50,9 +50,12 @@ module.exports.otpVerificationSchema = Joi.object().keys({
 
 // Reset Password Schema
 module.exports.resetPassSchema = Joi.object().keys({
-    password: Joi.string().required().min(8).max(25).pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*(){}:;_+-/=<>,.?|`~"\']+$')).messages({
-        'string.pattern.base': "Your password must be at least 8 characters long, contain at least one number and have a mixture of uppercase and lowercase letters",
-    }), //password must include at least 1 upper case letter, 1 lower case letter, and 1 numeric digit
+    // password: Joi.string().required().min(8).max(25).pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*(){}:;_+-/=<>,.?|`~"\']+$')).messages({
+    //     'string.pattern.base': "Your password must be at least 8 characters long, contain at least one number and have a mixture of uppercase and lowercase letters",
+    // }), //password must include at least 1 upper case letter, 1 lower case letter, and 1 numeric digit
+    password: Joi.string().required().min(8).max(25).messages({
+        'string.pattern.base': "Your password must be at least 8 characters long",
+    }), //password must be minimum 8 characters and max 25
     confirm_password: Joi.string().equal(Joi.ref('password')).required().messages({
         'any.only': `"confirm_password" should match with "password"`,
     }), //Confirm password must be same as password
