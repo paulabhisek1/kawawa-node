@@ -6,9 +6,9 @@
  * MIT Licensed
  */
 /**
-* Module dependencies.
-* @private
-*/
+ * Module dependencies.
+ * @private
+ */
 
 // ################################ Repositories ################################ //
 const userRepositories = require('../../repositories/UsersRepositories');
@@ -42,15 +42,15 @@ const jwtOptionsRefresh = global.constants.jwtRefreshTokenOptions;
 |------------------------------------------------
 */
 module.exports.registerUser = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Register User"
-        try{
+        try {
             let body = req.body;
             let userCount = await userRepositories.count({ where: { email: body.email } });
 
-            if(userCount == 0) {
+            if (userCount == 0) {
                 let userData;
-                await sequelize.transaction(async (t) => {
+                await sequelize.transaction(async(t) => {
                     let createUserData = {
                         full_name: body.full_name,
                         email: body.email,
@@ -71,7 +71,7 @@ module.exports.registerUser = (req, res) => {
                 delete userData.otp_expire_time;
                 delete userData.otp_status;
                 delete userData.is_active;
-                
+
                 let accessToken = jwt.sign({ user_id: userData.id, email: userData.email }, jwtOptionsAccess.secret, jwtOptionsAccess.options);
                 let refreshToken = jwt.sign({ user_id: userData.id, email: userData.email }, jwtOptionsRefresh.secret, jwtOptionsRefresh.options);
 
@@ -84,8 +84,7 @@ module.exports.registerUser = (req, res) => {
                     data: userData,
                     purpose: purpose
                 })
-            }
-            else{
+            } else {
                 return res.status(409).send({
                     status: 409,
                     msg: responseMessages.duplicateEmail,
@@ -93,8 +92,7 @@ module.exports.registerUser = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(e) {
+        } catch (e) {
             console.log("REGISTER USER ERROR : ", e);
             return res.status(500).send({
                 status: 500,
@@ -117,9 +115,9 @@ module.exports.registerUser = (req, res) => {
 |------------------------------------------------
 */
 module.exports.userLogin = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "User Login";
-        try{
+        try {
             let body = req.body;
             let whereData = {
                 email: body.email,
@@ -128,23 +126,29 @@ module.exports.userLogin = (req, res) => {
             }
             let userData = await userRepositories.findOne(whereData);
 
-            if(userData) {
+            if (userData) {
                 let jwtOptionsAccess = global.constants.jwtAccessTokenOptions;
                 let jwtOptionsRefresh = global.constants.jwtRefreshTokenOptions;
                 let accessToken = jwt.sign({ user_id: userData.id, email: userData.email }, jwtOptionsAccess.secret, jwtOptionsAccess.options);
                 let refreshToken = jwt.sign({ user_id: userData.id, email: userData.email }, jwtOptionsRefresh.secret, jwtOptionsRefresh.options);
 
+                delete userData.password;
+                delete userData.login_type;
+                delete userData.otp;
+                delete userData.otp_expire_time;
+                delete userData.otp_status;
+                delete userData.is_active;
+
+                userData['access_token'] = accessToken;
+                userData['refresh_token'] = refreshToken;
+
                 return res.status(200).send({
                     status: 200,
                     msg: responseMessages.loginSuccess,
-                    data: {
-                        access_token: accessToken,
-                        refresh_token: refreshToken
-                    },
+                    data: userData,
                     purpose: purpose
                 })
-            }
-            else{
+            } else {
                 return res.status(403).send({
                     status: 403,
                     msg: responseMessages.invalidCreds,
@@ -152,8 +156,7 @@ module.exports.userLogin = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(e) {
+        } catch (e) {
             console.log("User Login ERROR : ", e);
             return res.status(500).send({
                 status: 500,
@@ -176,12 +179,12 @@ module.exports.userLogin = (req, res) => {
 |------------------------------------------------
 */
 module.exports.socialLogin = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Social Login";
-        try{
+        try {
             let body = req.body;
             let userDetails = await userRepositories.findOne({ email: body.email });
-            if(userDetails) {
+            if (userDetails) {
                 let accessToken = jwt.sign({ user_id: userDetails.id, email: userDetails.email }, jwtOptionsAccess.secret, jwtOptionsAccess.options);
                 let refreshToken = jwt.sign({ user_id: userDetails.id, email: userDetails.email }, jwtOptionsRefresh.secret, jwtOptionsRefresh.options);
                 return res.status(200).send({
@@ -193,8 +196,7 @@ module.exports.socialLogin = (req, res) => {
                     },
                     purpose: purpose
                 })
-            }
-            else{
+            } else {
                 let createUserData = {
                     full_name: body.full_name,
                     email: body.email,
@@ -218,8 +220,7 @@ module.exports.socialLogin = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(e) {
+        } catch (e) {
             console.log("Social Login ERROR : ", e);
             return res.status(500).send({
                 status: 500,
@@ -242,13 +243,13 @@ module.exports.socialLogin = (req, res) => {
 |------------------------------------------------
 */
 module.exports.forgotPassword = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Forgot Password"
-        try{
+        try {
             let body = req.body;
             let userDetails = await userRepositories.findOne({ email: body.email });
 
-            if(!userDetails) {
+            if (!userDetails) {
                 return res.status(404).send({
                     status: 404,
                     msg: responseMessages.invalidUser,
@@ -260,7 +261,7 @@ module.exports.forgotPassword = (req, res) => {
             const otpValue = Math.floor(1000 + Math.random() * 9000);
             let updateData = await userRepositories.update({ id: userDetails.id }, { otp: otpValue });
 
-            if(updateData[0] == 1) {
+            if (updateData[0] == 1) {
                 let mailData = {
                     toEmail: userDetails.email,
                     subject: 'Forgot Password',
@@ -276,8 +277,7 @@ module.exports.forgotPassword = (req, res) => {
                 })
             }
             console.log("UPDATE : ", updateData);
-        }
-        catch(e) {
+        } catch (e) {
             console.log("Forgot Password ERROR : ", e);
             return res.status(500).send({
                 status: 500,
@@ -302,7 +302,7 @@ module.exports.forgotPassword = (req, res) => {
 module.exports.verifyOTP = (req, res) => {
     (async() => {
         let purpose = "Verify OTP";
-        try{
+        try {
             let body = req.body;
             let whereData = {
                 otp: body.otp,
@@ -310,15 +310,14 @@ module.exports.verifyOTP = (req, res) => {
             }
             let checkOTP = await userRepositories.findOne(whereData)
 
-            if(checkOTP) {
+            if (checkOTP) {
                 return res.status(200).send({
                     status: 200,
                     msg: responseMessages.validOTP,
                     data: {},
                     purpose: purpose
                 })
-            }
-            else{
+            } else {
                 return res.status(500).send({
                     status: 500,
                     msg: responseMessages.invalidOTP,
@@ -326,8 +325,7 @@ module.exports.verifyOTP = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(e) {
+        } catch (e) {
             console.log("Verify OTP ERROR : ", e);
             return res.status(500).send({
                 status: 500,
@@ -350,24 +348,23 @@ module.exports.verifyOTP = (req, res) => {
 |------------------------------------------------
 */
 module.exports.resetPassword = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Reset Password";
-        try{
+        try {
             let body = req.body;
             let userDetails = await userRepositories.findOne({ otp: body.otp });
 
-            if(userDetails) {
+            if (userDetails) {
                 let updateData = await userRepositories.update({ id: userDetails.id }, { password: md5(body.password), otp: null });
 
-                if(updateData[0] == 1) {
+                if (updateData[0] == 1) {
                     return res.status(200).send({
                         status: 200,
                         msg: responseMessages.resetPass,
                         data: {},
                         purpose: purpose
                     })
-                }
-                else{
+                } else {
                     return res.status(500).send({
                         status: 500,
                         msg: responseMessages.serverError,
@@ -375,8 +372,7 @@ module.exports.resetPassword = (req, res) => {
                         purpose: purpose
                     })
                 }
-            }
-            else{
+            } else {
                 return res.status(404).send({
                     status: 404,
                     msg: responseMessages.invalidOTP,
@@ -384,8 +380,7 @@ module.exports.resetPassword = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(e) {
+        } catch (e) {
             console.log("Reset Password ERROR : ", e);
             return res.status(500).send({
                 status: 500,
