@@ -6,7 +6,7 @@ const Joi = JoiBase.extend(JoiDate); // extend Joi with Joi Date
 module.exports.userRegisterSchema = Joi.object().keys({
     full_name: Joi.string().required(),
     email: Joi.string().email().required(),
-    mobile_no: Joi.string().required(),
+    mobile_no: Joi.number().required().min(8).max(13),
     password: Joi.string().required().min(6).max(25).messages({
         'string.pattern.base': "Your password must be at least 8 characters long, contain at least one number and have a mixture of uppercase and lowercase letters",
     }), //password must include at least 1 upper case letter, 1 lower case letter, and 1 numeric digit
