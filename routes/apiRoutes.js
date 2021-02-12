@@ -44,6 +44,6 @@ router.post('/social-login', validateRequest.validate(usersValidationSchema.soci
 router.post('/forgot-password', validateRequest.validate(usersValidationSchema.forgotPassSchema, 'body'), usersController.forgotPassword); // Forgot Password Route
 router.post('/verify-otp', validateRequest.validate(usersValidationSchema.otpVerificationSchema, 'body'), usersController.verifyOTP); // OTP Verification Route
 router.post('/reset-password', validateRequest.validate(usersValidationSchema.resetPassSchema, 'body'), usersController.resetPassword); // Reset Password Route
-router.post('/upload-song', uploadSong.any(), commonController.uploadTestSongs);
+router.get('/countries', commonController.fetchCountries); // Fetch Countries
 
 module.exports = router;

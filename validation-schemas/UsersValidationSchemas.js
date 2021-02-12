@@ -6,10 +6,8 @@ const Joi = JoiBase.extend(JoiDate); // extend Joi with Joi Date
 module.exports.userRegisterSchema = Joi.object().keys({
     full_name: Joi.string().required(),
     email: Joi.string().email().required(),
-    mobile_no: Joi.string().required(),
-    password: Joi.string().required().min(8).max(25).pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*(){}:;_+-/=<>,.?|`~"\']+$')).messages({
-        'string.pattern.base': "Your password must be at least 8 characters long, contain at least one number and have a mixture of uppercase and lowercase letters",
-    }), //password must include at least 1 upper case letter, 1 lower case letter, and 1 numeric digit
+    mobile_no: Joi.number().required(),
+    password: Joi.string().required().min(6),
     confirm_password: Joi.string().equal(Joi.ref('password')).required().messages({
         'any.only': `"confirm_password" should match with "password"`,
     }), //Confirm password must be same as password
@@ -27,7 +25,7 @@ module.exports.loginSchema = Joi.object().keys({
 module.exports.socialLoginSchema = Joi.object().keys({
     full_name: Joi.string().required(),
     email: Joi.string().required(),
-    mobile_no: Joi.string().allow(null, ''),
+    mobile_no: Joi.number().allow(null, ''),
     password: Joi.string().required(),
     dob: Joi.date().format("YYYY-MM-DD").allow(null, ''),
     profile_image: Joi.string().allow(null, ''),
@@ -47,9 +45,7 @@ module.exports.otpVerificationSchema = Joi.object().keys({
 
 // Reset Password Schema
 module.exports.resetPassSchema = Joi.object().keys({
-    password: Joi.string().required().min(8).max(25).pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9!@#$%^&*(){}:;_+-/=<>,.?|`~"\']+$')).messages({
-        'string.pattern.base': "Your password must be at least 8 characters long, contain at least one number and have a mixture of uppercase and lowercase letters",
-    }), //password must include at least 1 upper case letter, 1 lower case letter, and 1 numeric digit
+    password: Joi.string().required().min(6),
     confirm_password: Joi.string().equal(Joi.ref('password')).required().messages({
         'any.only': `"confirm_password" should match with "password"`,
     }), //Confirm password must be same as password

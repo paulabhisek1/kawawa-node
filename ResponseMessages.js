@@ -8,5 +8,6 @@ module.exports = {
     registrationSuccess: "You have been registered successfully",
     loginSuccess: "Logged in successfully",
     invalidUser: "User not found",
-    resetPass: "Password reset successfully, Log in to continue"
+    resetPass: "Password reset successfully, Log in to continue",
+    countryFetch: "Countries fetched successfully"
 }
