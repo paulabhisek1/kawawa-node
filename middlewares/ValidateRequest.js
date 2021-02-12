@@ -10,8 +10,8 @@ module.exports.validate = (schema, property) => {
         const message = details.map(i => i.message).join(',');
         res.status(422).json({
           status: 422,
-          message: message.replace(/[\\"]/g, ""),
-          data: [],
+          msg: message.replace(/[\\"]/g, ""),
+          data: {},
           purpose: "Validation Error"
         })
       }

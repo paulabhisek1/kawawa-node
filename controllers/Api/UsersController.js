@@ -48,6 +48,20 @@ module.exports.registerUser = (req, res) => {
             let body = req.body;
             let userCount = await userRepositories.count({ where: { email: body.email } });
 
+            let currentDate = moment();
+            let userDate = moment(body.dob);
+
+            let dateDiff = userDate.diff(currentDate, 'days');
+            
+            if(dateDiff >= 0) {
+                return res.status(422).json({
+                    status: 422,
+                    msg: "Date of Birth can't be in futute or current date ",
+                    data: {},
+                    purpose: "Validation Error"
+                })
+            }
+
             if (userCount == 0) {
                 let userData;
                 await sequelize.transaction(async(t) => {
