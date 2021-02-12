@@ -6,9 +6,9 @@
  * MIT Licensed
  */
 /**
-* Module dependencies.
-* @private
-*/
+ * Module dependencies.
+ * @private
+ */
 
 // ################################ Repositories ################################ //
 const countryRepository = require('../../repositories/CountriesRepository');
@@ -27,23 +27,26 @@ const responseMessages = require('../../ResponseMessages');
 |------------------------------------------------
 */
 module.exports.fetchCountries = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Fetch Countries";
-        try{
-            let whereData = { is_active: { $in: [0,1] } };
+        try {
+            let whereData = { is_active: { $in: [0, 1] } };
             let countriesData = await countryRepository.findAll(whereData);
+
+            let data = {
+                countries: countriesData
+            }
 
             return res.status(200).send({
                 status: 200,
                 msg: responseMessages.countryFetch,
-                data: countriesData,
+                data: data,
                 purpose: purpose
             })
-        }
-        catch(e) {
-            console.log("Fetch Countries Error : ",e);
+        } catch (e) {
+            console.log("Fetch Countries Error : ", e);
             return res.status(500).send({
-                status : 500,
+                status: 500,
                 msg: responseMessages.serverError,
                 data: {},
                 purpose: purpose
