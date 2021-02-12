@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Artists extends Model {
+  class Songs extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,24 +13,23 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   };
-  Artists.init({
-    full_name: DataTypes.STRING,
-    email: DataTypes.STRING,
-    mobile_no: DataTypes.STRING,
-    password: DataTypes.STRING,
-    dob: DataTypes.STRING,
+  Songs.init({
+    name: DataTypes.STRING,
+    cover_picture: DataTypes.STRING,
+    length: DataTypes.INTEGER,
+    file_name: DataTypes.STRING,
+    details: DataTypes.STRING,
+    artist_id: DataTypes.INTEGER,
+    album_id: DataTypes.INTEGER,
+    is_paid: DataTypes.INTEGER,
     country_id: DataTypes.INTEGER,
-    login_type: DataTypes.ENUM,
-    otp: DataTypes.STRING,
-    otp_expire_time: DataTypes.DATE,
-    profile_image: DataTypes.STRING,
+    genre_id: DataTypes.INTEGER,
     is_active: DataTypes.INTEGER,
-    current_reg_step: DataTypes.INTEGER,
-    reg_steps_completed: DataTypes.INTEGER,
+    price: DataTypes.INTEGER,
     type: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'Artists',
+    modelName: 'Songs',
   });
-  return Artists;
+  return Songs;
 };

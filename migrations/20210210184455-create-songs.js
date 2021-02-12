@@ -1,61 +1,55 @@
 'use strict';
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Artists', {
+    await queryInterface.createTable('Songs', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      full_name: {
+      name: {
         type: Sequelize.STRING
       },
-      email: {
+      cover_picture: {
         type: Sequelize.STRING
       },
-      mobile_no: {
+      length: {
+        type: Sequelize.INTEGER
+      },
+      file_name: {
         type: Sequelize.STRING
       },
-      password: {
+      details: {
         type: Sequelize.STRING
       },
-      dob: {
-        type: Sequelize.STRING
+      artist_id: {
+        type: Sequelize.INTEGER
+      },
+      album_id: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
+      },
+      is_paid: {
+        type: Sequelize.INTEGER
       },
       country_id: {
         type: Sequelize.INTEGER
       },
-      login_type: {
-        type: Sequelize.ENUM,
-        values: ['system', 'facebook', 'google'],
-      },
-      otp: {
-        type: Sequelize.STRING
-      },
-      otp_expire_time: {
-        type: Sequelize.DATE
-      },
-      profile_image: {
-        type: Sequelize.STRING
+      genre_id: {
+        type: Sequelize.INTEGER
       },
       is_active: {
         type: Sequelize.INTEGER,
         defaultValue: 0,
         comment: '0 => Inactive, 1 => Active'
       },
-      current_reg_step: {
-        type: Sequelize.INTEGER,
-        comment: "Current Step Of Registration"
-      },
-      reg_steps_completed: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
-        comment: '0 => Incomplete, 1 => Complete'
+      price: {
+        type: Sequelize.INTEGER
       },
       type: {
         type: Sequelize.STRING,
-        defaultValue: 'artist'
+        defaultValue: 'song'
       },
       createdAt: {
         allowNull: false,
@@ -70,6 +64,6 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Artists');
+    await queryInterface.dropTable('Songs');
   }
 };
