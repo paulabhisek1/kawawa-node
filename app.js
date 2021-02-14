@@ -53,6 +53,7 @@ require(global.appPath + '/helpers/events')(app)
 
 var apiRouter = require('./routes/apiRoutes');
 var adminRoutes = require('./routes/adminRoutes');
+var artistRoutes = require('./routes/artistRoutes');
 
 /**
  * Get port from environment and store in Express.
@@ -100,6 +101,7 @@ app.use(InterceptorForAllResponse);
 //------------------------------------------- ROUTES ----------------------------------------------//
 app.use('/api', apiRouter); // API Routes
 app.use('/admin', adminRoutes); // ADMIN Routes
+app.use('/artist', artistRoutes); // ARTIST Routes
 app.use('/', function (req, res) {
   res.send({
     "status": 200,

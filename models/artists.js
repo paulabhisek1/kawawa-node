@@ -20,7 +20,11 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING,
     dob: DataTypes.STRING,
     country_id: DataTypes.INTEGER,
-    login_type: DataTypes.ENUM,
+    login_type: {
+      type: DataTypes.ENUM,
+      values: ['system', 'facebook', 'google'],
+      defaultValue: 'system'
+    },
     otp: DataTypes.STRING,
     otp_expire_time: DataTypes.DATE,
     profile_image: DataTypes.STRING,
