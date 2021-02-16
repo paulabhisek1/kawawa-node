@@ -76,6 +76,8 @@ module.exports.registerUser = (req, res) => {
                         login_type: 'system',
                     }
 
+                    console.log('createUserData ------------ ', createUserData);
+
                     userData = await userRepositories.create(createUserData, t);
                 })
 
