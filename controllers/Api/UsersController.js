@@ -85,7 +85,7 @@ module.exports.registerUser = (req, res) => {
                     purpose: purpose
                 })
             } else {
-                return res.status(409).send({
+                return res.send({
                     status: 409,
                     msg: responseMessages.duplicateEmail,
                     data: {},
@@ -268,7 +268,7 @@ module.exports.forgotPassword = (req, res) => {
             let userDetails = await userRepositories.findOne({ email: body.email });
 
             if (!userDetails) {
-                return res.status(404).send({
+                return res.send({
                     status: 404,
                     msg: responseMessages.invalidUser,
                     data: {},
@@ -391,7 +391,7 @@ module.exports.resetPassword = (req, res) => {
                     })
                 }
             } else {
-                return res.status(404).send({
+                return res.send({
                     status: 404,
                     msg: responseMessages.invalidOTP,
                     data: {},
