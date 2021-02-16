@@ -76,7 +76,7 @@ module.exports.registerUser = (req, res) => {
                         login_type: 'system',
                     }
 
-                    console.log('createUserData ------------ ', createUserData);
+                    // console.log('createUserData ------------ ', createUserData);
 
                     userData = await userRepositories.create(createUserData, t);
                 })
@@ -101,7 +101,7 @@ module.exports.registerUser = (req, res) => {
                     purpose: purpose
                 })
             } else {
-                return res.status(409).send({
+                return res.status(200).send({
                     status: 200,
                     msg: responseMessages.duplicateEmail,
                     data: {},
@@ -165,7 +165,7 @@ module.exports.userLogin = (req, res) => {
                     purpose: purpose
                 })
             } else {
-                return res.status(403).send({
+                return res.status(200).send({
                     status: 200,
                     msg: responseMessages.invalidCreds,
                     data: {},
@@ -284,8 +284,8 @@ module.exports.forgotPassword = (req, res) => {
             let userDetails = await userRepositories.findOne({ email: body.email });
 
             if (!userDetails) {
-                return res.status(404).send({
-                    status: 404,
+                return res.status(200).send({
+                    status: 200,
                     msg: responseMessages.invalidUser,
                     data: {},
                     purpose: purpose
@@ -352,7 +352,7 @@ module.exports.verifyOTP = (req, res) => {
                     purpose: purpose
                 })
             } else {
-                return res.status(403).send({
+                return res.status(200).send({
                     status: 200,
                     msg: responseMessages.invalidOTP,
                     data: {},
@@ -407,7 +407,7 @@ module.exports.resetPassword = (req, res) => {
                     })
                 }
             } else {
-                return res.status(404).send({
+                return res.status(200).send({
                     status: 200,
                     msg: responseMessages.invalidOTP,
                     data: {},
