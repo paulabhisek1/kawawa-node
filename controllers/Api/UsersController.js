@@ -193,7 +193,7 @@ module.exports.socialLogin = (req, res) => {
                 delete userDetails.otp_status;
                 delete userDetails.is_active;
 
-                userDetails['country_id'] = {};
+                // userDetails['country_id'] = {};
                 userDetails['Country'] = {};
 
                 let accessToken = jwt.sign({ user_id: userDetails.id, email: userDetails.email }, jwtOptionsAccess.secret, jwtOptionsAccess.options);
@@ -228,7 +228,7 @@ module.exports.socialLogin = (req, res) => {
                 delete userData.otp_status;
                 delete userData.is_active;
 
-                userData['country_id'] = {};
+                // userData['country_id'] = {};
                 userData['Country'] = {};
 
                 let accessToken = jwt.sign({ user_id: userData.id, email: userData.email }, jwtOptionsAccess.secret, jwtOptionsAccess.options);
