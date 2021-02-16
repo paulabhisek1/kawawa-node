@@ -193,6 +193,9 @@ module.exports.socialLogin = (req, res) => {
                 delete userDetails.otp_status;
                 delete userDetails.is_active;
 
+                userData['country_id'] = {};
+                userData['Country'] = {};
+
                 let accessToken = jwt.sign({ user_id: userDetails.id, email: userDetails.email }, jwtOptionsAccess.secret, jwtOptionsAccess.options);
                 let refreshToken = jwt.sign({ user_id: userDetails.id, email: userDetails.email }, jwtOptionsRefresh.secret, jwtOptionsRefresh.options);
 
@@ -226,6 +229,7 @@ module.exports.socialLogin = (req, res) => {
                 delete userData.is_active;
 
                 userData['country_id'] = {};
+                userData['Country'] = {};
 
                 let accessToken = jwt.sign({ user_id: userData.id, email: userData.email }, jwtOptionsAccess.secret, jwtOptionsAccess.options);
                 let refreshToken = jwt.sign({ user_id: userData.id, email: userData.email }, jwtOptionsRefresh.secret, jwtOptionsRefresh.options);
