@@ -150,7 +150,7 @@ module.exports.userLogin = (req, res) => {
                 })
             } else {
                 return res.status(403).send({
-                    status: 403,
+                    status: 200,
                     msg: responseMessages.invalidCreds,
                     data: {},
                     purpose: purpose
@@ -337,7 +337,7 @@ module.exports.verifyOTP = (req, res) => {
                 })
             } else {
                 return res.status(403).send({
-                    status: 403,
+                    status: 200,
                     msg: responseMessages.invalidOTP,
                     data: {},
                     purpose: purpose
@@ -392,7 +392,7 @@ module.exports.resetPassword = (req, res) => {
                 }
             } else {
                 return res.status(404).send({
-                    status: 404,
+                    status: 200,
                     msg: responseMessages.invalidOTP,
                     data: {},
                     purpose: purpose
