@@ -225,11 +225,14 @@ module.exports.socialLogin = (req, res) => {
                 delete userData.otp_status;
                 delete userData.is_active;
 
+                userData['country_id'] = {};
+
                 let accessToken = jwt.sign({ user_id: userData.id, email: userData.email }, jwtOptionsAccess.secret, jwtOptionsAccess.options);
                 let refreshToken = jwt.sign({ user_id: userData.id, email: userData.email }, jwtOptionsRefresh.secret, jwtOptionsRefresh.options);
 
                 userData['access_token'] = accessToken;
                 userData['refresh_token'] = refreshToken;
+
 
                 return res.send({
                     status: 200,
