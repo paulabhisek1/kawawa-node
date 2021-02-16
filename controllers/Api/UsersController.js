@@ -193,8 +193,8 @@ module.exports.socialLogin = (req, res) => {
                 delete userDetails.otp_status;
                 delete userDetails.is_active;
 
-                userData['country_id'] = {};
-                userData['Country'] = {};
+                userDetails['country_id'] = {};
+                userDetails['Country'] = {};
 
                 let accessToken = jwt.sign({ user_id: userDetails.id, email: userDetails.email }, jwtOptionsAccess.secret, jwtOptionsAccess.options);
                 let refreshToken = jwt.sign({ user_id: userDetails.id, email: userDetails.email }, jwtOptionsRefresh.secret, jwtOptionsRefresh.options);
