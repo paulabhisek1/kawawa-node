@@ -16,11 +16,7 @@ module.exports = (sequelize, DataTypes) => {
   Admins.init({
     full_name: DataTypes.STRING,
     email: DataTypes.STRING,
-    mobile_no: DataTypes.STRING,
     password: DataTypes.STRING,
-    dob: DataTypes.DATE,
-    country_id: DataTypes.INTEGER,
-    login_type: DataTypes.ENUM,
     otp: DataTypes.STRING,
     otp_expire_time: DataTypes.DATE,
     profile_image: DataTypes.STRING,

@@ -1,5 +1,5 @@
 /*!
- * UsersController.js
+ * ArtistController.js
  * Containing all the controller actions related to `USER`
  * Author: Suman Rana
  * Date: 7th February, 2021`
@@ -11,7 +11,7 @@
  */
 
 // ################################ Repositories ################################ //
-const userRepositories = require('../../repositories/UsersRepositories');
+const artistRepositories = require('../../repositories/ArtistsRepositories');
 
 // ################################ Sequelize ################################ //
 const sequelize = require('../../config/dbConfig').sequelize;
@@ -33,20 +33,20 @@ const jwtOptionsRefresh = global.constants.jwtRefreshTokenOptions;
 
 /*
 |------------------------------------------------ 
-| API name          :  registerUser
+| API name          :  registerArtist
 | Response          :  Respective response message in JSON format
 | Logic             :  Register User
-| Request URL       :  BASE_URL/api/register
+| Request URL       :  BASE_URL/artist/register
 | Request method    :  POST
 | Author            :  Suman Rana
 |------------------------------------------------
 */
-module.exports.registerUser = (req, res) => {
+module.exports.registerArtist = (req, res) => {
     (async() => {
-        let purpose = "Register User"
+        let purpose = "Register Artist"
         try {
             let body = req.body;
-            let userCount = await userRepositories.count({ where: { email: body.email } });
+            let userCount = await artistRepositories.count({ where: { email: body.email } });
 
             let currentDate = moment();
             let userDate = moment(body.dob);
@@ -76,7 +76,7 @@ module.exports.registerUser = (req, res) => {
                         login_type: 'system',
                     }
 
-                    userData = await userRepositories.create(createUserData, t);
+                    userData = await artistRepositories.create(createUserData, t);
                 })
 
                 delete userData.password;
@@ -120,17 +120,17 @@ module.exports.registerUser = (req, res) => {
 
 /*
 |------------------------------------------------ 
-| API name          :  userLogin
+| API name          :  artistLogin
 | Response          :  Respective response message in JSON format
 | Logic             :  User Login
-| Request URL       :  BASE_URL/api/login
+| Request URL       :  BASE_URL/artist/login
 | Request method    :  POST
 | Author            :  Suman Rana
 |------------------------------------------------
 */
-module.exports.userLogin = (req, res) => {
+module.exports.artistLogin = (req, res) => {
     (async() => {
-        let purpose = "User Login";
+        let purpose = "Artist Login";
         try {
             let body = req.body;
             let whereData = {
@@ -138,7 +138,7 @@ module.exports.userLogin = (req, res) => {
                 password: md5(body.password),
                 is_active: 1
             }
-            let userData = await userRepositories.findOne(whereData);
+            let userData = await artistRepositories.findOne(whereData);
 
             if (userData) {
                 let jwtOptionsAccess = global.constants.jwtAccessTokenOptions;
@@ -164,14 +164,14 @@ module.exports.userLogin = (req, res) => {
                 })
             } else {
                 return res.status(403).send({
-                    status: 200,
+                    status: 403,
                     msg: responseMessages.invalidCreds,
                     data: {},
                     purpose: purpose
                 })
             }
         } catch (e) {
-            console.log("User Login ERROR : ", e);
+            console.log("Artist Login ERROR : ", e);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,
@@ -187,7 +187,7 @@ module.exports.userLogin = (req, res) => {
 | API name          :  socialLogin
 | Response          :  Respective response message in JSON format
 | Logic             :  Social Login
-| Request URL       :  BASE_URL/api/social-login
+| Request URL       :  BASE_URL/artist/social-login
 | Request method    :  POST
 | Author            :  Suman Rana
 |------------------------------------------------
@@ -197,7 +197,7 @@ module.exports.socialLogin = (req, res) => {
         let purpose = "Social Login";
         try {
             let body = req.body;
-            let userDetails = await userRepositories.findOne({ email: body.email });
+            let userDetails = await artistRepositories.findOne({ email: body.email });
             if (userDetails) {
 
                 delete userDetails.password;
@@ -230,7 +230,7 @@ module.exports.socialLogin = (req, res) => {
                     login_type: body.login_type,
                 }
 
-                let userData = await userRepositories.create(createUserData);
+                let userData = await artistRepositories.create(createUserData);
 
                 delete userData.password;
                 delete userData.login_type;
@@ -279,7 +279,7 @@ module.exports.forgotPassword = (req, res) => {
         let purpose = "Forgot Password"
         try {
             let body = req.body;
-            let userDetails = await userRepositories.findOne({ email: body.email });
+            let userDetails = await artistRepositories.findOne({ email: body.email, is_active: 1 });
 
             if (!userDetails) {
                 return res.status(404).send({
@@ -291,7 +291,7 @@ module.exports.forgotPassword = (req, res) => {
             }
 
             const otpValue = Math.floor(1000 + Math.random() * 9000);
-            let updateData = await userRepositories.update({ id: userDetails.id }, { otp: otpValue });
+            let updateData = await artistRepositories.update({ id: userDetails.id }, { otp: otpValue });
 
             if (updateData[0] == 1) {
                 let mailData = {
@@ -340,7 +340,7 @@ module.exports.verifyOTP = (req, res) => {
                 otp: body.otp,
                 email: body.email
             }
-            let checkOTP = await userRepositories.findOne(whereData)
+            let checkOTP = await artistRepositories.findOne(whereData)
 
             if (checkOTP) {
                 return res.status(200).send({
@@ -351,7 +351,7 @@ module.exports.verifyOTP = (req, res) => {
                 })
             } else {
                 return res.status(403).send({
-                    status: 200,
+                    status: 403,
                     msg: responseMessages.invalidOTP,
                     data: {},
                     purpose: purpose
@@ -384,10 +384,10 @@ module.exports.resetPassword = (req, res) => {
         let purpose = "Reset Password";
         try {
             let body = req.body;
-            let userDetails = await userRepositories.findOne({ otp: body.otp });
+            let userDetails = await artistRepositories.findOne({ otp: body.otp });
 
             if (userDetails) {
-                let updateData = await userRepositories.update({ id: userDetails.id }, { password: md5(body.password), otp: null });
+                let updateData = await artistRepositories.update({ id: userDetails.id }, { password: md5(body.password), otp: null });
 
                 if (updateData[0] == 1) {
                     return res.status(200).send({
@@ -406,7 +406,7 @@ module.exports.resetPassword = (req, res) => {
                 }
             } else {
                 return res.status(404).send({
-                    status: 200,
+                    status: 404,
                     msg: responseMessages.invalidOTP,
                     data: {},
                     purpose: purpose
