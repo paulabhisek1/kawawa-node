@@ -48,20 +48,6 @@ module.exports.registerUser = (req, res) => {
             let body = req.body;
             let userCount = await userRepositories.count({ where: { email: body.email } });
 
-            let currentDate = moment();
-            let userDate = moment(body.dob);
-
-            let dateDiff = userDate.diff(currentDate, 'days');
-
-            if (dateDiff >= 0) {
-                return res.status(422).json({
-                    status: 422,
-                    msg: "Date of Birth can't be in futute or current date ",
-                    data: {},
-                    purpose: "Validation Error"
-                })
-            }
-
             if (userCount == 0) {
                 let userData;
                 await sequelize.transaction(async(t) => {
@@ -75,8 +61,6 @@ module.exports.registerUser = (req, res) => {
                         country_id: body.country_id,
                         login_type: 'system',
                     }
-
-                    // console.log('createUserData ------------ ', createUserData);
 
                     userData = await userRepositories.create(createUserData, t);
                 })
@@ -94,15 +78,15 @@ module.exports.registerUser = (req, res) => {
                 userData['access_token'] = accessToken;
                 userData['refresh_token'] = refreshToken;
 
-                return res.status(200).send({
+                return res.send({
                     status: 200,
                     msg: responseMessages.registrationSuccess,
                     data: userData,
                     purpose: purpose
                 })
             } else {
-                return res.status(200).send({
-                    status: 200,
+                return res.status(409).send({
+                    status: 409,
                     msg: responseMessages.duplicateEmail,
                     data: {},
                     purpose: purpose
@@ -110,7 +94,7 @@ module.exports.registerUser = (req, res) => {
             }
         } catch (e) {
             console.log("REGISTER USER ERROR : ", e);
-            return res.status(500).send({
+            return res.send({
                 status: 500,
                 msg: responseMessages.serverError,
                 data: {},
@@ -158,15 +142,15 @@ module.exports.userLogin = (req, res) => {
                 userData['access_token'] = accessToken;
                 userData['refresh_token'] = refreshToken;
 
-                return res.status(200).send({
+                return res.send({
                     status: 200,
                     msg: responseMessages.loginSuccess,
                     data: userData,
                     purpose: purpose
                 })
             } else {
-                return res.status(200).send({
-                    status: 200,
+                return res.send({
+                    status: 403,
                     msg: responseMessages.invalidCreds,
                     data: {},
                     purpose: purpose
@@ -174,7 +158,7 @@ module.exports.userLogin = (req, res) => {
             }
         } catch (e) {
             console.log("User Login ERROR : ", e);
-            return res.status(500).send({
+            return res.send({
                 status: 500,
                 msg: responseMessages.serverError,
                 data: {},
@@ -215,7 +199,7 @@ module.exports.socialLogin = (req, res) => {
                 userDetails['access_token'] = accessToken;
                 userDetails['refresh_token'] = refreshToken;
 
-                return res.status(200).send({
+                return res.send({
                     status: 200,
                     msg: responseMessages.loginSuccess,
                     data: userDetails,
@@ -247,7 +231,7 @@ module.exports.socialLogin = (req, res) => {
                 userData['access_token'] = accessToken;
                 userData['refresh_token'] = refreshToken;
 
-                return res.status(200).send({
+                return res.send({
                     status: 200,
                     msg: responseMessages.loginSuccess,
                     data: userData,
@@ -256,7 +240,7 @@ module.exports.socialLogin = (req, res) => {
             }
         } catch (e) {
             console.log("Social Login ERROR : ", e);
-            return res.status(500).send({
+            return res.send({
                 status: 500,
                 msg: responseMessages.serverError,
                 data: {},
@@ -284,8 +268,8 @@ module.exports.forgotPassword = (req, res) => {
             let userDetails = await userRepositories.findOne({ email: body.email });
 
             if (!userDetails) {
-                return res.status(200).send({
-                    status: 200,
+                return res.status(404).send({
+                    status: 404,
                     msg: responseMessages.invalidUser,
                     data: {},
                     purpose: purpose
@@ -303,7 +287,7 @@ module.exports.forgotPassword = (req, res) => {
                 }
                 await commonFunction.sendMail(mailData);
 
-                return res.status(200).send({
+                return res.send({
                     status: 200,
                     msg: responseMessages.otpSendMessgae,
                     data: {},
@@ -313,7 +297,7 @@ module.exports.forgotPassword = (req, res) => {
             console.log("UPDATE : ", updateData);
         } catch (e) {
             console.log("Forgot Password ERROR : ", e);
-            return res.status(500).send({
+            return res.send({
                 status: 500,
                 msg: responseMessages.serverError,
                 data: {},
@@ -345,15 +329,15 @@ module.exports.verifyOTP = (req, res) => {
             let checkOTP = await userRepositories.findOne(whereData)
 
             if (checkOTP) {
-                return res.status(200).send({
+                return res.send({
                     status: 200,
                     msg: responseMessages.validOTP,
                     data: {},
                     purpose: purpose
                 })
             } else {
-                return res.status(200).send({
-                    status: 200,
+                return res.send({
+                    status: 403,
                     msg: responseMessages.invalidOTP,
                     data: {},
                     purpose: purpose
@@ -361,7 +345,7 @@ module.exports.verifyOTP = (req, res) => {
             }
         } catch (e) {
             console.log("Verify OTP ERROR : ", e);
-            return res.status(500).send({
+            return res.send({
                 status: 500,
                 msg: responseMessages.serverError,
                 data: {},
@@ -392,14 +376,14 @@ module.exports.resetPassword = (req, res) => {
                 let updateData = await userRepositories.update({ id: userDetails.id }, { password: md5(body.password), otp: null });
 
                 if (updateData[0] == 1) {
-                    return res.status(200).send({
+                    return res.send({
                         status: 200,
                         msg: responseMessages.resetPass,
                         data: {},
                         purpose: purpose
                     })
                 } else {
-                    return res.status(500).send({
+                    return res.send({
                         status: 500,
                         msg: responseMessages.serverError,
                         data: {},
@@ -407,8 +391,8 @@ module.exports.resetPassword = (req, res) => {
                     })
                 }
             } else {
-                return res.status(200).send({
-                    status: 200,
+                return res.status(404).send({
+                    status: 404,
                     msg: responseMessages.invalidOTP,
                     data: {},
                     purpose: purpose
@@ -416,7 +400,7 @@ module.exports.resetPassword = (req, res) => {
             }
         } catch (e) {
             console.log("Reset Password ERROR : ", e);
-            return res.status(500).send({
+            return res.send({
                 status: 500,
                 msg: responseMessages.serverError,
                 data: {},

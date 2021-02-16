@@ -37,7 +37,7 @@ module.exports.fetchCountries = (req, res) => {
                 countries: countriesData
             }
 
-            return res.status(200).send({
+            return res.send({
                 status: 200,
                 msg: responseMessages.countryFetch,
                 data: data,
@@ -45,7 +45,7 @@ module.exports.fetchCountries = (req, res) => {
             })
         } catch (e) {
             console.log("Fetch Countries Error : ", e);
-            return res.status(500).send({
+            return res.send({
                 status: 500,
                 msg: responseMessages.serverError,
                 data: {},
