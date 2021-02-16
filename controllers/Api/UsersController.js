@@ -52,8 +52,8 @@ module.exports.registerUser = (req, res) => {
             let userDate = moment(body.dob);
 
             let dateDiff = userDate.diff(currentDate, 'days');
-            
-            if(dateDiff >= 0) {
+
+            if (dateDiff >= 0) {
                 return res.status(422).json({
                     status: 422,
                     msg: "Date of Birth can't be in futute or current date ",
@@ -100,7 +100,7 @@ module.exports.registerUser = (req, res) => {
                 })
             } else {
                 return res.status(409).send({
-                    status: 409,
+                    status: 200,
                     msg: responseMessages.duplicateEmail,
                     data: {},
                     purpose: purpose
