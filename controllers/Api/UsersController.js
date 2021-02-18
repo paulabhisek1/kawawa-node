@@ -290,7 +290,39 @@ module.exports.forgotPassword = (req, res) => {
                 let mailData = {
                     toEmail: userDetails.email,
                     subject: 'Forgot Password',
-                    html: `<p>Your OTP is <b>${otpValue}</b></p>`
+                    // html: `<p>Your OTP is <b>${otpValue}</b></p>`,
+                    html: `<body style="background: #f2f2f2;">
+                    <div style="width:100%; max-width:600px; margin:0 auto; padding:40px 15px;">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding:8px 0;text-align: center; background:#7f7e7e;">
+                      <tr>
+                        <th scope="col"><img src="logo.png" alt="" width="150" /></th>
+                      </tr>
+                    </table>
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding:60px 40px;text-align: left; background:#fff;">
+                      <tr>
+                        <th scope="col">
+                        <p style="font-size:17px; font-weight:500; color:#000; line-height:24px;">Hi,</p>
+                        <p style="font-size:17px; font-weight:500; color:#000; line-height:24px; margin-top: 20px;">Please use the following code to authorize your device: <strong style="font-size:20px; color:#ff301e;"> ${otpValue}</strong></p>
+                        <p style="font-size:17px; font-weight:500; color:#000; line-height:24px; margin-top: 20px;">If you don't recognize this activity, please <a href="#" style="color:#ff301e; margin:0 2px;">reset your password</a>
+                          immediately. You can also reach us by responding to this email.</p>
+                        <p style="font-size:17px; font-weight:500; color:#000; line-height:24px; margin-top: 20px;">Thanks for your time,</p>
+                        <p style="font-size:17px; font-weight:500; color:#000; line-height:24px;">The Kawawa Sound Team </p>    
+                        
+                        </th>
+                      </tr>
+                    </table>
+                    
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding:20px 0;text-align: center; background:#f2f2f2;">
+                      <tr>
+                        <th scope="col">
+                        <p style="font-size:15px; font-weight:500; color:rgb(82, 82, 82)"><a href="#" style="color:rgb(82, 82, 82); margin:0 2px;">Terms & Condition</a> I <a href="#" style="color:rgb(82, 82, 82); margin:0 2px;">Privacy Policy</a> I <a href="#" style="color:rgb(82, 82, 82); margin:0 2px;">Rate App</a></p>
+                        <p style="font-size:15px; font-weight:500; color:rgb(82, 82, 82); margin-top: 8px;">655 Montgomery Street, Suite 490, Dpt 17022, San Francisco, CA 94111</p>
+                        <p style="font-size:15px; font-weight:500; color:rgb(82, 82, 82); margin-top: 8px;">© 2021 Kawawa Sound Inc.</p>
+                        </th>
+                      </tr>
+                    </table>
+                    </div>
+                    </body>`
                 }
                 await commonFunction.sendMail(mailData);
 
