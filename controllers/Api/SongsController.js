@@ -49,7 +49,8 @@ module.exports.fetchHomePageData = (req, res) => {
             let homePageData = await songRepository.findAll(whereData);
 
             let data = {
-                homePageData: homePageData
+                recently_played: homePageData,
+                recomended: homePageData
             }
 
             return res.send({
