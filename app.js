@@ -25,20 +25,20 @@ app.disable('Server');
 require('./config/dbConfig');
 
 app.use(bodyParser.json({
-  limit: '50mb'
+    limit: '50mb'
 })); // support json encoded bodies
 app.use(bodyParser.urlencoded({
-  limit: '50mb',
-  extended: true
+    limit: '50mb',
+    extended: true
 })); // support encoded bodies
 
 /* using middleware */
-app.use(function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS,HEAD');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,access-token,x-http-method-override,x-access-token,authorization');
-  res.setHeader('Access-Control-Expose-Headers', 'Content-Type,expire');
-  next();
+app.use(function(req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,PATCH,OPTIONS,HEAD');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,access-token,x-http-method-override,x-access-token,authorization');
+    res.setHeader('Access-Control-Expose-Headers', 'Content-Type,expire');
+    next();
 });
 
 global.appPath = __dirname;
@@ -65,14 +65,14 @@ app.set('port', port);
  * Create HTTP / HTTPS server.
  */
 if ((process.env.ENVIRONMENT == 'development') && fs.existsSync(process.env.SSL_PRIVATE_KEY)) {
-  var options = {
-    key: fs.readFileSync(process.env.SSL_PRIVATE_KEY),
-    cert: fs.readFileSync(process.env.SSL_CERT_KEY),
-    ca: fs.readFileSync(process.env.SSL_FULLCHAIN_KEY)
-  };
-  var server = require('https').createServer(options, app);
+    var options = {
+        key: fs.readFileSync(process.env.SSL_PRIVATE_KEY),
+        cert: fs.readFileSync(process.env.SSL_CERT_KEY),
+        ca: fs.readFileSync(process.env.SSL_FULLCHAIN_KEY)
+    };
+    var server = require('https').createServer(options, app);
 } else {
-  var server = require('http').createServer(app); // Create HTTP Server
+    var server = require('http').createServer(app); // Create HTTP Server
 }
 
 
@@ -88,12 +88,12 @@ server.on('listening', onListening);
  * Listen to all http response here
  */
 function InterceptorForAllResponse(req, res, next) {
-  var oldSend = res.send;
-  res.send = function (data) {
-    // arguments[0] (or `data`) contains the response body        
-    oldSend.apply(res, arguments);
-  }
-  next();
+    var oldSend = res.send;
+    res.send = function(data) {
+        // arguments[0] (or `data`) contains the response body        
+        oldSend.apply(res, arguments);
+    }
+    next();
 }
 
 app.use(InterceptorForAllResponse);
@@ -102,28 +102,28 @@ app.use(InterceptorForAllResponse);
 app.use('/api', apiRouter); // API Routes
 app.use('/admin', adminRoutes); // ADMIN Routes
 app.use('/artist', artistRoutes); // ARTIST Routes
-app.use('/', function (req, res) {
-  res.send({
-    "status": 200,
-    "message": "App Running Successfully"
-  });
+app.use('/', function(req, res) {
+    res.send({
+        "status": 200,
+        "message": "App Running Successfully"
+    });
 }); // Root Route (FOR TESTING)
 //------------------------------------------- ROUTES ----------------------------------------------//
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
+app.use(function(req, res, next) {
+    next(createError(404));
 });
 
 // error handler
-app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+app.use(function(err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  // render the error page
-  console.log(err);
-  res.status(err.status || 500).json('error');
+    // render the error page
+    console.log(err);
+    res.status(err.status || 500).json('error');
 });
 
 
@@ -131,54 +131,54 @@ app.use(function (err, req, res, next) {
  * Normalize a port into a number, string, or false.
  */
 function normalizePort(val) {
-  var port = parseInt(val, 10);
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
-  if (port >= 0) {
-    // port number
-    return port;
-  }
-  return false;
+    var port = parseInt(val, 10);
+    if (isNaN(port)) {
+        // named pipe
+        return val;
+    }
+    if (port >= 0) {
+        // port number
+        return port;
+    }
+    return false;
 }
 
 /**
  * Event listener for HTTP server "listening" event.
  */
 function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string' ?
-    'pipe ' + addr :
-    'port ' + addr.port;
-  console.log('Listening on', bind);
+    var addr = server.address();
+    var bind = typeof addr === 'string' ?
+        'pipe ' + addr :
+        'port ' + addr.port;
+    console.log('Listening on', bind);
 }
 
 /**
  * Event listener for HTTP server "error" event.
  */
 function onError(error) {
-  if (error.syscall !== 'listen') {
-    throw error;
-  }
+    if (error.syscall !== 'listen') {
+        throw error;
+    }
 
-  var bind = typeof port === 'string' ?
-    'Pipe ' + port :
-    'Port ' + port;
+    var bind = typeof port === 'string' ?
+        'Pipe ' + port :
+        'Port ' + port;
 
-  // handle specific listen errors with friendly messages
-  switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
-      process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
-      process.exit(1);
-      break;
-    default:
-      throw error;
-  }
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+        case 'EACCES':
+            console.error(bind + ' requires elevated privileges');
+            process.exit(1);
+            break;
+        case 'EADDRINUSE':
+            console.error(bind + ' is already in use');
+            process.exit(1);
+            break;
+        default:
+            throw error;
+    }
 }
 
 module.exports = app;
