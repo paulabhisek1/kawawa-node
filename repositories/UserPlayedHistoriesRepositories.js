@@ -1,6 +1,6 @@
 const sequelize = require('../config/dbConfig').sequelize;
 var DataTypes = require('sequelize/lib/data-types');
-const PlayedHistoryModel = require('../models/user_played_histories')(sequelize,DataTypes);
+const PlayedHistoryModel = require('../models/user_played_histories')(sequelize, DataTypes);
 const SongsModel = require('../models/songs')(sequelize, DataTypes);
 const ArtistModel = require('../models/artists')(sequelize, DataTypes);
 const GenresModel = require('../models/genres')(sequelize, DataTypes);
@@ -15,33 +15,33 @@ module.exports.allRecentlyPlayed = (where, data) => {
     return new Promise((resolve, reject) => {
         PlayedHistoryModel.findAndCountAll({
             where: where,
-            order: [['updatedAt', 'desc']],
-            include: [
-                {
-                    model: SongsModel,
-                    where: { is_active: 1 },
-                    attributes: ['id','name','cover_picture','file_name','length', 'is_paid', 'type'],
-                    include: [
-                        {
-                            model: ArtistModel,
-                            as: 'artist_details',
-                            attributes: ['id','full_name', 'profile_image', 'type']
-                        },
-                        {
-                            model: GenresModel,
-                            as: 'genre_details',
-                            attributes: ['id','name']
-                        },
-                        {
-                            model: AlbumsModel,
-                            as: 'album_details',
-                            attributes: ['id','name','cover_picture','total_songs']
-                        }
-                    ],
-                    as: 'song_details',
-                    required: true
-                }
+            order: [
+                ['updatedAt', 'desc']
             ],
+            include: [{
+                model: SongsModel,
+                where: { is_active: 1 },
+                attributes: ['id', 'name', 'cover_picture', 'file_name', 'length', 'is_paid', 'type'],
+                // include: [
+                //     {
+                //         model: ArtistModel,
+                //         as: 'artist_details',
+                //         attributes: ['id','full_name', 'profile_image', 'type']
+                //     },
+                //     {
+                //         model: GenresModel,
+                //         as: 'genre_details',
+                //         attributes: ['id','name']
+                //     },
+                //     {
+                //         model: AlbumsModel,
+                //         as: 'album_details',
+                //         attributes: ['id','name','cover_picture','total_songs']
+                //     }
+                // ],
+                as: 'song_details',
+                required: true
+            }],
             limit: data.limit,
             offset: data.offset,
             group: ['id']
@@ -58,33 +58,32 @@ module.exports.recentlyPlayed = (where, data) => {
     return new Promise((resolve, reject) => {
         PlayedHistoryModel.findAll({
             where: where,
-            order: [['updatedAt', 'desc']],
-            include: [
-                {
-                    model: SongsModel,
-                    where: { is_active: 1 },
-                    attributes: ['id','name','cover_picture','file_name','length', 'is_paid', 'type'],
-                    include: [
-                        {
-                            model: ArtistModel,
-                            as: 'artist_details',
-                            attributes: ['id','full_name', 'profile_image', 'type']
-                        },
-                        {
-                            model: GenresModel,
-                            as: 'genre_details',
-                            attributes: ['id','name']
-                        },
-                        {
-                            model: AlbumsModel,
-                            as: 'album_details',
-                            attributes: ['id','name','cover_picture','total_songs']
-                        }
-                    ],
-                    as: 'song_details',
-                    required: true
-                }
+            order: [
+                ['updatedAt', 'desc']
             ],
+            include: [{
+                model: SongsModel,
+                where: { is_active: 1 },
+                attributes: ['id', 'name', 'cover_picture', 'file_name', 'length', 'is_paid', 'type'],
+                // include: [{
+                //         model: ArtistModel,
+                //         as: 'artist_details',
+                //         attributes: ['id', 'full_name', 'profile_image', 'type']
+                //     },
+                //     {
+                //         model: GenresModel,
+                //         as: 'genre_details',
+                //         attributes: ['id', 'name']
+                //     },
+                //     {
+                //         model: AlbumsModel,
+                //         as: 'album_details',
+                //         attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                //     }
+                // ],
+                as: 'song_details',
+                required: true
+            }],
             limit: data.limit,
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
@@ -99,33 +98,32 @@ module.exports.recentlyPlayedAllData = (where, data) => {
     return new Promise((resolve, reject) => {
         PlayedHistoryModel.findAll({
             where: where,
-            order: [['updatedAt', 'desc']],
-            include: [
-                {
-                    model: SongsModel,
-                    where: { is_active: 1 },
-                    attributes: ['id','name','cover_picture','file_name','length', 'is_paid', 'type'],
-                    include: [
-                        {
-                            model: ArtistModel,
-                            as: 'artist_details',
-                            attributes: ['id','full_name', 'profile_image', 'type']
-                        },
-                        {
-                            model: GenresModel,
-                            as: 'genre_details',
-                            attributes: ['id','name']
-                        },
-                        {
-                            model: AlbumsModel,
-                            as: 'album_details',
-                            attributes: ['id','name','cover_picture','total_songs']
-                        }
-                    ],
-                    as: 'song_details',
-                    required: true
-                }
+            order: [
+                ['updatedAt', 'desc']
             ],
+            include: [{
+                model: SongsModel,
+                where: { is_active: 1 },
+                attributes: ['id', 'name', 'cover_picture', 'file_name', 'length', 'is_paid', 'type'],
+                // include: [{
+                //         model: ArtistModel,
+                //         as: 'artist_details',
+                //         attributes: ['id', 'full_name', 'profile_image', 'type']
+                //     },
+                //     {
+                //         model: GenresModel,
+                //         as: 'genre_details',
+                //         attributes: ['id', 'name']
+                //     },
+                //     {
+                //         model: AlbumsModel,
+                //         as: 'album_details',
+                //         attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                //     }
+                // ],
+                as: 'song_details',
+                required: true
+            }],
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
             resolve(result);

@@ -53,29 +53,30 @@ module.exports.freeSongs = (where, data) => {
     return new Promise((resolve, reject) => {
         SongsModel.findAll({
             where: where,
-            order: [['createdAt', 'desc']],
-            include: [
-                {
-                    model: ArtistModel,
-                    as: 'artist_details',
-                    attributes: ['id','full_name', 'profile_image', 'type']
-                },
-                {
-                    model: GenresModel,
-                    as: 'genre_details',
-                    attributes: ['id','name']
-                },
-                {
-                    model: AlbumsModel,
-                    as: 'album_details',
-                    attributes: ['id','name','cover_picture','total_songs']
-                },
-                {
-                    model: FavouritesModel,
-                    as: 'is_favourite',
-                    attributes: ['id']
-                }
+            order: [
+                ['createdAt', 'desc']
             ],
+            // include: [{
+            //         model: ArtistModel,
+            //         as: 'artist_details',
+            //         attributes: ['id', 'full_name', 'profile_image', 'type']
+            //     },
+            //     {
+            //         model: GenresModel,
+            //         as: 'genre_details',
+            //         attributes: ['id', 'name']
+            //     },
+            //     {
+            //         model: AlbumsModel,
+            //         as: 'album_details',
+            //         attributes: ['id', 'name', 'cover_picture', 'total_songs']
+            //     },
+            //     {
+            //         model: FavouritesModel,
+            //         as: 'is_favourite',
+            //         attributes: ['id']
+            //     }
+            // ],
             limit: data.limit,
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
@@ -91,29 +92,30 @@ module.exports.freeSongsPaginate = (where, data) => {
     return new Promise((resolve, reject) => {
         SongsModel.findAndCountAll({
             where: where,
-            order: [['createdAt', 'desc']],
-            include: [
-                {
-                    model: ArtistModel,
-                    as: 'artist_details',
-                    attributes: ['id','full_name', 'profile_image', 'type']
-                },
-                {
-                    model: GenresModel,
-                    as: 'genre_details',
-                    attributes: ['id','name']
-                },
-                {
-                    model: AlbumsModel,
-                    as: 'album_details',
-                    attributes: ['id','name','cover_picture','total_songs']
-                },
-                {
-                    model: FavouritesModel,
-                    as: 'is_favourite',
-                    attributes: ['id']
-                }
+            order: [
+                ['createdAt', 'desc']
             ],
+            // include: [{
+            //         model: ArtistModel,
+            //         as: 'artist_details',
+            //         attributes: ['id', 'full_name', 'profile_image', 'type']
+            //     },
+            //     {
+            //         model: GenresModel,
+            //         as: 'genre_details',
+            //         attributes: ['id', 'name']
+            //     },
+            //     {
+            //         model: AlbumsModel,
+            //         as: 'album_details',
+            //         attributes: ['id', 'name', 'cover_picture', 'total_songs']
+            //     },
+            //     {
+            //         model: FavouritesModel,
+            //         as: 'is_favourite',
+            //         attributes: ['id']
+            //     }
+            // ],
             offset: data.offset,
             limit: data.limit,
             group: ['id']
@@ -131,7 +133,9 @@ module.exports.recommendedSongs = (where, data) => {
     return new Promise((resolve, reject) => {
         SongsModel.findAll({
             where: where,
-            order: [['createdAt', 'desc']],
+            order: [
+                ['createdAt', 'desc']
+            ],
             attributes: [
                 'id',
                 'name',
@@ -140,28 +144,28 @@ module.exports.recommendedSongs = (where, data) => {
                 'file_name',
                 'type'
             ],
-            include: [
-                {
-                    model: ArtistModel,
-                    as: 'artist_details',
-                    attributes: ['id','full_name', 'profile_image', 'type']
-                },
-                {
-                    model: GenresModel,
-                    as: 'genre_details',
-                    attributes: ['id','name']
-                },
-                {
-                    model: AlbumsModel,
-                    as: 'album_details',
-                    attributes: ['id','name','cover_picture','total_songs']
-                },
-                {
-                    model: FavouritesModel,
-                    as: 'is_favourite',
-                    attributes: ['id']
-                }
-            ],
+            // include: [
+            //     {
+            //         model: ArtistModel,
+            //         as: 'artist_details',
+            //         attributes: ['id','full_name', 'profile_image', 'type']
+            //     },
+            //     {
+            //         model: GenresModel,
+            //         as: 'genre_details',
+            //         attributes: ['id','name']
+            //     },
+            //     {
+            //         model: AlbumsModel,
+            //         as: 'album_details',
+            //         attributes: ['id','name','cover_picture','total_songs']
+            //     },
+            //     {
+            //         model: FavouritesModel,
+            //         as: 'is_favourite',
+            //         attributes: ['id']
+            //     }
+            // ],
             limit: data.limit,
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
@@ -177,7 +181,9 @@ module.exports.recommendedSongsPaginate = (where, data) => {
     return new Promise((resolve, reject) => {
         SongsModel.findAndCountAll({
             where: where,
-            order: [['createdAt', 'desc']],
+            order: [
+                ['createdAt', 'desc']
+            ],
             attributes: [
                 'id',
                 'name',
@@ -186,28 +192,28 @@ module.exports.recommendedSongsPaginate = (where, data) => {
                 'file_name',
                 'type'
             ],
-            include: [
-                {
-                    model: ArtistModel,
-                    as: 'artist_details',
-                    attributes: ['id','full_name', 'profile_image', 'type']
-                },
-                {
-                    model: GenresModel,
-                    as: 'genre_details',
-                    attributes: ['id','name']
-                },
-                {
-                    model: AlbumsModel,
-                    as: 'album_details',
-                    attributes: ['id','name','cover_picture','total_songs']
-                },
-                {
-                    model: FavouritesModel,
-                    as: 'is_favourite',
-                    attributes: ['id']
-                }
-            ],
+            // include: [
+            //     {
+            //         model: ArtistModel,
+            //         as: 'artist_details',
+            //         attributes: ['id','full_name', 'profile_image', 'type']
+            //     },
+            //     {
+            //         model: GenresModel,
+            //         as: 'genre_details',
+            //         attributes: ['id','name']
+            //     },
+            //     {
+            //         model: AlbumsModel,
+            //         as: 'album_details',
+            //         attributes: ['id','name','cover_picture','total_songs']
+            //     },
+            //     {
+            //         model: FavouritesModel,
+            //         as: 'is_favourite',
+            //         attributes: ['id']
+            //     }
+            // ],
             offset: data.offset,
             limit: data.limit,
             group: ['id']
@@ -231,32 +237,32 @@ module.exports.weeklyTopTen = (where, data) => {
                 'cover_picture',
                 'length',
                 'file_name',
-                'type',
-                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id GROUP BY favourites.id HAVING count(*) > 0)`),'totalFavourites']
+                'type', [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id GROUP BY favourites.id HAVING count(*) > 0)`), 'totalFavourites']
             ],
-            include: [
-                {
-                    model: ArtistModel,
-                    as: 'artist_details',
-                    attributes: ['id','full_name', 'profile_image', 'type']
-                },
-                {
-                    model: GenresModel,
-                    as: 'genre_details',
-                    attributes: ['id','name']
-                },
-                {
-                    model: AlbumsModel,
-                    as: 'album_details',
-                    attributes: ['id','name','cover_picture','total_songs']
-                },
-                {
-                    model: FavouritesModel,
-                    as: 'is_favourite',
-                    attributes: ['id']
-                }
+            // include: [{
+            //         model: ArtistModel,
+            //         as: 'artist_details',
+            //         attributes: ['id', 'full_name', 'profile_image', 'type']
+            //     },
+            //     {
+            //         model: GenresModel,
+            //         as: 'genre_details',
+            //         attributes: ['id', 'name']
+            //     },
+            //     {
+            //         model: AlbumsModel,
+            //         as: 'album_details',
+            //         attributes: ['id', 'name', 'cover_picture', 'total_songs']
+            //     },
+            //     {
+            //         model: FavouritesModel,
+            //         as: 'is_favourite',
+            //         attributes: ['id']
+            //     }
+            // ],
+            order: [
+                [sequelize.literal(`totalFavourites`), 'desc']
             ],
-            order: [[sequelize.literal(`totalFavourites`), 'desc']],
             limit: data.limit,
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
@@ -278,32 +284,32 @@ module.exports.weeklyTopTenPaginate = (where, data) => {
                 'cover_picture',
                 'length',
                 'file_name',
-                'type',
-                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id GROUP BY favourites.id HAVING count(*) > 0)`),'totalFavourites']
+                'type', [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id GROUP BY favourites.id HAVING count(*) > 0)`), 'totalFavourites']
             ],
-            include: [
-                {
-                    model: ArtistModel,
-                    as: 'artist_details',
-                    attributes: ['id','full_name', 'profile_image', 'type']
-                },
-                {
-                    model: GenresModel,
-                    as: 'genre_details',
-                    attributes: ['id','name']
-                },
-                {
-                    model: AlbumsModel,
-                    as: 'album_details',
-                    attributes: ['id','name','cover_picture','total_songs']
-                },
-                {
-                    model: FavouritesModel,
-                    as: 'is_favourite',
-                    attributes: ['id']
-                }
+            // include: [{
+            //         model: ArtistModel,
+            //         as: 'artist_details',
+            //         attributes: ['id', 'full_name', 'profile_image', 'type']
+            //     },
+            //     {
+            //         model: GenresModel,
+            //         as: 'genre_details',
+            //         attributes: ['id', 'name']
+            //     },
+            //     {
+            //         model: AlbumsModel,
+            //         as: 'album_details',
+            //         attributes: ['id', 'name', 'cover_picture', 'total_songs']
+            //     },
+            //     {
+            //         model: FavouritesModel,
+            //         as: 'is_favourite',
+            //         attributes: ['id']
+            //     }
+            // ],
+            order: [
+                [sequelize.literal(`totalFavourites`), 'desc']
             ],
-            order: [[sequelize.literal(`totalFavourites`), 'desc']],
             offset: data.offset,
             limit: data.limit,
             group: ['id']
@@ -318,15 +324,15 @@ module.exports.weeklyTopTenPaginate = (where, data) => {
 
 // Add To Liked Songs
 module.exports.markFavouriteInsert = (data) => {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         FavouritesModel.create(data)
-        .then((result) => {
-            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
-            resolve(result);
-        })
-        .catch((err) => {
-            reject(err);
-        });
+            .then((result) => {
+                result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+                resolve(result);
+            })
+            .catch((err) => {
+                reject(err);
+            });
     })
 }
 
@@ -345,16 +351,16 @@ module.exports.favDestroy = (where) => {
 
 // Fetch Favourite Details
 module.exports.favouriteFindDetails = (where) => {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         FavouritesModel.findOne({
-            where: where
-        })
-        .then((result) => {
-            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
-            resolve(result);
-        })
-        .catch((err) => {
-            reject(err);
-        });
+                where: where
+            })
+            .then((result) => {
+                result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+                resolve(result);
+            })
+            .catch((err) => {
+                reject(err);
+            });
     })
 }
