@@ -63,6 +63,7 @@ module.exports.fetchHomePageData = (req, res) => {
             where = {};
             data = {};
             where.is_active = 1;
+            where.is_paid = 0;
             let freeSongs = await songRepository.freeSongs(where, data);
 
             // Artist List
@@ -87,6 +88,7 @@ module.exports.fetchHomePageData = (req, res) => {
                 { artist_id : { $in: recommendArtistList } },
                 { genre_id : { $in: recommentGenreList } },
             ];
+            where.is_active = 1;
             let recommendedSongsData = await songRepository.recommendedSongs(where, data);
 
             // Weekly Top 10
@@ -205,6 +207,7 @@ module.exports.allRecommend = (req, res) => {
                 { artist_id : { $in: recommendArtistList } },
                 { genre_id : { $in: recommentGenreList } },
             ];
+            where.is_active = 1;
             let recommendedSongsData = await songRepository.recommendedSongsPaginate(where, data);
 
             let dataResp = {
@@ -251,6 +254,7 @@ module.exports.allWeeklyTop = (req, res) => {
             data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
+            where.is_active = 1;
             let allweeklytop = await songRepository.weeklyTopTenPaginate(where, data);
 
             let dataResp = {
@@ -297,6 +301,7 @@ module.exports.allArtist = (req, res) => {
             data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
+            where.is_active = 1;
             let allartist = await artistRepositories.artistListPaginate(where, data);
 
             let dataResp = {
@@ -343,6 +348,8 @@ module.exports.allFreeSongs = (req, res) => {
             data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
+            where.is_active = 1;
+            where.is_paid = 0;
             let allfreesongs = await songRepository.freeSongsPaginate(where, data);
 
             let dataResp = {
