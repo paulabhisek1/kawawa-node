@@ -56,27 +56,27 @@ module.exports.freeSongs = (where, data) => {
             order: [
                 ['createdAt', 'desc']
             ],
-            // include: [{
-            //         model: ArtistModel,
-            //         as: 'artist_details',
-            //         attributes: ['id', 'full_name', 'profile_image', 'type']
-            //     },
-            //     {
-            //         model: GenresModel,
-            //         as: 'genre_details',
-            //         attributes: ['id', 'name']
-            //     },
-            //     {
-            //         model: AlbumsModel,
-            //         as: 'album_details',
-            //         attributes: ['id', 'name', 'cover_picture', 'total_songs']
-            //     },
-            //     {
-            //         model: FavouritesModel,
-            //         as: 'is_favourite',
-            //         attributes: ['id']
-            //     }
-            // ],
+            include: [{
+                    model: ArtistModel,
+                    as: 'artist_details',
+                    attributes: ['id', 'full_name', 'profile_image', 'type']
+                },
+                {
+                    model: GenresModel,
+                    as: 'genre_details',
+                    attributes: ['id', 'name']
+                },
+                {
+                    model: AlbumsModel,
+                    as: 'album_details',
+                    attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                },
+                {
+                    model: FavouritesModel,
+                    as: 'is_favourite',
+                    attributes: ['id']
+                }
+            ],
             limit: data.limit,
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
@@ -95,27 +95,27 @@ module.exports.freeSongsPaginate = (where, data) => {
             order: [
                 ['createdAt', 'desc']
             ],
-            // include: [{
-            //         model: ArtistModel,
-            //         as: 'artist_details',
-            //         attributes: ['id', 'full_name', 'profile_image', 'type']
-            //     },
-            //     {
-            //         model: GenresModel,
-            //         as: 'genre_details',
-            //         attributes: ['id', 'name']
-            //     },
-            //     {
-            //         model: AlbumsModel,
-            //         as: 'album_details',
-            //         attributes: ['id', 'name', 'cover_picture', 'total_songs']
-            //     },
-            //     {
-            //         model: FavouritesModel,
-            //         as: 'is_favourite',
-            //         attributes: ['id']
-            //     }
-            // ],
+            include: [{
+                    model: ArtistModel,
+                    as: 'artist_details',
+                    attributes: ['id', 'full_name', 'profile_image', 'type']
+                },
+                {
+                    model: GenresModel,
+                    as: 'genre_details',
+                    attributes: ['id', 'name']
+                },
+                {
+                    model: AlbumsModel,
+                    as: 'album_details',
+                    attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                },
+                {
+                    model: FavouritesModel,
+                    as: 'is_favourite',
+                    attributes: ['id']
+                }
+            ],
             offset: data.offset,
             limit: data.limit,
             group: ['id']
@@ -144,28 +144,27 @@ module.exports.recommendedSongs = (where, data) => {
                 'file_name',
                 'type'
             ],
-            // include: [
-            //     {
-            //         model: ArtistModel,
-            //         as: 'artist_details',
-            //         attributes: ['id','full_name', 'profile_image', 'type']
-            //     },
-            //     {
-            //         model: GenresModel,
-            //         as: 'genre_details',
-            //         attributes: ['id','name']
-            //     },
-            //     {
-            //         model: AlbumsModel,
-            //         as: 'album_details',
-            //         attributes: ['id','name','cover_picture','total_songs']
-            //     },
-            //     {
-            //         model: FavouritesModel,
-            //         as: 'is_favourite',
-            //         attributes: ['id']
-            //     }
-            // ],
+            include: [{
+                    model: ArtistModel,
+                    as: 'artist_details',
+                    attributes: ['id', 'full_name', 'profile_image', 'type']
+                },
+                {
+                    model: GenresModel,
+                    as: 'genre_details',
+                    attributes: ['id', 'name']
+                },
+                {
+                    model: AlbumsModel,
+                    as: 'album_details',
+                    attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                },
+                {
+                    model: FavouritesModel,
+                    as: 'is_favourite',
+                    attributes: ['id']
+                }
+            ],
             limit: data.limit,
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
@@ -192,28 +191,27 @@ module.exports.recommendedSongsPaginate = (where, data) => {
                 'file_name',
                 'type'
             ],
-            // include: [
-            //     {
-            //         model: ArtistModel,
-            //         as: 'artist_details',
-            //         attributes: ['id','full_name', 'profile_image', 'type']
-            //     },
-            //     {
-            //         model: GenresModel,
-            //         as: 'genre_details',
-            //         attributes: ['id','name']
-            //     },
-            //     {
-            //         model: AlbumsModel,
-            //         as: 'album_details',
-            //         attributes: ['id','name','cover_picture','total_songs']
-            //     },
-            //     {
-            //         model: FavouritesModel,
-            //         as: 'is_favourite',
-            //         attributes: ['id']
-            //     }
-            // ],
+            include: [{
+                    model: ArtistModel,
+                    as: 'artist_details',
+                    attributes: ['id', 'full_name', 'profile_image', 'type']
+                },
+                {
+                    model: GenresModel,
+                    as: 'genre_details',
+                    attributes: ['id', 'name']
+                },
+                {
+                    model: AlbumsModel,
+                    as: 'album_details',
+                    attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                },
+                {
+                    model: FavouritesModel,
+                    as: 'is_favourite',
+                    attributes: ['id']
+                }
+            ],
             offset: data.offset,
             limit: data.limit,
             group: ['id']
@@ -237,29 +235,29 @@ module.exports.weeklyTopTen = (where, data) => {
                 'cover_picture',
                 'length',
                 'file_name',
-                'type', [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id GROUP BY favourites.id HAVING count(*) > 0)`), 'totalFavourites']
+                'type', [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id)`), 'totalFavourites']
             ],
-            // include: [{
-            //         model: ArtistModel,
-            //         as: 'artist_details',
-            //         attributes: ['id', 'full_name', 'profile_image', 'type']
-            //     },
-            //     {
-            //         model: GenresModel,
-            //         as: 'genre_details',
-            //         attributes: ['id', 'name']
-            //     },
-            //     {
-            //         model: AlbumsModel,
-            //         as: 'album_details',
-            //         attributes: ['id', 'name', 'cover_picture', 'total_songs']
-            //     },
-            //     {
-            //         model: FavouritesModel,
-            //         as: 'is_favourite',
-            //         attributes: ['id']
-            //     }
-            // ],
+            include: [{
+                    model: ArtistModel,
+                    as: 'artist_details',
+                    attributes: ['id', 'full_name', 'profile_image', 'type']
+                },
+                {
+                    model: GenresModel,
+                    as: 'genre_details',
+                    attributes: ['id', 'name']
+                },
+                {
+                    model: AlbumsModel,
+                    as: 'album_details',
+                    attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                },
+                {
+                    model: FavouritesModel,
+                    as: 'is_favourite',
+                    attributes: ['id']
+                }
+            ],
             order: [
                 [sequelize.literal(`totalFavourites`), 'desc']
             ],
@@ -284,29 +282,29 @@ module.exports.weeklyTopTenPaginate = (where, data) => {
                 'cover_picture',
                 'length',
                 'file_name',
-                'type', [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id GROUP BY favourites.id HAVING count(*) > 0)`), 'totalFavourites']
+                'type', [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id)`), 'totalFavourites']
             ],
-            // include: [{
-            //         model: ArtistModel,
-            //         as: 'artist_details',
-            //         attributes: ['id', 'full_name', 'profile_image', 'type']
-            //     },
-            //     {
-            //         model: GenresModel,
-            //         as: 'genre_details',
-            //         attributes: ['id', 'name']
-            //     },
-            //     {
-            //         model: AlbumsModel,
-            //         as: 'album_details',
-            //         attributes: ['id', 'name', 'cover_picture', 'total_songs']
-            //     },
-            //     {
-            //         model: FavouritesModel,
-            //         as: 'is_favourite',
-            //         attributes: ['id']
-            //     }
-            // ],
+            include: [{
+                    model: ArtistModel,
+                    as: 'artist_details',
+                    attributes: ['id', 'full_name', 'profile_image', 'type']
+                },
+                {
+                    model: GenresModel,
+                    as: 'genre_details',
+                    attributes: ['id', 'name']
+                },
+                {
+                    model: AlbumsModel,
+                    as: 'album_details',
+                    attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                },
+                {
+                    model: FavouritesModel,
+                    as: 'is_favourite',
+                    attributes: ['id']
+                }
+            ],
             order: [
                 [sequelize.literal(`totalFavourites`), 'desc']
             ],

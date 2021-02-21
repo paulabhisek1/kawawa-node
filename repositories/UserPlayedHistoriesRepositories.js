@@ -22,23 +22,22 @@ module.exports.allRecentlyPlayed = (where, data) => {
                 model: SongsModel,
                 where: { is_active: 1 },
                 attributes: ['id', 'name', 'cover_picture', 'file_name', 'length', 'is_paid', 'type'],
-                // include: [
-                //     {
-                //         model: ArtistModel,
-                //         as: 'artist_details',
-                //         attributes: ['id','full_name', 'profile_image', 'type']
-                //     },
-                //     {
-                //         model: GenresModel,
-                //         as: 'genre_details',
-                //         attributes: ['id','name']
-                //     },
-                //     {
-                //         model: AlbumsModel,
-                //         as: 'album_details',
-                //         attributes: ['id','name','cover_picture','total_songs']
-                //     }
-                // ],
+                include: [{
+                        model: ArtistModel,
+                        as: 'artist_details',
+                        attributes: ['id', 'full_name', 'profile_image', 'type']
+                    },
+                    {
+                        model: GenresModel,
+                        as: 'genre_details',
+                        attributes: ['id', 'name']
+                    },
+                    {
+                        model: AlbumsModel,
+                        as: 'album_details',
+                        attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                    }
+                ],
                 as: 'song_details',
                 required: true
             }],
@@ -65,22 +64,22 @@ module.exports.recentlyPlayed = (where, data) => {
                 model: SongsModel,
                 where: { is_active: 1 },
                 attributes: ['id', 'name', 'cover_picture', 'file_name', 'length', 'is_paid', 'type'],
-                // include: [{
-                //         model: ArtistModel,
-                //         as: 'artist_details',
-                //         attributes: ['id', 'full_name', 'profile_image', 'type']
-                //     },
-                //     {
-                //         model: GenresModel,
-                //         as: 'genre_details',
-                //         attributes: ['id', 'name']
-                //     },
-                //     {
-                //         model: AlbumsModel,
-                //         as: 'album_details',
-                //         attributes: ['id', 'name', 'cover_picture', 'total_songs']
-                //     }
-                // ],
+                include: [{
+                        model: ArtistModel,
+                        as: 'artist_details',
+                        attributes: ['id', 'full_name', 'profile_image', 'type']
+                    },
+                    {
+                        model: GenresModel,
+                        as: 'genre_details',
+                        attributes: ['id', 'name']
+                    },
+                    {
+                        model: AlbumsModel,
+                        as: 'album_details',
+                        attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                    }
+                ],
                 as: 'song_details',
                 required: true
             }],
@@ -105,22 +104,22 @@ module.exports.recentlyPlayedAllData = (where, data) => {
                 model: SongsModel,
                 where: { is_active: 1 },
                 attributes: ['id', 'name', 'cover_picture', 'file_name', 'length', 'is_paid', 'type'],
-                // include: [{
-                //         model: ArtistModel,
-                //         as: 'artist_details',
-                //         attributes: ['id', 'full_name', 'profile_image', 'type']
-                //     },
-                //     {
-                //         model: GenresModel,
-                //         as: 'genre_details',
-                //         attributes: ['id', 'name']
-                //     },
-                //     {
-                //         model: AlbumsModel,
-                //         as: 'album_details',
-                //         attributes: ['id', 'name', 'cover_picture', 'total_songs']
-                //     }
-                // ],
+                include: [{
+                        model: ArtistModel,
+                        as: 'artist_details',
+                        attributes: ['id', 'full_name', 'profile_image', 'type']
+                    },
+                    {
+                        model: GenresModel,
+                        as: 'genre_details',
+                        attributes: ['id', 'name']
+                    },
+                    {
+                        model: AlbumsModel,
+                        as: 'album_details',
+                        attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                    }
+                ],
                 as: 'song_details',
                 required: true
             }],
