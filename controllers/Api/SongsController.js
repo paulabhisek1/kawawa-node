@@ -58,6 +58,11 @@ module.exports.fetchHomePageData = (req, res) => {
             // Recently Played
             where.user_id = userID ;
             let allRecentlyPlayed = await userPlayedHistoryRepo.recentlyPlayed(where, data);
+            let newAllRecentlyPlayed = [];
+            allRecentlyPlayed.forEach((item, index) => {
+                newAllRecentlyPlayed.push(item.song_details);
+            });
+            allRecentlyPlayed = newAllRecentlyPlayed;
 
             // Free Songs
             where = {};
@@ -146,8 +151,13 @@ module.exports.allRecentlyPlayed = (req, res) => {
             where.user_id = userID ;
             let allRecentlyPlayed = await userPlayedHistoryRepo.allRecentlyPlayed(where, data);
 
+            let newAllRecentlyPlayed = [];
+            allRecentlyPlayed.rows.forEach((item, index) => {
+                newAllRecentlyPlayed.push(item.song_details);
+            });
+
             let dataResp = {
-                recently_played: allRecentlyPlayed.rows,
+                recently_played: newAllRecentlyPlayed,
                 total_count: allRecentlyPlayed.count.length
             }
 

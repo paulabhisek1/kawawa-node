@@ -232,7 +232,7 @@ module.exports.weeklyTopTen = (where, data) => {
                 'length',
                 'file_name',
                 'type',
-                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id HAVING count(*) > 0)`),'totalFavourites']
+                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id GROUP BY favourites.id HAVING count(*) > 0)`),'totalFavourites']
             ],
             include: [
                 {
@@ -279,7 +279,7 @@ module.exports.weeklyTopTenPaginate = (where, data) => {
                 'length',
                 'file_name',
                 'type',
-                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id)`),'totalFavourites']
+                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id GROUP BY favourites.id HAVING count(*) > 0)`),'totalFavourites']
             ],
             include: [
                 {
