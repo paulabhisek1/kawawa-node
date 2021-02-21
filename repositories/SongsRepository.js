@@ -2,7 +2,7 @@ const sequelize = require('../config/dbConfig').sequelize;
 var DataTypes = require('sequelize/lib/data-types');
 const SongsModel = require('../models/songs')(sequelize, DataTypes);
 
-// Find One
+// Find All
 module.exports.findAll = (whereData) => {
     return new Promise((resolve, reject) => {
         SongsModel.findAll({

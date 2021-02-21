@@ -12,6 +12,7 @@
 
 // ################################ Repositories ################################ //
 const songRepository = require('../../repositories/SongsRepository');
+const artistRepositories = require('../../repositories/ArtistsRepositories');
 
 // ################################ Sequelize ################################ //
 const sequelize = require('../../config/dbConfig').sequelize;
@@ -46,16 +47,20 @@ module.exports.fetchHomePageData = (req, res) => {
         let purpose = "Fetch Home Page Data";
         try {
             let whereData = { is_active: 1 };
-            let homePageData = await songRepository.findAll(whereData);
+            let songsData = await songRepository.findAll(whereData);
+            let artistData = await artistRepositories.findAll(whereData);
 
             let data = {
-                recently_played: homePageData,
-                recomended: homePageData
+                recently_played: songsData,
+                recomended: songsData,
+                weekly_top: songsData,
+                artist: artistData,
+                free_songs: songsData,
             }
 
             return res.send({
                 status: 200,
-                msg: responseMessages.countryFetch,
+                msg: responseMessages.homeFetch,
                 data: data,
                 purpose: purpose
             })

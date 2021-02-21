@@ -9,5 +9,6 @@ module.exports = {
     loginSuccess: "Logged in successfully",
     invalidUser: "User not found",
     resetPass: "Password reset successfully, Log in to continue",
-    countryFetch: "Countries fetched successfully"
+    countryFetch: "Countries fetched successfully",
+    homeFetch: "Home page data fetched successfully"
 }

@@ -1,6 +1,6 @@
 const sequelize = require('../config/dbConfig').sequelize;
 var DataTypes = require('sequelize/lib/data-types');
-const ArtistModel = require('../models/artists')(sequelize,DataTypes);
+const ArtistModel = require('../models/artists')(sequelize, DataTypes);
 const CountryModel = require('../models/countries')(sequelize, DataTypes);
 
 // Associations
@@ -24,11 +24,9 @@ module.exports.findOne = (whereData) => {
     return new Promise((resolve, reject) => {
         ArtistModel.findOne({
             where: whereData,
-            include: [
-                {
-                    model: CountryModel,
-                }
-            ]
+            include: [{
+                model: CountryModel,
+            }]
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
             resolve(result);
@@ -39,19 +37,19 @@ module.exports.findOne = (whereData) => {
 }
 
 // Create 
-module.exports.create = (data, t=null) => {
-    return new Promise((resolve, reject)=>{
+module.exports.create = (data, t = null) => {
+    return new Promise((resolve, reject) => {
         let options = {}
-        //if trunsaction exist
+            //if trunsaction exist
         if (t != null) options.transaction = t;
         ArtistModel.create(data, options)
-        .then((result) => {
-            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
-            resolve(result);
-        })
-        .catch((err) => {
-            reject(err);
-        });
+            .then((result) => {
+                result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+                resolve(result);
+            })
+            .catch((err) => {
+                reject(err);
+            });
     })
 }
 
@@ -59,14 +57,28 @@ module.exports.create = (data, t=null) => {
 module.exports.update = (where, data, t = null) => {
     return new Promise((resolve, reject) => {
         let options = {
-            where: where
-        }
-        //if trunsaction exist
+                where: where
+            }
+            //if trunsaction exist
         if (t != null) options.transaction = t;
         ArtistModel.update(data, options).then((result) => {
             resolve(result)
         }).catch((err) => {
             reject(err);
+        })
+    })
+}
+
+// Find All
+module.exports.findAll = (whereData) => {
+    return new Promise((resolve, reject) => {
+        ArtistModel.findAll({
+            where: whereData,
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
         })
     })
 }
