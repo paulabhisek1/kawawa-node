@@ -62,8 +62,6 @@ module.exports.fetchHomePageData = (req, res) => {
             allRecentlyPlayed.forEach((item, index) => {
                 newAllRecentlyPlayed.push(item.song_details);
             });
-            console.log('newAllRecentlyPlayed', newAllRecentlyPlayed);
-            if (newAllRecentlyPlayed.artist_details.genre_details == "") { newAllRecentlyPlayed.artist_details.genre_details = {}; }
             allRecentlyPlayed = newAllRecentlyPlayed;
 
             // Free Songs
