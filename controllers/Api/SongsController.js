@@ -56,12 +56,13 @@ module.exports.fetchHomePageData = (req, res) => {
             let userID = req.headers.userID;
 
             // Recently Played
-            where.user_id = userID ;
+            where.user_id = userID;
             let allRecentlyPlayed = await userPlayedHistoryRepo.recentlyPlayed(where, data);
             let newAllRecentlyPlayed = [];
             allRecentlyPlayed.forEach((item, index) => {
                 newAllRecentlyPlayed.push(item.song_details);
             });
+            if (newAllRecentlyPlayed.genre_details == "") newAllRecentlyPlayed.genre_details = {};
             allRecentlyPlayed = newAllRecentlyPlayed;
 
             // Free Songs
@@ -82,16 +83,16 @@ module.exports.fetchHomePageData = (req, res) => {
             let recommendArtistList = [];
             let recommentGenreList = [];
             allRecenData.forEach((item, index) => {
-                if(recommendArtistList.findIndex(x => x === item.song_details.artist_details.id) < 0) {
+                if (recommendArtistList.findIndex(x => x === item.song_details.artist_details.id) < 0) {
                     recommendArtistList.push(item.song_details.artist_details.id)
                 }
-                if(recommentGenreList.findIndex(x => x === item.song_details.genre_details.id) < 0) {
+                if (recommentGenreList.findIndex(x => x === item.song_details.genre_details.id) < 0) {
                     recommentGenreList.push(item.song_details.genre_details.id)
                 }
             })
             where.$or = [
-                { artist_id : { $in: recommendArtistList } },
-                { genre_id : { $in: recommentGenreList } },
+                { artist_id: { $in: recommendArtistList } },
+                { genre_id: { $in: recommentGenreList } },
             ];
             where.is_active = 1;
             let recommendedSongsData = await songRepository.recommendedSongs(where, data);
@@ -148,7 +149,7 @@ module.exports.allRecentlyPlayed = (req, res) => {
             data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
-            where.user_id = userID ;
+            where.user_id = userID;
             let allRecentlyPlayed = await userPlayedHistoryRepo.allRecentlyPlayed(where, data);
 
             let newAllRecentlyPlayed = [];
@@ -205,17 +206,17 @@ module.exports.allRecommend = (req, res) => {
             let recommendArtistList = [];
             let recommentGenreList = [];
             allRecenData.forEach((item, index) => {
-                if(recommendArtistList.findIndex(x => x === item.song_details.artist_details.id) < 0) {
+                if (recommendArtistList.findIndex(x => x === item.song_details.artist_details.id) < 0) {
                     recommendArtistList.push(item.song_details.artist_details.id)
                 }
-                if(recommentGenreList.findIndex(x => x === item.song_details.genre_details.id) < 0) {
+                if (recommentGenreList.findIndex(x => x === item.song_details.genre_details.id) < 0) {
                     recommentGenreList.push(item.song_details.genre_details.id)
                 }
             })
             where = {};
             where.$or = [
-                { artist_id : { $in: recommendArtistList } },
-                { genre_id : { $in: recommentGenreList } },
+                { artist_id: { $in: recommendArtistList } },
+                { genre_id: { $in: recommentGenreList } },
             ];
             where.is_active = 1;
             let recommendedSongsData = await songRepository.recommendedSongsPaginate(where, data);
@@ -396,16 +397,16 @@ module.exports.allFreeSongs = (req, res) => {
 |------------------------------------------------
 */
 module.exports.favouriteAndUnfavourite = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Mark Favourite & Unfavourite";
-        try{
+        try {
             let songID = req.params.id;
             let userID = req.headers.userID;
             let songDetails = await songRepository.findOne({ id: songID, is_active: 1 });
 
-            if(songDetails) {
-                let favDetails = await songRepository.favouriteFindDetails({ user_id: userID,file_id: songID });
-                if(favDetails) {
+            if (songDetails) {
+                let favDetails = await songRepository.favouriteFindDetails({ user_id: userID, file_id: songID });
+                if (favDetails) {
                     await songRepository.favDestroy({ id: favDetails.id });
 
                     return res.send({
@@ -414,8 +415,7 @@ module.exports.favouriteAndUnfavourite = (req, res) => {
                         data: {},
                         purpose: purpose
                     })
-                }
-                else{
+                } else {
                     let createData = {
                         user_id: userID,
                         file_id: songDetails.id,
@@ -430,8 +430,7 @@ module.exports.favouriteAndUnfavourite = (req, res) => {
                         purpose: purpose
                     })
                 }
-            }
-            else {
+            } else {
                 return res.send({
                     status: 404,
                     msg: responseMessages.songNotFound,
@@ -439,8 +438,7 @@ module.exports.favouriteAndUnfavourite = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Mark Favourite & Unfavourite Error : ", err);
             return res.send({
                 status: 500,
