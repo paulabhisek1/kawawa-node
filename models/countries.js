@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     is_active: DataTypes.INTEGER
   }, {
     sequelize,
-    modelName: 'Countries',
+    modelName: 'countries',
   });
   return Countries;
 };

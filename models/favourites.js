@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {
     sequelize,
-    modelName: 'Favourites',
+    modelName: 'favourites',
   });
   return Favourites;
 };
