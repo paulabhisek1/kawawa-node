@@ -63,7 +63,7 @@ module.exports.fetchHomePageData = (req, res) => {
                 newAllRecentlyPlayed.push(item.song_details);
             });
             console.log('newAllRecentlyPlayed', newAllRecentlyPlayed);
-            if (newAllRecentlyPlayed.genre_details == "") { newAllRecentlyPlayed.genre_details = {}; }
+            if (newAllRecentlyPlayed.artist_details.genre_details == "") { newAllRecentlyPlayed.artist_details.genre_details = {}; }
             allRecentlyPlayed = newAllRecentlyPlayed;
 
             // Free Songs
