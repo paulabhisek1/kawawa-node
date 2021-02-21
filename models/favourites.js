@@ -3,7 +3,7 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class user_played_histories extends Model {
+  class Favourites extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -13,17 +13,16 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   };
-  user_played_histories.init({
+  Favourites.init({
     user_id: DataTypes.INTEGER,
     file_id: DataTypes.INTEGER,
-    last_played_length: DataTypes.INTEGER,
     type: {
       type: DataTypes.ENUM,
-      values: ['song', 'podcast']
-    }
+      values: ['song','podcast']
+    },
   }, {
     sequelize,
-    modelName: 'user_played_histories',
+    modelName: 'Favourites',
   });
-  return user_played_histories;
+  return Favourites;
 };

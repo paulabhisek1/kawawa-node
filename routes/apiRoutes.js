@@ -6,9 +6,11 @@ const fs = require('fs');
 
 /* ############################################ Middlewares ############################################ */
 const validateRequest = require('../middlewares/ValidateRequest');
+const authenticationMiddleware = require('../middlewares/AuthenticationMiddleware');
 
 /* ############################################ Joi Validation Schema ############################################ */
 const usersValidationSchema = require('../validation-schemas/UsersValidationSchemas');
+const songsValidationsSchema = require('../validation-schemas/SongsValidationSchema');
 
 /* ############################################ Controllers ############################################ */
 const usersController = require('../controllers/Api/UsersController');
@@ -46,11 +48,15 @@ router.post('/forgot-password', validateRequest.validate(usersValidationSchema.f
 router.post('/verify-otp', validateRequest.validate(usersValidationSchema.otpVerificationSchema, 'body'), usersController.verifyOTP); // OTP Verification Route
 router.post('/reset-password', validateRequest.validate(usersValidationSchema.resetPassSchema, 'body'), usersController.resetPassword); // Reset Password Route
 router.get('/countries', commonController.fetchCountries); // Fetch Countries
-router.get('/homepage', songsController.fetchHomePageData); // Fetch Home page data
-router.get('/all-recently-played', songsController.allRecentlyPlayed); // See All Recently played songs
-router.get('/all-recommend', songsController.allRecommend); // See All Recommend songs
-router.get('/all-weekly-top', songsController.allWeeklyTop); // See All weekly top songs
-router.get('/all-artist', songsController.allArtist); // See All artist
-router.get('/all-free-songs', songsController.allFreeSongs); // See All Free songs
+
+router.post('/mark-unmark-liked/:id', authenticationMiddleware.authenticateRequestAPI, songsController.favouriteAndUnfavourite); // Fetch Home page data
+
+// ################################### HOMEPAGE ########################################### //
+router.get('/homepage', authenticationMiddleware.authenticateRequestAPI, songsController.fetchHomePageData); // Fetch Home page data
+router.get('/all-recently-played', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.allRecentlyPlayed); // See All Recently played songs
+router.get('/all-recommend', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.allRecommend); // See All Recommend songs
+router.get('/all-weekly-top', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.allWeeklyTop); // See All weekly top songs
+router.get('/all-artist', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.allArtist); // See All artist
+router.get('/all-free-songs', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.allFreeSongs); // See All Free songs
 
 module.exports = router;

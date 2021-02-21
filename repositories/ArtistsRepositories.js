@@ -82,3 +82,36 @@ module.exports.findAll = (whereData) => {
         })
     })
 }
+
+// Find All
+module.exports.artistList = (whereData) => {
+    return new Promise((resolve, reject) => {
+        ArtistModel.findAll({
+            where: whereData,
+            attributes: ['id','full_name','profile_image']
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
+// Find All
+module.exports.artistListPaginate = (whereData, data) => {
+    return new Promise((resolve, reject) => {
+        ArtistModel.findAndCountAll({
+            where: whereData,
+            attributes: ['id','full_name','profile_image'],
+            offset: data.offset,
+            limit: data.limit,
+            group: ['id']
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}

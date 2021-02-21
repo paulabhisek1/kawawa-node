@@ -12,9 +12,14 @@ module.exports = {
     countryFetch: "Countries fetched successfully",
     homeFetch: "Home page data fetched successfully",
     allrecentlyplayed: "All Recently played songs fetched successfully",
+    recentlyplayed: "Recently played songs fetched successfully",
     allrecommend: "All Recommend songs fetched successfully",
     allweeklytop: "All weekly top songs fetched successfully",
     allartist: "All artist fetched successfully",
     allfreesongs: "All free songs fetched successfully",
-
+    authFailure: 'Authentication failed',
+    authRequired: 'Authentication required',
+    songNotFound: 'Song not found',
+    favMessage: 'Added to Liked Songs',
+    unfavMessage: 'Removed from Liked Songs',
 }
