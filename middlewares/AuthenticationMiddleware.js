@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const responseMessages = require('../responseMessages');
+const responseMessages = require('../ResponseMessages');
 
 // ################################ Repositories ################################ //
 const userRepositories = require('../repositories/UsersRepositories');
