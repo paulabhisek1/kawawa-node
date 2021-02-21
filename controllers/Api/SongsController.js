@@ -130,7 +130,7 @@ module.exports.allRecommend = (req, res) => {
         let purpose = "All Recommend songs";
         try {
             let whereData = { is_active: 1 };
-            let recommend = await songRepository.findAll(whereData);
+            let allrecommend = await songRepository.findAll(whereData);
 
             let data = {
                 allrecommend: allrecommend,
