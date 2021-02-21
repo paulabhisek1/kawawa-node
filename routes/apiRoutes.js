@@ -48,5 +48,9 @@ router.post('/reset-password', validateRequest.validate(usersValidationSchema.re
 router.get('/countries', commonController.fetchCountries); // Fetch Countries
 router.get('/homepage', songsController.fetchHomePageData); // Fetch Home page data
 router.get('/see-all-recently-played', songsController.seeAllRecentlyPlayed); // See All Recently played songs
+router.get('/see-all-recommend', songsController.seeAllRecommend); // See All Recommend songs
+router.get('/see-all-weekly-top', songsController.seeAllWeeklyTop); // See All weekly top songs
+router.get('/see-all-artist', songsController.seeAllArtist); // See All artist
+router.get('/see-all-free-songs', songsController.seeAllFreeSongs); // See All Free songs
 
 module.exports = router;
