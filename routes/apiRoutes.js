@@ -47,10 +47,10 @@ router.post('/verify-otp', validateRequest.validate(usersValidationSchema.otpVer
 router.post('/reset-password', validateRequest.validate(usersValidationSchema.resetPassSchema, 'body'), usersController.resetPassword); // Reset Password Route
 router.get('/countries', commonController.fetchCountries); // Fetch Countries
 router.get('/homepage', songsController.fetchHomePageData); // Fetch Home page data
-router.get('/see-all-recently-played', songsController.seeAllRecentlyPlayed); // See All Recently played songs
-router.get('/see-all-recommend', songsController.seeAllRecommend); // See All Recommend songs
-router.get('/see-all-weekly-top', songsController.seeAllWeeklyTop); // See All weekly top songs
-router.get('/see-all-artist', songsController.seeAllArtist); // See All artist
-router.get('/see-all-free-songs', songsController.seeAllFreeSongs); // See All Free songs
+router.get('/all-recently-played', songsController.allRecentlyPlayed); // See All Recently played songs
+router.get('/all-recommend', songsController.allRecommend); // See All Recommend songs
+router.get('/all-weekly-top', songsController.allWeeklyTop); // See All weekly top songs
+router.get('/all-artist', songsController.allArtist); // See All artist
+router.get('/all-free-songs', songsController.allFreeSongs); // See All Free songs
 
 module.exports = router;

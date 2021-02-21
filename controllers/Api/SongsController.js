@@ -78,23 +78,23 @@ module.exports.fetchHomePageData = (req, res) => {
 
 /*
 |------------------------------------------------ 
-| API name          :  seeAllRecentlyPlayed
+| API name          :  allRecentlyPlayed
 | Response          :  Respective response message in JSON format
 | Logic             :  See All Recently played songs
-| Request URL       :  BASE_URL/api/seeAllRecentlyPlayed
+| Request URL       :  BASE_URL/api/allRecentlyPlayed
 | Request method    :  GET
 | Author            :  Suman Rana
 |------------------------------------------------
 */
-module.exports.seeAllRecentlyPlayed = (req, res) => {
+module.exports.allRecentlyPlayed = (req, res) => {
     (async() => {
-        let purpose = "See All Recently played songs";
+        let purpose = "All Recently played songs";
         try {
             let whereData = { is_active: 1 };
-            let seeAllRecentlyPlayed = await songRepository.findAll(whereData);
+            let allRecentlyPlayed = await songRepository.findAll(whereData);
 
             let data = {
-                recently_played: seeAllRecentlyPlayed,
+                recently_played: allRecentlyPlayed,
             }
 
             return res.send({
@@ -104,7 +104,7 @@ module.exports.seeAllRecentlyPlayed = (req, res) => {
                 purpose: purpose
             })
         } catch (e) {
-            console.log("See All Recently played songs Error : ", e);
+            console.log("All Recently played songs Error : ", e);
             return res.send({
                 status: 500,
                 msg: responseMessages.serverError,
@@ -117,23 +117,23 @@ module.exports.seeAllRecentlyPlayed = (req, res) => {
 
 /*
 |------------------------------------------------ 
-| API name          :  seeAllRecommend
+| API name          :  allRecommend
 | Response          :  Respective response message in JSON format
 | Logic             :  See All Recommend songs
-| Request URL       :  BASE_URL/api/seeAllRecommend
+| Request URL       :  BASE_URL/api/allRecommend
 | Request method    :  GET
 | Author            :  Suman Rana
 |------------------------------------------------
 */
-module.exports.seeAllRecommend = (req, res) => {
+module.exports.allRecommend = (req, res) => {
     (async() => {
-        let purpose = "See All Recommend songs";
+        let purpose = "All Recommend songs";
         try {
             let whereData = { is_active: 1 };
             let recommend = await songRepository.findAll(whereData);
 
             let data = {
-                recommend: recommend,
+                allrecommend: allrecommend,
             }
 
             return res.send({
@@ -143,7 +143,7 @@ module.exports.seeAllRecommend = (req, res) => {
                 purpose: purpose
             })
         } catch (e) {
-            console.log("See All Recommend songs Error : ", e);
+            console.log("All Recommend songs Error : ", e);
             return res.send({
                 status: 500,
                 msg: responseMessages.serverError,
@@ -156,17 +156,17 @@ module.exports.seeAllRecommend = (req, res) => {
 
 /*
 |------------------------------------------------ 
-| API name          :  seeAllWeeklyTop
+| API name          :  allWeeklyTop
 | Response          :  Respective response message in JSON format
 | Logic             :  See All weekly top songs
-| Request URL       :  BASE_URL/api/seeAllWeeklyTop
+| Request URL       :  BASE_URL/api/allWeeklyTop
 | Request method    :  GET
 | Author            :  Suman Rana
 |------------------------------------------------
 */
-module.exports.seeAllWeeklyTop = (req, res) => {
+module.exports.allWeeklyTop = (req, res) => {
     (async() => {
-        let purpose = "See All weekly top songs";
+        let purpose = "All weekly top songs";
         try {
             let whereData = { is_active: 1 };
             let allweeklytop = await songRepository.findAll(whereData);
@@ -182,7 +182,7 @@ module.exports.seeAllWeeklyTop = (req, res) => {
                 purpose: purpose
             })
         } catch (e) {
-            console.log("See All weekly top songs Error : ", e);
+            console.log("All weekly top songs Error : ", e);
             return res.send({
                 status: 500,
                 msg: responseMessages.serverError,
@@ -195,17 +195,17 @@ module.exports.seeAllWeeklyTop = (req, res) => {
 
 /*
 |------------------------------------------------ 
-| API name          :  seeAllArtist
+| API name          :  allArtist
 | Response          :  Respective response message in JSON format
 | Logic             :  See All Artist
-| Request URL       :  BASE_URL/api/seeAllArtist
+| Request URL       :  BASE_URL/api/allArtist
 | Request method    :  GET
 | Author            :  Suman Rana
 |------------------------------------------------
 */
-module.exports.seeAllArtist = (req, res) => {
+module.exports.allArtist = (req, res) => {
     (async() => {
-        let purpose = "See All Artist";
+        let purpose = "All Artist";
         try {
             let whereData = { is_active: 1 };
             let allartist = await artistRepositories.findAll(whereData);
@@ -221,7 +221,7 @@ module.exports.seeAllArtist = (req, res) => {
                 purpose: purpose
             })
         } catch (e) {
-            console.log("See All Artist Error : ", e);
+            console.log("All Artist Error : ", e);
             return res.send({
                 status: 500,
                 msg: responseMessages.serverError,
@@ -234,17 +234,17 @@ module.exports.seeAllArtist = (req, res) => {
 
 /*
 |------------------------------------------------ 
-| API name          :  seeAllFreeSongs
+| API name          :  allFreeSongs
 | Response          :  Respective response message in JSON format
 | Logic             :  See All Free songs
-| Request URL       :  BASE_URL/api/seeAllFreeSongs
+| Request URL       :  BASE_URL/api/allFreeSongs
 | Request method    :  GET
 | Author            :  Suman Rana
 |------------------------------------------------
 */
-module.exports.seeAllFreeSongs = (req, res) => {
+module.exports.allFreeSongs = (req, res) => {
     (async() => {
-        let purpose = "See All Free Songs";
+        let purpose = "All Free Songs";
         try {
             let whereData = { is_active: 1, is_paid: 0 };
             let allfreesongs = await songRepository.findAll(whereData);
@@ -260,7 +260,7 @@ module.exports.seeAllFreeSongs = (req, res) => {
                 purpose: purpose
             })
         } catch (e) {
-            console.log("See All Free Songs Error : ", e);
+            console.log("All Free Songs Error : ", e);
             return res.send({
                 status: 500,
                 msg: responseMessages.serverError,
