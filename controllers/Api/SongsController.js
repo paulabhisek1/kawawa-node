@@ -75,3 +75,42 @@ module.exports.fetchHomePageData = (req, res) => {
         }
     })()
 }
+
+/*
+|------------------------------------------------ 
+| API name          :  seeAllRecentlyPlayed
+| Response          :  Respective response message in JSON format
+| Logic             :  See All Recently played songs
+| Request URL       :  BASE_URL/api/seeAllRecentlyPlayed
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.seeAllRecentlyPlayed = (req, res) => {
+    (async() => {
+        let purpose = "See All Recently played songs";
+        try {
+            let whereData = { is_active: 1 };
+            let songsData = await songRepository.findAll(whereData);
+
+            let data = {
+                recently_played: songsData,
+            }
+
+            return res.send({
+                status: 200,
+                msg: responseMessages.homeFetch,
+                data: data,
+                purpose: purpose
+            })
+        } catch (e) {
+            console.log("See All Recently played songs Error : ", e);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}

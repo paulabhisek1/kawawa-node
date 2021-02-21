@@ -47,5 +47,6 @@ router.post('/verify-otp', validateRequest.validate(usersValidationSchema.otpVer
 router.post('/reset-password', validateRequest.validate(usersValidationSchema.resetPassSchema, 'body'), usersController.resetPassword); // Reset Password Route
 router.get('/countries', commonController.fetchCountries); // Fetch Countries
 router.get('/homepage', songsController.fetchHomePageData); // Fetch Home page data
+router.get('/see-all-recently-played', songsController.seeAllRecentlyPlayed); // See All Recently played songs
 
 module.exports = router;
