@@ -34,11 +34,52 @@ module.exports.findAll = (whereData) => {
     })
 }
 
-// Find All
+// Find One
 module.exports.findOne = (whereData) => {
     return new Promise((resolve, reject) => {
         SongsModel.findOne({
             where: whereData,
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
+// Find And Count All
+module.exports.findAndCountAll = (where, data) => {
+    return new Promise((resolve, reject) => {
+        SongsModel.findAndCountAll({
+            where: where,
+            order: [
+                ['createdAt', 'desc']
+            ],
+            include: [{
+                    model: ArtistModel,
+                    as: 'artist_details',
+                    attributes: ['id', 'full_name', 'profile_image', 'type']
+                },
+                {
+                    model: GenresModel,
+                    as: 'genre_details',
+                    attributes: ['id', 'name']
+                },
+                {
+                    model: AlbumsModel,
+                    as: 'album_details',
+                    attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                },
+                {
+                    model: FavouritesModel,
+                    as: 'is_favourite',
+                    attributes: ['id']
+                }
+            ],
+            offset: data.offset,
+            limit: data.limit,
+            group: ['id']
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
             resolve(result);
@@ -235,7 +276,8 @@ module.exports.weeklyTopTen = (where, data) => {
                 'cover_picture',
                 'length',
                 'file_name',
-                'type', [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id)`), 'totalFavourites']
+                'type', 
+                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id)`), 'totalFavourites']
             ],
             include: [{
                     model: ArtistModel,
@@ -258,6 +300,7 @@ module.exports.weeklyTopTen = (where, data) => {
                     attributes: ['id']
                 }
             ],
+            having: sequelize.literal('`totalFavourites` > 0'),
             order: [
                 [sequelize.literal(`totalFavourites`), 'desc']
             ],
@@ -274,15 +317,17 @@ module.exports.weeklyTopTen = (where, data) => {
 // Weekly Top 10 Songs With Pagination
 module.exports.weeklyTopTenPaginate = (where, data) => {
     return new Promise((resolve, reject) => {
-        SongsModel.findAndCountAll({
+        SongsModel.findAll({
             where: where,
+            subQuery: false,
             attributes: [
                 'id',
                 'name',
                 'cover_picture',
                 'length',
                 'file_name',
-                'type', [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id)`), 'totalFavourites']
+                'type',
+                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id)`), 'totalFavourites']
             ],
             include: [{
                     model: ArtistModel,
@@ -305,10 +350,10 @@ module.exports.weeklyTopTenPaginate = (where, data) => {
                     attributes: ['id']
                 }
             ],
+            having: sequelize.literal('`totalFavourites` > 0'),
             order: [
                 [sequelize.literal(`totalFavourites`), 'desc']
             ],
-            offset: data.offset,
             limit: data.limit,
             group: ['id']
         }).then(result => {

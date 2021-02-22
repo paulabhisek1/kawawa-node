@@ -59,4 +59,8 @@ router.get('/all-weekly-top', validateRequest.validate(songsValidationsSchema.al
 router.get('/all-artist', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.allArtist); // See All artist
 router.get('/all-free-songs', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.allFreeSongs); // See All Free songs
 
+// ################################### SONGS ########################################### //
+router.get('/artist-songs', validateRequest.validate(songsValidationsSchema.artistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.artistWiseTrack); // Artist wise songs
+router.get('/album-songs', validateRequest.validate(songsValidationsSchema.albumSongs, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.albumWiseTrack); // Album wise songs
+router.get('/artist-albums', validateRequest.validate(songsValidationsSchema.artistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.allAlbumsList); // Artist wise songs
 module.exports = router;

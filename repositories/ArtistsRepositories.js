@@ -2,9 +2,17 @@ const sequelize = require('../config/dbConfig').sequelize;
 var DataTypes = require('sequelize/lib/data-types');
 const ArtistModel = require('../models/artists')(sequelize, DataTypes);
 const CountryModel = require('../models/countries')(sequelize, DataTypes);
+const SongsModel = require('../models/songs')(sequelize, DataTypes);
+const GenresModel = require('../models/genres')(sequelize, DataTypes);
+const AlbumsModel = require('../models/albums')(sequelize, DataTypes);
+const FavouritesModel = require('../models/favourites')(sequelize, DataTypes);
 
 // Associations
 ArtistModel.belongsTo(CountryModel, { foreignKey: 'country_id' });
+SongsModel.belongsTo(ArtistModel, { foreignKey: 'artist_id', as: 'artist_details' });
+SongsModel.belongsTo(GenresModel, { foreignKey: 'genre_id', as: 'genre_details' });
+SongsModel.belongsTo(AlbumsModel, { foreignKey: 'album_id', as: 'album_details' });
+SongsModel.hasOne(FavouritesModel, { foreignKey: 'file_id', as: 'is_favourite' });
 
 
 // Count
@@ -115,3 +123,6 @@ module.exports.artistListPaginate = (whereData, data) => {
         })
     })
 }
+
+
+

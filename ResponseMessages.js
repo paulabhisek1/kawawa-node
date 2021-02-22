@@ -22,4 +22,7 @@ module.exports = {
     songNotFound: 'Song not found',
     favMessage: 'Added to Liked Songs',
     unfavMessage: 'Removed from Liked Songs',
+    artistSongs: 'Artist wise songs fetched successfully',
+    albumSongs: 'Album wise songs fetched successfully',
+    albumList: 'Albums fetched successfully',
 }

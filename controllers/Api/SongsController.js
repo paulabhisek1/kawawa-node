@@ -15,6 +15,7 @@ const songRepository = require('../../repositories/SongsRepository');
 const artistRepositories = require('../../repositories/ArtistsRepositories');
 const userPlayedHistoryRepo = require('../../repositories/UserPlayedHistoriesRepositories');
 const artistRepository = require('../../repositories/ArtistsRepositories');
+const albumRepository = require('../../repositories/AlbumRepositories');
 
 // ################################ Sequelize ################################ //
 const sequelize = require('../../config/dbConfig').sequelize;
@@ -50,9 +51,7 @@ module.exports.fetchHomePageData = (req, res) => {
         try {
             let where = {};
             let data = {};
-            let subData = {};
-            subData.limit = 4;
-            data.limit = 10;
+            data.limit = 6;
             let userID = req.headers.userID;
 
             // Recently Played
@@ -99,7 +98,7 @@ module.exports.fetchHomePageData = (req, res) => {
             // Weekly Top 10
             where = {};
             where.is_active = 1;
-            let topTenSongsData = await songRepository.weeklyTopTen(where, subData);
+            let topTenSongsData = await songRepository.weeklyTopTen(where, data);
 
             let dataResp = {
                 recently_played: allRecentlyPlayed,
@@ -145,7 +144,7 @@ module.exports.allRecentlyPlayed = (req, res) => {
             let where = {};
             let data = {};
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
-            data.limit = 20;
+            data.limit = 10;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
             where.user_id = userID;
@@ -197,7 +196,7 @@ module.exports.allRecommend = (req, res) => {
             let where = {};
             let data = {};
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
-            data.limit = 20;
+            data.limit = 10;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
             where.user_id = userID;
@@ -261,15 +260,15 @@ module.exports.allWeeklyTop = (req, res) => {
             let where = {};
             let data = {};
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
-            data.limit = 20;
+            data.limit = 10;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
             where.is_active = 1;
             let allweeklytop = await songRepository.weeklyTopTenPaginate(where, data);
 
             let dataResp = {
-                allweeklytop: allweeklytop.rows,
-                total_count: allweeklytop.count.length
+                allweeklytop: allweeklytop,
+                // total_count: allweeklytop.count.length
             }
 
             return res.send({
@@ -308,7 +307,7 @@ module.exports.allArtist = (req, res) => {
             let where = {};
             let data = {};
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
-            data.limit = 20;
+            data.limit = 10;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
             where.is_active = 1;
@@ -355,7 +354,7 @@ module.exports.allFreeSongs = (req, res) => {
             let where = {};
             let data = {};
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
-            data.limit = 20;
+            data.limit = 10;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
             where.is_active = 1;
@@ -389,7 +388,7 @@ module.exports.allFreeSongs = (req, res) => {
 |------------------------------------------------ 
 | API name          :  favouriteAndUnfavourite
 | Response          :  Respective response message in JSON format
-| Logic             :  See All Free songs
+| Logic             :  Favourite And Unfavourite Song
 | Request URL       :  BASE_URL/api/mark-unmark-liked/<<Song ID>>
 | Request method    :  POST
 | Author            :  Suman Rana
@@ -448,3 +447,159 @@ module.exports.favouriteAndUnfavourite = (req, res) => {
         }
     })()
 }
+
+/*
+|------------------------------------------------ 
+| API name          :  artistWiseTrack
+| Response          :  Respective response message in JSON format
+| Logic             :  Artist Wise Songs & Albums
+| Request URL       :  BASE_URL/api/artist-songs?page=<< Page No >>&artist_id=<< Artist ID >>
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.artistWiseTrack = (req, res) => {
+    (async()=>{
+        let purpose = "Artist Wise Track List"
+        try{
+            let queryParam = req.query;
+            let where = {};
+            let data = {};
+            let page = queryParam.page ? parseInt(queryParam.page) : 1;
+            data.limit = 10;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+            let artistID = queryParam.artist_id;
+            where.is_active = 1;
+            where.album_id = 0;
+            where.artist_id = artistID;
+
+            let artistSongs = await songRepository.findAndCountAll(where, data);
+            let albumsList = await albumRepository.findAll({ artist_id: artistID, is_active: 1 }, 6)
+
+            let dataResp = {
+                arist_songs: {
+                    songs: artistSongs.rows,
+                    total_count: artistSongs.count.length
+                },
+                albums_list: albumsList
+            }
+
+            return res.send({
+                status: 200,
+                msg: responseMessages.artistSongs,
+                data: dataResp,
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("Artist Wise Track List : ", err);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  artistWiseTrack
+| Response          :  Respective response message in JSON format
+| Logic             :  Album Wise Songs
+| Request URL       :  BASE_URL/api/album-songs?page=<< Page No >>&album_id=<< Album ID >>
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.albumWiseTrack = (req, res) => {
+    (async()=>{
+        let purpose = "Album Wise Track List"
+        try{
+            let queryParam = req.query;
+            let where = {};
+            let data = {};
+            let page = queryParam.page ? parseInt(queryParam.page) : 1;
+            data.limit = 10;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+            let albumID = queryParam.album_id;
+            where.is_active = 1;
+            where.album_id = albumID;
+
+            let albumSongs = await songRepository.findAndCountAll(where, data);
+
+            let dataResp = {
+                album_songs: albumSongs.rows,
+                total_count: albumSongs.count.length
+            }
+
+            return res.send({
+                status: 200,
+                msg: responseMessages.albumSongs,
+                data: dataResp,
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("Album Wise Track List Err : ", err);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  allAlbumsList
+| Response          :  Respective response message in JSON format
+| Logic             :  See All Albums
+| Request URL       :  BASE_URL/api/artist-albums?page=<< Page No >>&artist_id=<< Artist ID >>
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.allAlbumsList = (req, res) => {
+    (async()=>{
+        let purpose = "All Albums List"
+        try{
+            let queryParam = req.query;
+            let where = {};
+            let data = {};
+            let page = queryParam.page ? parseInt(queryParam.page) : 1;
+            data.limit = 10;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+            let artistID = queryParam.artist_id;
+            where.is_active = 1;
+            where.artist_id = artistID
+
+            let albumList = await albumRepository.findAndCountAll(where, data);
+
+            let dataResp = {
+                all_albums: albumList.rows,
+                total_count: albumList.count.length
+            }
+
+            return res.send({
+                status: 200,
+                msg: responseMessages.albumList,
+                data: dataResp,
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("All Albums List Err : ", err);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
