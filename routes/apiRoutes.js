@@ -16,6 +16,7 @@ const songsValidationsSchema = require('../validation-schemas/SongsValidationSch
 const usersController = require('../controllers/Api/UsersController');
 const commonController = require('../controllers/Common/CommonController');
 const songsController = require('../controllers/Api/SongsController');
+const artistAPIController = require('../controllers/Api/ArtistController');
 
 /* ############################################ Routes  ############################################ */
 
@@ -63,4 +64,9 @@ router.get('/all-free-songs', validateRequest.validate(songsValidationsSchema.al
 router.get('/artist-songs', validateRequest.validate(songsValidationsSchema.artistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.artistWiseTrack); // Artist wise songs
 router.get('/album-songs', validateRequest.validate(songsValidationsSchema.albumSongs, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.albumWiseTrack); // Album wise songs
 router.get('/artist-albums', validateRequest.validate(songsValidationsSchema.artistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.allAlbumsList); // Artist wise songs
+
+// ################################### SONGS ########################################### //
+router.post('/artist-follow/:id', authenticationMiddleware.authenticateRequestAPI, artistAPIController.followArtist); // Artist Follow
+router.get('/artist-follow-details/:id', authenticationMiddleware.authenticateRequestAPI, artistAPIController.artistFollowDetails); // Artist Follow Details
+
 module.exports = router;

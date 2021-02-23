@@ -1,6 +1,6 @@
 /*!
- * UsersController.js
- * Containing all the controller actions related to `USER`
+ * SongsController.js
+ * Containing all the controller actions related to `SONGS`
  * Author: Suman Rana
  * Date: 7th February, 2021`
  * MIT Licensed
@@ -11,10 +11,8 @@
  */
 
 // ################################ Repositories ################################ //
-const songRepository = require('../../repositories/SongsRepository');
 const artistRepositories = require('../../repositories/ArtistsRepositories');
 const userPlayedHistoryRepo = require('../../repositories/UserPlayedHistoriesRepositories');
-const artistRepository = require('../../repositories/ArtistsRepositories');
 const albumRepository = require('../../repositories/AlbumRepositories');
 
 // ################################ Sequelize ################################ //

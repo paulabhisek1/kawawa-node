@@ -6,6 +6,7 @@ const SongsModel = require('../models/songs')(sequelize, DataTypes);
 const GenresModel = require('../models/genres')(sequelize, DataTypes);
 const AlbumsModel = require('../models/albums')(sequelize, DataTypes);
 const FavouritesModel = require('../models/favourites')(sequelize, DataTypes);
+const FollowedArtistsModel = require('../models/followed_artists')(sequelize, DataTypes);
 
 // Associations
 ArtistModel.belongsTo(CountryModel, { foreignKey: 'country_id' });
@@ -13,6 +14,7 @@ SongsModel.belongsTo(ArtistModel, { foreignKey: 'artist_id', as: 'artist_details
 SongsModel.belongsTo(GenresModel, { foreignKey: 'genre_id', as: 'genre_details' });
 SongsModel.belongsTo(AlbumsModel, { foreignKey: 'album_id', as: 'album_details' });
 SongsModel.hasOne(FavouritesModel, { foreignKey: 'file_id', as: 'is_favourite' });
+ArtistModel.hasOne(FollowedArtistsModel, { foreignKey: 'artist_id', as: 'is_followed' });
 
 
 // Count
@@ -35,6 +37,29 @@ module.exports.findOne = (whereData) => {
             include: [{
                 model: CountryModel,
             }]
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
+// Artist Details
+module.exports.artistDetails = (whereData, data) => {
+    return new Promise((resolve, reject) => {
+        ArtistModel.findOne({
+            where: whereData,
+            attributes: ['id','full_name','profile_image'],
+            include: [
+                {
+                    model: FollowedArtistsModel,
+                    as: 'is_followed',
+                    where: { user_id: data.user_id },
+                    required: false
+                }
+            ]
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
             resolve(result);
@@ -121,6 +146,49 @@ module.exports.artistListPaginate = (whereData, data) => {
         }).catch((error) => {
             reject(error);
         })
+    })
+}
+
+// Follow Artist
+module.exports.followArtist = (data) => {
+    return new Promise((resolve, reject) => {
+        FollowedArtistsModel.create(data)
+            .then((result) => {
+                result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+                resolve(result);
+            })
+            .catch((err) => {
+                reject(err);
+            });
+    })
+}
+
+// Unfollow Artist
+module.exports.unfollowArtist = (where) => {
+    return new Promise((resolve, reject) => {
+        FollowedArtistsModel.destroy({
+            where: where
+        }).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
+
+// Fetch Follow Details
+module.exports.followDetails = (where) => {
+    return new Promise((resolve, reject) => {
+        FollowedArtistsModel.findOne({
+                where: where
+            })
+            .then((result) => {
+                result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+                resolve(result);
+            })
+            .catch((err) => {
+                reject(err);
+            });
     })
 }
 

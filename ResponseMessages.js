@@ -25,4 +25,8 @@ module.exports = {
     artistSongs: 'Artist wise songs fetched successfully',
     albumSongs: 'Album wise songs fetched successfully',
     albumList: 'Albums fetched successfully',
+    artistNotFound: 'Artist Not Found',
+    artistFollowed: `Ok,you're following`,
+    artistUnfollowed: `Ok,you've stopped following`,
+    artistDetails: `Artist details fetched successfully`,
 }
