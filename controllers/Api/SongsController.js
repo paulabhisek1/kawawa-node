@@ -14,6 +14,7 @@
 const artistRepositories = require('../../repositories/ArtistsRepositories');
 const userPlayedHistoryRepo = require('../../repositories/UserPlayedHistoriesRepositories');
 const albumRepository = require('../../repositories/AlbumRepositories');
+const playlistRepository = require('../../repositories/PlaylistRepositories');
 
 // ################################ Sequelize ################################ //
 const sequelize = require('../../config/dbConfig').sequelize;
@@ -591,6 +592,40 @@ module.exports.allAlbumsList = (req, res) => {
         }
         catch(err) {
             console.log("All Albums List Err : ", err);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+module.exports.createPlaylist = (req, res) => {
+    (async()=>{
+        let purpose = "Create Playlist"
+        try{
+            let userID = req.headers.userID;
+            let body = req.body;
+
+            let createData = {
+                name: body.name,
+                user_id: userID
+            }
+            let playlistData = await playlistRepository.createPlaylist(createData);
+
+            return res.send({
+                status: 200,
+                msg: responseMessages.playlistCreate,
+                data: {
+                    playlist: playlistData
+                },
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("Create Playlist Error : ", err);
             return res.send({
                 status: 500,
                 msg: responseMessages.serverError,

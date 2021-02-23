@@ -18,3 +18,8 @@ module.exports.albumSongs = Joi.object().keys({
     page: Joi.number().min(1).required(),
     album_id: Joi.number().required(),
 });
+
+// Create Playlist
+module.exports.createPlaylist = Joi.object().keys({
+    name: Joi.string().min(1).label('Playlist name'),
+});

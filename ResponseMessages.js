@@ -29,4 +29,5 @@ module.exports = {
     artistFollowed: `Ok,you're following`,
     artistUnfollowed: `Ok,you've stopped following`,
     artistDetails: `Artist details fetched successfully`,
+    playlistCreate: `Playlist created to successfully`
 }

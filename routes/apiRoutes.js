@@ -69,4 +69,7 @@ router.get('/artist-albums', validateRequest.validate(songsValidationsSchema.art
 router.post('/artist-follow/:id', authenticationMiddleware.authenticateRequestAPI, artistAPIController.followArtist); // Artist Follow
 router.get('/artist-follow-details/:id', authenticationMiddleware.authenticateRequestAPI, artistAPIController.artistFollowDetails); // Artist Follow Details
 
+// ################################### Playlist ########################################### //
+router.post('/create-playlist', validateRequest.validate(songsValidationsSchema.createPlaylist, 'body'), authenticationMiddleware.authenticateRequestAPI, songsController.createPlaylist); // Create Playlist
+
 module.exports = router;
