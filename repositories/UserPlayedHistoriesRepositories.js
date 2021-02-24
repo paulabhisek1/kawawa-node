@@ -5,7 +5,9 @@ const SongsModel = require('../models/songs')(sequelize, DataTypes);
 const ArtistModel = require('../models/artists')(sequelize, DataTypes);
 const GenresModel = require('../models/genres')(sequelize, DataTypes);
 const AlbumsModel = require('../models/albums')(sequelize, DataTypes);
+const FavouritesModel = require('../models/favourites')(sequelize, DataTypes);
 
+SongsModel.hasMany(FavouritesModel, { foreignKey: 'file_id', as: 'is_favourite' });
 PlayedHistoryModel.belongsTo(SongsModel, { foreignKey: 'file_id', as: 'song_details' });
 SongsModel.belongsTo(ArtistModel, { foreignKey: 'artist_id', as: 'artist_details' });
 SongsModel.belongsTo(GenresModel, { foreignKey: 'genre_id', as: 'genre_details' });
@@ -21,7 +23,7 @@ module.exports.allRecentlyPlayed = (where, data) => {
             include: [{
                 model: SongsModel,
                 where: { is_active: 1 },
-                attributes: ['id', 'name', 'cover_picture', 'file_name', 'length', 'is_paid', 'type'],
+                attributes: ['id', 'name', 'cover_picture', 'file_name', 'length', 'is_paid', 'type','artist_id','genre_id','album_id','country_id','createdAt','updatedAt'],
                 include: [{
                         model: ArtistModel,
                         as: 'artist_details',
@@ -36,6 +38,12 @@ module.exports.allRecentlyPlayed = (where, data) => {
                         model: AlbumsModel,
                         as: 'album_details',
                         attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                    },
+                    {
+                        model: FavouritesModel,
+                        where: { user_id: data.user_id },
+                        as: 'is_favourite',
+                        attributes: ['id']
                     }
                 ],
                 as: 'song_details',
@@ -63,7 +71,7 @@ module.exports.recentlyPlayed = (where, data) => {
             include: [{
                 model: SongsModel,
                 where: { is_active: 1 },
-                attributes: ['id', 'name', 'cover_picture', 'file_name', 'length', 'is_paid', 'type'],
+                attributes: ['id', 'name', 'cover_picture', 'file_name', 'length', 'is_paid', 'type','artist_id','genre_id','album_id','country_id','createdAt','updatedAt'],
                 include: [{
                         model: ArtistModel,
                         as: 'artist_details',
@@ -78,6 +86,12 @@ module.exports.recentlyPlayed = (where, data) => {
                         model: AlbumsModel,
                         as: 'album_details',
                         attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                    },
+                    {
+                        model: FavouritesModel,
+                        where: { user_id: data.user_id },
+                        as: 'is_favourite',
+                        attributes: ['id']
                     }
                 ],
                 as: 'song_details',
@@ -103,7 +117,7 @@ module.exports.recentlyPlayedAllData = (where, data) => {
             include: [{
                 model: SongsModel,
                 where: { is_active: 1 },
-                attributes: ['id', 'name', 'cover_picture', 'file_name', 'length', 'is_paid', 'type'],
+                attributes: ['id', 'name', 'cover_picture', 'file_name', 'length', 'is_paid', 'type','artist_id','genre_id','album_id','country_id','createdAt','updatedAt'],
                 include: [{
                         model: ArtistModel,
                         as: 'artist_details',
@@ -118,6 +132,12 @@ module.exports.recentlyPlayedAllData = (where, data) => {
                         model: AlbumsModel,
                         as: 'album_details',
                         attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                    },
+                    {
+                        model: FavouritesModel,
+                        where: { user_id: where.user_id },
+                        as: 'is_favourite',
+                        attributes: ['id']
                     }
                 ],
                 as: 'song_details',

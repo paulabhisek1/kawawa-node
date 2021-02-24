@@ -1,5 +1,6 @@
 module.exports = {
     allowMimeType: ['image/jpeg', 'image/png', 'application/pdf','video/mp4', 'image/svg'],
+    profile_photo_url: '/uploads/profile_images',
     jwtAccessTokenOptions: {
         secret: 'KawawaMusicApp#@2021',
         options: {

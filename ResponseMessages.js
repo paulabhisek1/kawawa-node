@@ -29,5 +29,13 @@ module.exports = {
     artistFollowed: `Ok,you're following`,
     artistUnfollowed: `Ok,you've stopped following`,
     artistDetails: `Artist details fetched successfully`,
-    playlistCreate: `Playlist created to successfully`
+    playlistCreate: `Playlist created successfully`,
+    playlistNotFound: `Playlist not found`,
+    duplicatePlaylistSong: `This is already in your playlist`,
+    playlistList: `Playlist list fetched successfully`,
+    playlistSongs: `Playlist songs fetched successfully`,
+    userNotFound: `User not found`,
+    userDetailsUpdate: `User details updated successfully`,
+    userPictureUpdate: `User profile picture updated successfully`,
+    userDetailsFetch: `User details fecthed successfully`,
 }

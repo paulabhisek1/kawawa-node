@@ -448,3 +448,176 @@ module.exports.resetPassword = (req, res) => {
         }
     })()
 }
+
+/*
+|------------------------------------------------ 
+| API name          :  fetchUserDetails
+| Response          :  Respective response message in JSON format
+| Logic             :  Fetch User Details
+| Request URL       :  BASE_URL/api/fetch-user-details
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.fetchUserDetails = (req, res) => {
+    (async()=>{
+        let purpose = "Fetch User Details";
+        try{
+            let userID = req.headers.userID;
+
+            let userCount = await userRepositories.count({ id: userID, is_active: 1 });
+
+            if(userCount > 0) {
+                let userDetails = await userRepositories.findOne({ id: userID });
+                delete userDetails.password;
+                delete userDetails.login_type;
+                delete userDetails.otp;
+                delete userDetails.otp_expire_time;
+                delete userDetails.otp_status;
+                delete userDetails.is_active;
+
+                return res.send({
+                    status: 200,
+                    msg: responseMessages.userDetailsFetch,
+                    data: {
+                        user_details: userDetails
+                    },
+                    purpose: purpose
+                })
+            }
+            else{
+                return res.send({
+                    status: 500,
+                    msg: responseMessages.userNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Fetch User Details ERROR : ", e);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  updateUserName
+| Response          :  Respective response message in JSON format
+| Logic             :  Update User Name
+| Request URL       :  BASE_URL/api/update-user-details
+| Request method    :  PUT
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.updateUserName = (req, res) => {
+    (async()=>{
+        let purpose = "Update User Name";
+        try{
+            let userID = req.headers.userID;
+
+            let userCount = await userRepositories.count({ id: userID, is_active: 1 });
+
+            if(userCount > 0) {
+                await userRepositories.update({ id: userID }, { full_name: req.body.full_name });
+                let userDetails = await userRepositories.findOne({ id: userID });
+                delete userDetails.password;
+                delete userDetails.login_type;
+                delete userDetails.otp;
+                delete userDetails.otp_expire_time;
+                delete userDetails.otp_status;
+                delete userDetails.is_active;
+
+                return res.send({
+                    status: 200,
+                    msg: responseMessages.userDetailsUpdate,
+                    data: {
+                        user_details: userDetails
+                    },
+                    purpose: purpose
+                })
+            }
+            else{
+                return res.send({
+                    status: 500,
+                    msg: responseMessages.userNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Reset Password ERROR : ", e);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  updateProfilePicture
+| Response          :  Respective response message in JSON format
+| Logic             :  Update User Profile Picture
+| Request URL       :  BASE_URL/api/update-user-picture
+| Request method    :  PUT
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.updateProfilePicture = (req, res) => {
+    (async()=>{
+        let purpose = "Update Profile Picture";
+        try{
+            let userID = req.headers.userID;
+
+            let userCount = await userRepositories.count({ id: userID, is_active: 1 });
+
+            if(userCount > 0) {
+                await userRepositories.update({ id: userID }, { profile_image: `${global.constants.profile_photo_url}/${req.file.filename}` });
+                let userDetails = await userRepositories.findOne({ id: userID });
+                delete userDetails.password;
+                delete userDetails.login_type;
+                delete userDetails.otp;
+                delete userDetails.otp_expire_time;
+                delete userDetails.otp_status;
+                delete userDetails.is_active;
+
+                return res.send({
+                    status: 200,
+                    msg: responseMessages.userPictureUpdate,
+                    data: {
+                        user_details: userDetails
+                    },
+                    purpose: purpose
+                })
+            }
+            else{
+                return res.send({
+                    status: 500,
+                    msg: responseMessages.userNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Reset Password ERROR : ", e);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}

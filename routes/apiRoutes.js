@@ -22,35 +22,32 @@ const artistAPIController = require('../controllers/Api/ArtistController');
 
 
 // SET STORAGE FOR SONG
-var storageSong = multer.diskStorage({
+var storageProfilePicture = multer.diskStorage({
     destination: function(req, file, cb) {
-        if (file.fieldname == 'song') {
-            const path = 'uploads/songs';
-            fs.mkdirSync(path, { recursive: true });
-            cb(null, path);
-        }
-        if (file.fieldname == 'cover') {
-            const path = 'uploads/songs_cover';
-            fs.mkdirSync(path, { recursive: true });
-            cb(null, path);
-        }
+        const path = 'uploads/profile_images';
+        fs.mkdirSync(path, { recursive: true });
+        cb(null, path);
     },
     filename: function(req, file, cb) {
         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
     }
 })
 
-var uploadSong = multer({ storage: storageSong })
+var uploadProfilePicture = multer({ storage: storageProfilePicture })
 
+// ################################### HOMEPAGE ########################################### //
 router.post('/register', validateRequest.validate(usersValidationSchema.userRegisterSchema, 'body'), usersController.registerUser); // User Registration Route
 router.post('/login', validateRequest.validate(usersValidationSchema.loginSchema, 'body'), usersController.userLogin); // System Login Route
 router.post('/social-login', validateRequest.validate(usersValidationSchema.socialLoginSchema, 'body'), usersController.socialLogin); // System Login Route
 router.post('/forgot-password', validateRequest.validate(usersValidationSchema.forgotPassSchema, 'body'), usersController.forgotPassword); // Forgot Password Route
 router.post('/verify-otp', validateRequest.validate(usersValidationSchema.otpVerificationSchema, 'body'), usersController.verifyOTP); // OTP Verification Route
 router.post('/reset-password', validateRequest.validate(usersValidationSchema.resetPassSchema, 'body'), usersController.resetPassword); // Reset Password Route
-router.get('/countries', commonController.fetchCountries); // Fetch Countries
+router.get('/fetch-user-details', authenticationMiddleware.authenticateRequestAPI, usersController.fetchUserDetails); // Fetch User Details
+router.put('/update-user-details', validateRequest.validate(usersValidationSchema.updateUserDetails, 'body'), authenticationMiddleware.authenticateRequestAPI, usersController.updateUserName); // Fetch User Details
+router.put('/update-user-picture', authenticationMiddleware.authenticateRequestAPI, uploadProfilePicture.single('file'), usersController.updateProfilePicture); // Fetch User Details
 
-router.post('/mark-unmark-liked/:id', authenticationMiddleware.authenticateRequestAPI, songsController.favouriteAndUnfavourite); // Fetch Home page data
+// ################################### COMMON ########################################### //
+router.get('/countries', commonController.fetchCountries); // Fetch Countries
 
 // ################################### HOMEPAGE ########################################### //
 router.get('/homepage', authenticationMiddleware.authenticateRequestAPI, songsController.fetchHomePageData); // Fetch Home page data
@@ -63,13 +60,16 @@ router.get('/all-free-songs', validateRequest.validate(songsValidationsSchema.al
 // ################################### SONGS ########################################### //
 router.get('/artist-songs', validateRequest.validate(songsValidationsSchema.artistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.artistWiseTrack); // Artist wise songs
 router.get('/album-songs', validateRequest.validate(songsValidationsSchema.albumSongs, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.albumWiseTrack); // Album wise songs
-router.get('/artist-albums', validateRequest.validate(songsValidationsSchema.artistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.allAlbumsList); // Artist wise songs
+router.get('/artist-albums', validateRequest.validate(songsValidationsSchema.artistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.allAlbumsList); // Artist wise album list
+router.post('/mark-unmark-liked/:id', authenticationMiddleware.authenticateRequestAPI, songsController.favouriteAndUnfavourite); // Mark & Unmark Favourite
 
 // ################################### SONGS ########################################### //
 router.post('/artist-follow/:id', authenticationMiddleware.authenticateRequestAPI, artistAPIController.followArtist); // Artist Follow
-router.get('/artist-follow-details/:id', authenticationMiddleware.authenticateRequestAPI, artistAPIController.artistFollowDetails); // Artist Follow Details
 
 // ################################### Playlist ########################################### //
 router.post('/create-playlist', validateRequest.validate(songsValidationsSchema.createPlaylist, 'body'), authenticationMiddleware.authenticateRequestAPI, songsController.createPlaylist); // Create Playlist
+router.post('/add-song-to-playlist', validateRequest.validate(songsValidationsSchema.addSongToPlaylist, 'body'), authenticationMiddleware.authenticateRequestAPI, songsController.addSongToPlaylist); // Add Song To Playlist
+router.get('/playlist-list', validateRequest.validate(songsValidationsSchema.playlistList, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.playlistList); // Playlist List
+router.get('/playlist-songs', validateRequest.validate(songsValidationsSchema.playlistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.playlistSongs); // Playlist Songs
 
 module.exports = router;

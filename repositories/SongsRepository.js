@@ -10,7 +10,7 @@ const FavouritesModel = require('../models/favourites')(sequelize, DataTypes);
 SongsModel.belongsTo(ArtistModel, { foreignKey: 'artist_id', as: 'artist_details' });
 SongsModel.belongsTo(GenresModel, { foreignKey: 'genre_id', as: 'genre_details' });
 SongsModel.belongsTo(AlbumsModel, { foreignKey: 'album_id', as: 'album_details' });
-SongsModel.hasOne(FavouritesModel, { foreignKey: 'file_id', as: 'is_favourite' });
+SongsModel.hasMany(FavouritesModel, { foreignKey: 'file_id', as: 'is_favourite' });
 
 // Find All
 module.exports.findAll = (whereData) => {
@@ -23,7 +23,13 @@ module.exports.findAll = (whereData) => {
                 'cover_picture',
                 'length',
                 'file_name',
-                'type'
+                'type',
+                'artist_id',
+                'genre_id',
+                'album_id',
+                'country_id',
+                'createdAt',
+                'updatedAt'
             ],
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
@@ -38,6 +44,20 @@ module.exports.findAll = (whereData) => {
 module.exports.findOne = (whereData) => {
     return new Promise((resolve, reject) => {
         SongsModel.findOne({
+            where: whereData,
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
+// Count
+module.exports.count = (whereData) => {
+    return new Promise((resolve, reject) => {
+        SongsModel.count({
             where: whereData,
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
@@ -73,6 +93,7 @@ module.exports.findAndCountAll = (where, data) => {
                 },
                 {
                     model: FavouritesModel,
+                    where: { user_id: data.user_id },
                     as: 'is_favourite',
                     attributes: ['id']
                 }
@@ -114,6 +135,7 @@ module.exports.freeSongs = (where, data) => {
                 },
                 {
                     model: FavouritesModel,
+                    where: { user_id: data.user_id },
                     as: 'is_favourite',
                     attributes: ['id']
                 }
@@ -153,6 +175,7 @@ module.exports.freeSongsPaginate = (where, data) => {
                 },
                 {
                     model: FavouritesModel,
+                    where: { user_id: data.user_id },
                     as: 'is_favourite',
                     attributes: ['id']
                 }
@@ -183,7 +206,13 @@ module.exports.recommendedSongs = (where, data) => {
                 'cover_picture',
                 'length',
                 'file_name',
-                'type'
+                'type',
+                'artist_id',
+                'genre_id',
+                'album_id',
+                'country_id',
+                'createdAt',
+                'updatedAt'
             ],
             include: [{
                     model: ArtistModel,
@@ -202,6 +231,7 @@ module.exports.recommendedSongs = (where, data) => {
                 },
                 {
                     model: FavouritesModel,
+                    where: { user_id: data.user_id },
                     as: 'is_favourite',
                     attributes: ['id']
                 }
@@ -230,7 +260,13 @@ module.exports.recommendedSongsPaginate = (where, data) => {
                 'cover_picture',
                 'length',
                 'file_name',
-                'type'
+                'type',
+                'artist_id',
+                'genre_id',
+                'album_id',
+                'country_id',
+                'createdAt',
+                'updatedAt'
             ],
             include: [{
                     model: ArtistModel,
@@ -249,6 +285,7 @@ module.exports.recommendedSongsPaginate = (where, data) => {
                 },
                 {
                     model: FavouritesModel,
+                    where: { user_id: data.user_id },
                     as: 'is_favourite',
                     attributes: ['id']
                 }
@@ -277,6 +314,12 @@ module.exports.weeklyTopTen = (where, data) => {
                 'length',
                 'file_name',
                 'type', 
+                'artist_id',
+                'genre_id',
+                'album_id',
+                'country_id',
+                'createdAt',
+                'updatedAt',
                 [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id)`), 'totalFavourites']
             ],
             include: [{
@@ -296,6 +339,7 @@ module.exports.weeklyTopTen = (where, data) => {
                 },
                 {
                     model: FavouritesModel,
+                    where: { user_id: data.user_id },
                     as: 'is_favourite',
                     attributes: ['id']
                 }
@@ -327,6 +371,12 @@ module.exports.weeklyTopTenPaginate = (where, data) => {
                 'length',
                 'file_name',
                 'type',
+                'artist_id',
+                'genre_id',
+                'album_id',
+                'country_id',
+                'createdAt',
+                'updatedAt',
                 [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id)`), 'totalFavourites']
             ],
             include: [{
@@ -346,6 +396,7 @@ module.exports.weeklyTopTenPaginate = (where, data) => {
                 },
                 {
                     model: FavouritesModel,
+                    where: { user_id: data.user_id },
                     as: 'is_favourite',
                     attributes: ['id']
                 }

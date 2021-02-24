@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   playlists.init({
-    name: DataTypes.INTEGER,
+    name: DataTypes.STRING,
     user_id: DataTypes.INTEGER
   }, {
     sequelize,

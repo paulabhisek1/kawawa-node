@@ -11,6 +11,7 @@
  */
 
 // ################################ Repositories ################################ //
+const songRepository = require('../../repositories/SongsRepository');
 const artistRepositories = require('../../repositories/ArtistsRepositories');
 const userPlayedHistoryRepo = require('../../repositories/UserPlayedHistoriesRepositories');
 const albumRepository = require('../../repositories/AlbumRepositories');
@@ -52,6 +53,7 @@ module.exports.fetchHomePageData = (req, res) => {
             let data = {};
             data.limit = 6;
             let userID = req.headers.userID;
+            data.user_id = userID;
 
             // Recently Played
             where.user_id = userID;
@@ -64,7 +66,6 @@ module.exports.fetchHomePageData = (req, res) => {
 
             // Free Songs
             where = {};
-            data = {};
             where.is_active = 1;
             where.is_paid = 0;
             let freeSongs = await songRepository.freeSongs(where, data);
@@ -147,6 +148,7 @@ module.exports.allRecentlyPlayed = (req, res) => {
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
             where.user_id = userID;
+            data.user_id = userID;
             let allRecentlyPlayed = await userPlayedHistoryRepo.allRecentlyPlayed(where, data);
 
             let newAllRecentlyPlayed = [];
@@ -199,6 +201,7 @@ module.exports.allRecommend = (req, res) => {
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
             where.user_id = userID;
+            data.user_id = userID;
             let allRecenData = await userPlayedHistoryRepo.recentlyPlayedAllData({ user_id: userID });
             let recommendArtistList = [];
             let recommentGenreList = [];
@@ -263,6 +266,7 @@ module.exports.allWeeklyTop = (req, res) => {
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
             where.is_active = 1;
+            data.user_id = userID;
             let allweeklytop = await songRepository.weeklyTopTenPaginate(where, data);
 
             let dataResp = {
@@ -309,6 +313,7 @@ module.exports.allArtist = (req, res) => {
             data.limit = 10;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
+            data.user_id = userID;
             where.is_active = 1;
             let allartist = await artistRepositories.artistListPaginate(where, data);
 
@@ -358,6 +363,7 @@ module.exports.allFreeSongs = (req, res) => {
             let userID = req.headers.userID;
             where.is_active = 1;
             where.is_paid = 0;
+            data.user_id = userID;
             let allfreesongs = await songRepository.freeSongsPaginate(where, data);
 
             let dataResp = {
@@ -453,7 +459,7 @@ module.exports.favouriteAndUnfavourite = (req, res) => {
 | Response          :  Respective response message in JSON format
 | Logic             :  Artist Wise Songs & Albums
 | Request URL       :  BASE_URL/api/artist-songs?page=<< Page No >>&artist_id=<< Artist ID >>
-| Request method    :  POST
+| Request method    :  GET
 | Author            :  Suman Rana
 |------------------------------------------------
 */
@@ -462,6 +468,7 @@ module.exports.artistWiseTrack = (req, res) => {
         let purpose = "Artist Wise Track List"
         try{
             let queryParam = req.query;
+            let userID = req.headers.userID;
             let where = {};
             let data = {};
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
@@ -471,12 +478,15 @@ module.exports.artistWiseTrack = (req, res) => {
             where.is_active = 1;
             where.album_id = 0;
             where.artist_id = artistID;
+            data.user_id = userID;
 
+            let artistDetails = await artistRepositories.artistDetails({ id: artistID, is_active: 1 }, { user_id: userID });
             let artistSongs = await songRepository.findAndCountAll(where, data);
             let albumsList = await albumRepository.findAll({ artist_id: artistID, is_active: 1 }, 6)
 
             let dataResp = {
-                arist_songs: {
+                artist_details: artistDetails,
+                artist_songs: {
                     songs: artistSongs.rows,
                     total_count: artistSongs.count.length
                 },
@@ -504,11 +514,11 @@ module.exports.artistWiseTrack = (req, res) => {
 
 /*
 |------------------------------------------------ 
-| API name          :  artistWiseTrack
+| API name          :  albumWiseTrack
 | Response          :  Respective response message in JSON format
 | Logic             :  Album Wise Songs
 | Request URL       :  BASE_URL/api/album-songs?page=<< Page No >>&album_id=<< Album ID >>
-| Request method    :  POST
+| Request method    :  GET
 | Author            :  Suman Rana
 |------------------------------------------------
 */
@@ -517,6 +527,7 @@ module.exports.albumWiseTrack = (req, res) => {
         let purpose = "Album Wise Track List"
         try{
             let queryParam = req.query;
+            let userID = req.headers.userID;
             let where = {};
             let data = {};
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
@@ -525,6 +536,7 @@ module.exports.albumWiseTrack = (req, res) => {
             let albumID = queryParam.album_id;
             where.is_active = 1;
             where.album_id = albumID;
+            data.user_id = userID;
 
             let albumSongs = await songRepository.findAndCountAll(where, data);
 
@@ -558,7 +570,7 @@ module.exports.albumWiseTrack = (req, res) => {
 | Response          :  Respective response message in JSON format
 | Logic             :  See All Albums
 | Request URL       :  BASE_URL/api/artist-albums?page=<< Page No >>&artist_id=<< Artist ID >>
-| Request method    :  POST
+| Request method    :  GET
 | Author            :  Suman Rana
 |------------------------------------------------
 */
@@ -567,6 +579,7 @@ module.exports.allAlbumsList = (req, res) => {
         let purpose = "All Albums List"
         try{
             let queryParam = req.query;
+            let userID = req.headers.userID;
             let where = {};
             let data = {};
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
@@ -574,7 +587,8 @@ module.exports.allAlbumsList = (req, res) => {
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let artistID = queryParam.artist_id;
             where.is_active = 1;
-            where.artist_id = artistID
+            where.artist_id = artistID;
+            data.user_id = userID;
 
             let albumList = await albumRepository.findAndCountAll(where, data);
 
@@ -602,6 +616,16 @@ module.exports.allAlbumsList = (req, res) => {
     })()
 }
 
+/*
+|------------------------------------------------ 
+| API name          :  createPlaylist
+| Response          :  Respective response message in JSON format
+| Logic             :  Create Playlist
+| Request URL       :  BASE_URL/api/create-playlist
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
 module.exports.createPlaylist = (req, res) => {
     (async()=>{
         let purpose = "Create Playlist"
@@ -626,6 +650,194 @@ module.exports.createPlaylist = (req, res) => {
         }
         catch(err) {
             console.log("Create Playlist Error : ", err);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  addSongToPlaylist
+| Response          :  Respective response message in JSON format
+| Logic             :  Add Song To Playlist
+| Request URL       :  BASE_URL/api/add-song-to-playlist
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.addSongToPlaylist = (req, res) => {
+    (async()=>{
+        let purpose = "Add Song To Playlist"
+        try{
+            let playlistID = req.body.playlist_id;
+            let songID = req.body.file_id;
+            let userID = req.headers.userID;
+
+            let playlistDetails = await playlistRepository.findOne({ id: playlistID, user_id: userID });
+
+            if(playlistDetails) {
+                let songCount = await songRepository.count({ id: songID, is_active: 1, type: 'song' });
+
+                if(songCount > 0) {
+                    let playlistSong = await playlistRepository.playlistSongsCount({ file_id: songID, playlist_id: playlistID });
+
+                    if(playlistSong > 0) {
+                        return res.send({
+                            status: 409,
+                            msg: responseMessages.duplicatePlaylistSong,
+                            data: {},
+                            purpose: purpose
+                        })
+                    }
+                    else{
+                        let createData = {
+                            file_id: songID,
+                            playlist_id: playlistID
+                        }
+                        await playlistRepository.playlistSongsAdd(createData);
+
+                        return res.send({
+                            status: 200,
+                            msg: `Added to ${playlistDetails.name}`,
+                            data: {},
+                            purpose: purpose
+                        })
+                    }
+                }
+                else{
+                    return res.send({
+                        status: 404,
+                        msg: responseMessages.songNotFound,
+                        data: {},
+                        purpose: purpose
+                    })
+                }
+            }
+            else{
+                return res.send({
+                    status: 404,
+                    msg: responseMessages.playlistNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Add Song To Playlist Error : ", err);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  playlistList
+| Response          :  Respective response message in JSON format
+| Logic             :  List Of Playlists
+| Request URL       :  BASE_URL/api/playlist-list?page=<< Page No >>
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.playlistList = (req, res) => {
+    (async()=>{
+        let purpose = "Playlist List";
+        try{
+            let queryParam = req.query;
+            let userID = req.headers.userID;
+            let where = {};
+            let data = {};
+            let page = queryParam.page ? parseInt(queryParam.page) : 1;
+            data.limit = 10;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+            where.user_id = userID;
+
+            let playlist = await playlistRepository.playlistList(where, data);
+            let dataResp = {
+                playlist_list: playlist.rows,
+                total_count: playlist.count.length
+            }
+
+            return res.send({
+                status: 500,
+                msg: responseMessages.playlistList,
+                data: dataResp,
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("Playlist List Error : ", err);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  playlistSongs
+| Response          :  Respective response message in JSON format
+| Logic             :  List Of Playlist Songs
+| Request URL       :  BASE_URL/api/playlist-songs?page=<< Page No >>&playlist_id=<< Playlist ID >>
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.playlistSongs = (req, res) => {
+    (async()=>{
+        let purpose = "Playlist Songs";
+        try{
+            let queryParam = req.query;
+            let userID = req.headers.userID;
+            let playlistID = queryParam.playlist_id;
+            let where = {};
+            let data = {};
+            let page = queryParam.page ? parseInt(queryParam.page) : 1;
+            data.limit = 10;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+            data.user_id = userID;
+
+            let playlistCount = await playlistRepository.count({ id: playlistID, user_id: userID });
+
+            if(playlistCount > 0) {
+                let playlistSongs = await playlistRepository.playlistSongs(where, data);
+                let dataResp = {
+                    playlist_songs: playlistSongs.rows,
+                    total_count: playlistSongs.count.length
+                }
+
+                return res.send({
+                    status: 404,
+                    msg: responseMessages.playlistNotFound,
+                    data: dataResp,
+                    purpose: purpose
+                })
+            }
+            else{
+                return res.send({
+                    status: 404,
+                    msg: responseMessages.playlistNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Playlist Songs Error : ", err);
             return res.send({
                 status: 500,
                 msg: responseMessages.serverError,

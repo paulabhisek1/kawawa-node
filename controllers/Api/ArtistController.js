@@ -31,46 +31,6 @@ const moment = require('moment');
 const jwtOptionsAccess = global.constants.jwtAccessTokenOptions;
 const jwtOptionsRefresh = global.constants.jwtRefreshTokenOptions;
 
-module.exports.artistFollowDetails = (req, res) => {
-    (async()=>{
-        let purpose = "Artist Details User Respective"
-        try{
-            let artistID = req.params.id;
-            let userID = req.headers.userID;
-
-            let artistDetails = await artistRepositories.artistDetails({ id: artistID, is_active: 1 }, { user_id: userID });
-
-            if(artistDetails) {
-                return res.send({
-                    status: 200,
-                    msg: responseMessages.artistDetails,
-                    data: {
-                        artist_details: artistDetails
-                    },
-                    purpose: purpose
-                })
-            }
-            else{
-                return res.send({
-                    status: 404,
-                    msg: responseMessages.artistNotFound,
-                    data: {},
-                    purpose: purpose
-                })
-            }
-        }
-        catch(err) {
-            console.log("Follow Artist Error : ", err);
-            return res.send({
-                status: 500,
-                msg: responseMessages.serverError,
-                data: {},
-                purpose: purpose
-            })
-        }
-    })()
-}
-
 /*
 |------------------------------------------------ 
 | API name          :  followArtist

@@ -16,7 +16,10 @@ module.exports = (sequelize, DataTypes) => {
   playlist_songs.init({
     playlist_id: DataTypes.INTEGER,
     file_id: DataTypes.INTEGER,
-    type: DataTypes.ENUM
+    type: {
+      type: DataTypes.ENUM,
+      values: ['song','podcast']
+    }
   }, {
     sequelize,
     modelName: 'playlist_songs',

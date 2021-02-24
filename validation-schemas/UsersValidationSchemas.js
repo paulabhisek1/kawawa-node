@@ -51,3 +51,8 @@ module.exports.resetPassSchema = Joi.object().keys({
     }), //Confirm password must be same as password
     otp: Joi.string().required()
 });
+
+// Reset Password Schema
+module.exports.updateUserDetails = Joi.object().keys({
+    full_name: Joi.string().required(),
+});

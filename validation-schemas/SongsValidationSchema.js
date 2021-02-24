@@ -21,5 +21,22 @@ module.exports.albumSongs = Joi.object().keys({
 
 // Create Playlist
 module.exports.createPlaylist = Joi.object().keys({
-    name: Joi.string().min(1).label('Playlist name'),
+    name: Joi.string().required().label('Playlist name'),
+});
+
+// Add Song Playlist
+module.exports.addSongToPlaylist = Joi.object().keys({
+    file_id: Joi.number().required().label('File id'),
+    playlist_id: Joi.number().required().label('Playlist id'),
+});
+
+// Playlist List
+module.exports.playlistList = Joi.object().keys({
+    page: Joi.number().min(1).required(),
+});
+
+// Playlist Songs
+module.exports.playlistSongs = Joi.object().keys({
+    page: Joi.number().min(1).required(),
+    playlist_id: Joi.number().required(),
 });
