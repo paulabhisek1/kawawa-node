@@ -464,9 +464,9 @@ module.exports.favouriteAndUnfavourite = (req, res) => {
 |------------------------------------------------
 */
 module.exports.artistWiseTrack = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Artist Wise Track List"
-        try{
+        try {
             let queryParam = req.query;
             let userID = req.headers.userID;
             let where = {};
@@ -499,8 +499,7 @@ module.exports.artistWiseTrack = (req, res) => {
                 data: dataResp,
                 purpose: purpose
             })
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Artist Wise Track List : ", err);
             return res.send({
                 status: 500,
@@ -523,9 +522,9 @@ module.exports.artistWiseTrack = (req, res) => {
 |------------------------------------------------
 */
 module.exports.albumWiseTrack = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Album Wise Track List"
-        try{
+        try {
             let queryParam = req.query;
             let userID = req.headers.userID;
             let where = {};
@@ -551,8 +550,7 @@ module.exports.albumWiseTrack = (req, res) => {
                 data: dataResp,
                 purpose: purpose
             })
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Album Wise Track List Err : ", err);
             return res.send({
                 status: 500,
@@ -575,9 +573,9 @@ module.exports.albumWiseTrack = (req, res) => {
 |------------------------------------------------
 */
 module.exports.allAlbumsList = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "All Albums List"
-        try{
+        try {
             let queryParam = req.query;
             let userID = req.headers.userID;
             let where = {};
@@ -603,8 +601,7 @@ module.exports.allAlbumsList = (req, res) => {
                 data: dataResp,
                 purpose: purpose
             })
-        }
-        catch(err) {
+        } catch (err) {
             console.log("All Albums List Err : ", err);
             return res.send({
                 status: 500,
@@ -627,9 +624,9 @@ module.exports.allAlbumsList = (req, res) => {
 |------------------------------------------------
 */
 module.exports.createPlaylist = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Create Playlist"
-        try{
+        try {
             let userID = req.headers.userID;
             let body = req.body;
 
@@ -647,8 +644,7 @@ module.exports.createPlaylist = (req, res) => {
                 },
                 purpose: purpose
             })
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Create Playlist Error : ", err);
             return res.send({
                 status: 500,
@@ -671,33 +667,33 @@ module.exports.createPlaylist = (req, res) => {
 |------------------------------------------------
 */
 module.exports.addSongToPlaylist = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Add Song To Playlist"
-        try{
+        try {
             let playlistID = req.body.playlist_id;
             let songID = req.body.file_id;
             let userID = req.headers.userID;
 
             let playlistDetails = await playlistRepository.findOne({ id: playlistID, user_id: userID });
 
-            if(playlistDetails) {
+            if (playlistDetails) {
                 let songCount = await songRepository.count({ id: songID, is_active: 1, type: 'song' });
 
-                if(songCount > 0) {
+                if (songCount > 0) {
                     let playlistSong = await playlistRepository.playlistSongsCount({ file_id: songID, playlist_id: playlistID });
 
-                    if(playlistSong > 0) {
+                    if (playlistSong > 0) {
                         return res.send({
                             status: 409,
                             msg: responseMessages.duplicatePlaylistSong,
                             data: {},
                             purpose: purpose
                         })
-                    }
-                    else{
+                    } else {
                         let createData = {
                             file_id: songID,
-                            playlist_id: playlistID
+                            playlist_id: playlistID,
+                            type: 'song'
                         }
                         await playlistRepository.playlistSongsAdd(createData);
 
@@ -708,8 +704,7 @@ module.exports.addSongToPlaylist = (req, res) => {
                             purpose: purpose
                         })
                     }
-                }
-                else{
+                } else {
                     return res.send({
                         status: 404,
                         msg: responseMessages.songNotFound,
@@ -717,8 +712,7 @@ module.exports.addSongToPlaylist = (req, res) => {
                         purpose: purpose
                     })
                 }
-            }
-            else{
+            } else {
                 return res.send({
                     status: 404,
                     msg: responseMessages.playlistNotFound,
@@ -726,8 +720,7 @@ module.exports.addSongToPlaylist = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Add Song To Playlist Error : ", err);
             return res.send({
                 status: 500,
@@ -750,9 +743,9 @@ module.exports.addSongToPlaylist = (req, res) => {
 |------------------------------------------------
 */
 module.exports.playlistList = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Playlist List";
-        try{
+        try {
             let queryParam = req.query;
             let userID = req.headers.userID;
             let where = {};
@@ -774,8 +767,7 @@ module.exports.playlistList = (req, res) => {
                 data: dataResp,
                 purpose: purpose
             })
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Playlist List Error : ", err);
             return res.send({
                 status: 500,
@@ -798,9 +790,9 @@ module.exports.playlistList = (req, res) => {
 |------------------------------------------------
 */
 module.exports.playlistSongs = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Playlist Songs";
-        try{
+        try {
             let queryParam = req.query;
             let userID = req.headers.userID;
             let playlistID = queryParam.playlist_id;
@@ -813,7 +805,7 @@ module.exports.playlistSongs = (req, res) => {
 
             let playlistCount = await playlistRepository.count({ id: playlistID, user_id: userID });
 
-            if(playlistCount > 0) {
+            if (playlistCount > 0) {
                 let playlistSongs = await playlistRepository.playlistSongs(where, data);
                 let dataResp = {
                     playlist_songs: playlistSongs.rows,
@@ -826,8 +818,7 @@ module.exports.playlistSongs = (req, res) => {
                     data: dataResp,
                     purpose: purpose
                 })
-            }
-            else{
+            } else {
                 return res.send({
                     status: 404,
                     msg: responseMessages.playlistNotFound,
@@ -835,8 +826,7 @@ module.exports.playlistSongs = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Playlist Songs Error : ", err);
             return res.send({
                 status: 500,
@@ -847,4 +837,3 @@ module.exports.playlistSongs = (req, res) => {
         }
     })()
 }
-
