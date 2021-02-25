@@ -803,7 +803,7 @@ module.exports.playlistSongs = (req, res) => {
             data.offset = data.limit ? data.limit * (page - 1) : null;
             // data.user_id = userID;
 
-            let playlistCount = await playlistRepository.count({ id: playlistID });
+            let playlistCount = await playlistRepository.count({ playlist_id: playlistID });
 
             if (playlistCount > 0) {
                 let playlistSongs = await playlistRepository.playlistSongs(where, data);
