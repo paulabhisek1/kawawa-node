@@ -801,9 +801,9 @@ module.exports.playlistSongs = (req, res) => {
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
             data.limit = 10;
             data.offset = data.limit ? data.limit * (page - 1) : null;
-            data.user_id = userID;
+            // data.user_id = userID;
 
-            let playlistCount = await playlistRepository.count({ id: playlistID, user_id: userID });
+            let playlistCount = await playlistRepository.count({ id: playlistID });
 
             if (playlistCount > 0) {
                 let playlistSongs = await playlistRepository.playlistSongs(where, data);
