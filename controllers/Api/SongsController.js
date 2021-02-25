@@ -692,8 +692,7 @@ module.exports.addSongToPlaylist = (req, res) => {
                     } else {
                         let createData = {
                             file_id: songID,
-                            playlist_id: playlistID,
-                            type: 'song'
+                            playlist_id: playlistID
                         }
                         await playlistRepository.playlistSongsAdd(createData);
 
@@ -801,9 +800,9 @@ module.exports.playlistSongs = (req, res) => {
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
             data.limit = 10;
             data.offset = data.limit ? data.limit * (page - 1) : null;
-            // data.user_id = userID;
+            data.user_id = userID;
 
-            let playlistCount = await playlistRepository.count({ playlist_id: playlistID });
+            let playlistCount = await playlistRepository.count({ id: playlistID, user_id: userID });
 
             if (playlistCount > 0) {
                 let playlistSongs = await playlistRepository.playlistSongs(where, data);
