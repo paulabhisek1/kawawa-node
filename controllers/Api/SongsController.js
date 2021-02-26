@@ -692,7 +692,8 @@ module.exports.addSongToPlaylist = (req, res) => {
                     } else {
                         let createData = {
                             file_id: songID,
-                            playlist_id: playlistID
+                            playlist_id: playlistID,
+                            type: 'song'
                         }
                         await playlistRepository.playlistSongsAdd(createData);
 
@@ -805,6 +806,7 @@ module.exports.playlistSongs = (req, res) => {
             let playlistCount = await playlistRepository.count({ id: playlistID, user_id: userID });
 
             if (playlistCount > 0) {
+                where.id = playlistID;
                 let playlistSongs = await playlistRepository.playlistSongs(where, data);
                 let dataResp = {
                     playlist_songs: playlistSongs.rows,
@@ -813,7 +815,7 @@ module.exports.playlistSongs = (req, res) => {
 
                 return res.send({
                     status: 404,
-                    msg: responseMessages.playlistNotFound,
+                    msg: responseMessages.playlistSongs,
                     data: dataResp,
                     purpose: purpose
                 })
