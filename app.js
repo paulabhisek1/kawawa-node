@@ -65,6 +65,7 @@ app.set('port', port);
  * Create HTTP / HTTPS server.
  */
 if ((process.env.ENVIRONMENT == 'development') && fs.existsSync(process.env.SSL_PRIVATE_KEY)) {
+    console.log("HTTPS SERVER");
     var options = {
         key: fs.readFileSync(process.env.SSL_PRIVATE_KEY),
         cert: fs.readFileSync(process.env.SSL_CERT_KEY),
@@ -72,6 +73,7 @@ if ((process.env.ENVIRONMENT == 'development') && fs.existsSync(process.env.SSL_
     };
     var server = require('https').createServer(options, app);
 } else {
+    console.log("HTTP SERVER");
     var server = require('http').createServer(app); // Create HTTP Server
 }
 
