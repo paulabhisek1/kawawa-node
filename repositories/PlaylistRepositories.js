@@ -102,7 +102,8 @@ module.exports.playlistSongs = (where, data) => {
                             model: FavouritesModel,
                             where: { user_id: data.user_id },
                             as: 'is_favourite',
-                            attributes: ['id']
+                            attributes: ['id'],
+                            required:false
                         }
                     ],
                     as:'song_details',

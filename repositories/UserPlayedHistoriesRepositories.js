@@ -43,7 +43,8 @@ module.exports.allRecentlyPlayed = (where, data) => {
                         model: FavouritesModel,
                         where: { user_id: data.user_id },
                         as: 'is_favourite',
-                        attributes: ['id']
+                        attributes: ['id'],
+                        required:false
                     }
                 ],
                 as: 'song_details',
@@ -91,7 +92,8 @@ module.exports.recentlyPlayed = (where, data) => {
                         model: FavouritesModel,
                         where: { user_id: data.user_id },
                         as: 'is_favourite',
-                        attributes: ['id']
+                        attributes: ['id'],
+                        required:false
                     }
                 ],
                 as: 'song_details',
@@ -137,7 +139,8 @@ module.exports.recentlyPlayedAllData = (where, data) => {
                         model: FavouritesModel,
                         where: { user_id: where.user_id },
                         as: 'is_favourite',
-                        attributes: ['id']
+                        attributes: ['id'],
+                        required:false
                     }
                 ],
                 as: 'song_details',

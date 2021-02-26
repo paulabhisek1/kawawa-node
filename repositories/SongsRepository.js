@@ -95,7 +95,8 @@ module.exports.findAndCountAll = (where, data) => {
                     model: FavouritesModel,
                     where: { user_id: data.user_id },
                     as: 'is_favourite',
-                    attributes: ['id']
+                    attributes: ['id'],
+                    required:false
                 }
             ],
             offset: data.offset,
@@ -137,7 +138,8 @@ module.exports.freeSongs = (where, data) => {
                     model: FavouritesModel,
                     where: { user_id: data.user_id },
                     as: 'is_favourite',
-                    attributes: ['id']
+                    attributes: ['id'],
+                    required:false
                 }
             ],
             limit: data.limit,
@@ -177,7 +179,8 @@ module.exports.freeSongsPaginate = (where, data) => {
                     model: FavouritesModel,
                     where: { user_id: data.user_id },
                     as: 'is_favourite',
-                    attributes: ['id']
+                    attributes: ['id'],
+                    required:false
                 }
             ],
             offset: data.offset,
@@ -233,7 +236,8 @@ module.exports.recommendedSongs = (where, data) => {
                     model: FavouritesModel,
                     where: { user_id: data.user_id },
                     as: 'is_favourite',
-                    attributes: ['id']
+                    attributes: ['id'],
+                    required:false
                 }
             ],
             limit: data.limit,
@@ -287,7 +291,8 @@ module.exports.recommendedSongsPaginate = (where, data) => {
                     model: FavouritesModel,
                     where: { user_id: data.user_id },
                     as: 'is_favourite',
-                    attributes: ['id']
+                    attributes: ['id'],
+                    required:false
                 }
             ],
             offset: data.offset,
@@ -341,7 +346,8 @@ module.exports.weeklyTopTen = (where, data) => {
                     model: FavouritesModel,
                     where: { user_id: data.user_id },
                     as: 'is_favourite',
-                    attributes: ['id']
+                    attributes: ['id'],
+                    required:false
                 }
             ],
             having: sequelize.literal('`totalFavourites` > 0'),
@@ -398,7 +404,8 @@ module.exports.weeklyTopTenPaginate = (where, data) => {
                     model: FavouritesModel,
                     where: { user_id: data.user_id },
                     as: 'is_favourite',
-                    attributes: ['id']
+                    attributes: ['id'],
+                    required:false
                 }
             ],
             having: sequelize.literal('`totalFavourites` > 0'),
