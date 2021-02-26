@@ -67,7 +67,7 @@ app.set('port', port);
 console.log("process.env.ENVIRONMENT : ", process.env.ENVIRONMENT);
 console.log("process.env.ENVIRONMENT : ", process.env.SSL_PRIVATE_KEY);
 console.log("CHECK 1 : ", process.env.ENVIRONMENT == 'development');
-console.log("CHECK 2 : ", fs.existsSync('/etc/letsencrypt/live/www.improcraft.com/privkey'));
+console.log("CHECK 2 : ", fs.existsSync('/etc/letsencrypt/live/privkey.pem'));
 if ((process.env.ENVIRONMENT == 'development') && fs.existsSync(process.env.SSL_PRIVATE_KEY)) {
     console.log("HTTPS SERVER");
     var options = {
