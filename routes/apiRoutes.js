@@ -21,7 +21,7 @@ const artistAPIController = require('../controllers/Api/ArtistController');
 /* ############################################ Routes  ############################################ */
 
 
-// SET STORAGE FOR SONG
+// SET STORAGE FOR PROFILE PICTURE
 var storageProfilePicture = multer.diskStorage({
     destination: function(req, file, cb) {
         const path = 'uploads/profile_images';
