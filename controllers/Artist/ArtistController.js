@@ -199,26 +199,35 @@ module.exports.socialLogin = (req, res) => {
             let body = req.body;
             let userDetails = await artistRepositories.findOne({ email: body.email });
             if (userDetails) {
-
-                delete userDetails.password;
-                delete userDetails.login_type;
-                delete userDetails.otp;
-                delete userDetails.otp_expire_time;
-                delete userDetails.otp_status;
-                delete userDetails.is_active;
-
-                let accessToken = jwt.sign({ user_id: userDetails.id, email: userDetails.email }, jwtOptionsAccess.secret, jwtOptionsAccess.options);
-                let refreshToken = jwt.sign({ user_id: userDetails.id, email: userDetails.email }, jwtOptionsRefresh.secret, jwtOptionsRefresh.options);
-
-                userDetails['access_token'] = accessToken;
-                userDetails['refresh_token'] = refreshToken;
-
-                return res.status(200).send({
-                    status: 200,
-                    msg: responseMessages.loginSuccess,
-                    data: userDetails,
-                    purpose: purpose
-                })
+                if(userDetails.login_type == body.login_type) {
+                    delete userDetails.password;
+                    delete userDetails.login_type;
+                    delete userDetails.otp;
+                    delete userDetails.otp_expire_time;
+                    delete userDetails.otp_status;
+                    delete userDetails.is_active;
+    
+                    let accessToken = jwt.sign({ user_id: userDetails.id, email: userDetails.email }, jwtOptionsAccess.secret, jwtOptionsAccess.options);
+                    let refreshToken = jwt.sign({ user_id: userDetails.id, email: userDetails.email }, jwtOptionsRefresh.secret, jwtOptionsRefresh.options);
+    
+                    userDetails['access_token'] = accessToken;
+                    userDetails['refresh_token'] = refreshToken;
+    
+                    return res.status(200).send({
+                        status: 200,
+                        msg: responseMessages.loginSuccess,
+                        data: userDetails,
+                        purpose: purpose
+                    })
+                }
+                else{
+                    return res.send({
+                        status: 409,
+                        msg: responseMessages.duplicateEmail,
+                        data: {},
+                        purpose: purpose
+                    })
+                }
             } else {
                 let createUserData = {
                     full_name: body.full_name,
