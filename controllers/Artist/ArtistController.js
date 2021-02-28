@@ -278,7 +278,7 @@ module.exports.socialLogin = (req, res) => {
 | API name          :  forgotPassword
 | Response          :  Respective response message in JSON format
 | Logic             :  Forgot Password
-| Request URL       :  BASE_URL/api/forgot-password
+| Request URL       :  BASE_URL/artist/forgot-password
 | Request method    :  POST
 | Author            :  Suman Rana
 |------------------------------------------------
@@ -335,7 +335,7 @@ module.exports.forgotPassword = (req, res) => {
 | API name          :  verifyOTP
 | Response          :  Respective response message in JSON format
 | Logic             :  Verify OTP
-| Request URL       :  BASE_URL/api/verify-otp
+| Request URL       :  BASE_URL/artist/verify-otp
 | Request method    :  POST
 | Author            :  Suman Rana
 |------------------------------------------------
@@ -383,7 +383,7 @@ module.exports.verifyOTP = (req, res) => {
 | API name          :  resetPassword
 | Response          :  Respective response message in JSON format
 | Logic             :  Reset Password
-| Request URL       :  BASE_URL/api/reset-password
+| Request URL       :  BASE_URL/artist/reset-password
 | Request method    :  POST
 | Author            :  Suman Rana
 |------------------------------------------------
@@ -423,6 +423,71 @@ module.exports.resetPassword = (req, res) => {
             }
         } catch (e) {
             console.log("Reset Password ERROR : ", e);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  saveArtistDetailsStepOne
+| Response          :  Respective response message in JSON format
+| Logic             :  Reset Password
+| Request URL       :  BASE_URL/artist/artist-details/step-one
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.saveArtistDetailsStepOne = (req, res) => {
+    (async()=>{
+        let purpose = "Save Artist Details Step One";
+        try{
+            let artistID = req.headers.userID;
+            let artistCount = await artistRepositories.count({ id: artistID, is_active: 1 });
+
+            if(artistCount > 0) {
+                let body = req.body;
+                await sequelize.transaction(async(t)=>{
+                    await artistRepositories.deleteArtistDetails({ artist_id: artistID }, t);
+
+                    let createData = {
+                        artist_id: artistID,
+                        street: body.street,
+                        building_no: body.building_no,
+                        city: body.city,
+                        state: body.state,
+                        zip: body.zip
+                    }
+                    await artistRepositories.createArtistDetails(createData, t);
+                });
+
+                let artistDetails = await artistRepositories.artistDetails({ id: artistID }, { user_id: artistID });
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.artistDetailsStepOne,
+                    data: {
+                        artist_details: artistDetails
+                    },
+                    purpose: purpose
+                })
+            }
+            else{
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.artistNotFound,
+                    data: {},
+                    purpose: purpose
+                }) 
+            }
+        }
+        catch(err) {
+            console.log("Save Artist Details Step One ERROR : ", err);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,

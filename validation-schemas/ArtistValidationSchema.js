@@ -51,3 +51,12 @@ module.exports.resetPassSchema = Joi.object().keys({
     }), //Confirm password must be same as password
     otp: Joi.string().required()
 });
+
+// Artist Details Step One Schema
+module.exports.artistDetailsStepOne = Joi.object().keys({
+    street: Joi.string().required(),
+    building_no: Joi.string().required(),
+    city: Joi.string().required(),
+    state: Joi.string().required(),
+    zip: Joi.string().required()
+});

@@ -7,6 +7,7 @@ const GenresModel = require('../models/genres')(sequelize, DataTypes);
 const AlbumsModel = require('../models/albums')(sequelize, DataTypes);
 const FavouritesModel = require('../models/favourites')(sequelize, DataTypes);
 const FollowedArtistsModel = require('../models/followed_artists')(sequelize, DataTypes);
+const ArtistDetailsModel = require('../models/artist_details')(sequelize, DataTypes);
 
 // Associations
 ArtistModel.belongsTo(CountryModel, { foreignKey: 'country_id' });
@@ -15,6 +16,7 @@ SongsModel.belongsTo(GenresModel, { foreignKey: 'genre_id', as: 'genre_details' 
 SongsModel.belongsTo(AlbumsModel, { foreignKey: 'album_id', as: 'album_details' });
 SongsModel.hasOne(FavouritesModel, { foreignKey: 'file_id', as: 'is_favourite' });
 ArtistModel.hasOne(FollowedArtistsModel, { foreignKey: 'artist_id', as: 'is_followed' });
+ArtistModel.hasOne(ArtistDetailsModel, { foreignKey: 'artist_id', as: 'artist_account_details' });
 
 
 // Count
@@ -58,6 +60,11 @@ module.exports.artistDetails = (whereData, data) => {
                     as: 'is_followed',
                     where: { user_id: data.user_id },
                     required: false
+                },
+                {
+                    model: ArtistDetailsModel,
+                    as: 'artist_account_details',
+                    required: false
                 }
             ]
         }).then(result => {
@@ -99,6 +106,39 @@ module.exports.update = (where, data, t = null) => {
         }).catch((err) => {
             reject(err);
         })
+    })
+}
+
+// Delete Artist Details
+module.exports.deleteArtistDetails = (where, t = null) => {
+    return new Promise((resolve, reject) => {
+        let options = {
+                where: where
+            }
+            //if trunsaction exist
+        if (t != null) options.transaction = t;
+        ArtistDetailsModel.destroy(options).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
+
+// Create Artist Details
+module.exports.createArtistDetails = (data, t = null) => {
+    return new Promise((resolve, reject) => {
+        let options = {}
+            //if trunsaction exist
+        if (t != null) options.transaction = t;
+        ArtistDetailsModel.create(data, options)
+            .then((result) => {
+                result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+                resolve(result);
+            })
+            .catch((err) => {
+                reject(err);
+            });
     })
 }
 

@@ -6,6 +6,7 @@ const fs = require('fs');
 
 /* ############################################ Middlewares ############################################ */
 const validateRequest = require('../middlewares/ValidateRequest');
+const authenticationMiddleware = require('../middlewares/AuthenticationMiddleware');
 
 /* ############################################ Joi Validation Schema ############################################ */
 const artistValidationSchema = require('../validation-schemas/ArtistValidationSchema');
@@ -45,5 +46,6 @@ router.post('/forgot-password', validateRequest.validate(artistValidationSchema.
 router.post('/verify-otp', validateRequest.validate(artistValidationSchema.otpVerificationSchema, 'body'), artistController.verifyOTP); // OTP Verification Route
 router.post('/reset-password', validateRequest.validate(artistValidationSchema.resetPassSchema, 'body'), artistController.resetPassword); // Reset Password Route
 router.get('/countries', commonController.fetchCountries); // Fetch Countries
+router.post('/artist-details/step-one', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.artistDetailsStepOne, 'body'), artistController.saveArtistDetailsStepOne) // Save Artist Details Step One
 
 module.exports = router;

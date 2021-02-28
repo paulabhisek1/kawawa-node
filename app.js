@@ -64,7 +64,7 @@ app.set('port', port);
 /**
  * Create HTTP / HTTPS server.
  */
-if ((process.env.ENVIRONMENT == 'development') && fs.existsSync(process.env.SSL_PRIVATE_KEY)) {
+if ((process.env.ENVIRONMENT == 'development_no') && fs.existsSync(process.env.SSL_PRIVATE_KEY)) {
     console.log("HTTPS SERVER");
     var options = {
         key: fs.readFileSync(process.env.SSL_PRIVATE_KEY),

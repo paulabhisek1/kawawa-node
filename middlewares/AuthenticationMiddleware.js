@@ -3,6 +3,7 @@ const responseMessages = require('../ResponseMessages');
 
 // ################################ Repositories ################################ //
 const userRepositories = require('../repositories/UsersRepositories');
+const artistRepositories = require('../repositories/ArtistsRepositories');
 
 // ################################ Globals ################################ //
 const jwtOptionsAccess = global.constants.jwtAccessTokenOptions;
@@ -41,10 +42,52 @@ module.exports.authenticateRequestAPI = async (req, res, next) => {
                 message: responseMessages.authRequired
             })
         }
-
     }
     catch (e) {
         console.log("Middleware Error : ", e);
+        res.json({
+            status: 500,
+            message: responseMessages.serverError,
+        })
+    }
+}
+
+module.exports.authenticateArtistRequestAPI = async (req, res, next) => {
+    try{
+        if (req.headers.authorization) {
+            let accessToken = req.headers.authorization.split(' ')[1];
+            jwt.verify(accessToken, jwtOptionsAccess.secret, async (err, decodedToken) => {
+                if (err) {
+                    return res.json({
+                        status: 401,
+                        message: responseMessages.authFailure,
+                    })
+                }
+                else {
+                    let userCount = await artistRepositories.count({ where: { id: decodedToken.user_id } });
+                    
+                    if(userCount > 0) {
+                        req.headers.userID = decodedToken.user_id;
+                        next();
+                    }
+                    else{
+                        return res.json({
+                            status: 401,
+                            message: responseMessages.authFailure,
+                        })
+                    }
+                }
+            });
+        }
+        else {
+            return res.json({
+                status: 401,
+                message: responseMessages.authRequired
+            })
+        }
+    }
+    catch(err) {
+        console.log("Artist Middleware Error : ", e);
         res.json({
             status: 500,
             message: responseMessages.serverError,
