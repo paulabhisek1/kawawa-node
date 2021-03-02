@@ -484,26 +484,39 @@ module.exports.artistWiseTrack = (req, res) => {
             data.user_id = userID;
 
             let artistDetails = await artistRepositories.artistDetails({ id: artistID, is_active: 1 }, { user_id: userID });
-            if (artistDetails.is_followed == "") artistDetails.is_followed = {};
-            let artistSongs = await songRepository.findAndCountAll(where, data);
-            let albumsList = await albumRepository.findAll({ artist_id: artistID, is_active: 1 }, 6)
-            let totalPages = Math.ceil(artistSongs.count.length / 20);
-            let dataResp = {
-                artist_details: artistDetails,
-                artist_songs: {
-                    songs: artistSongs.rows,
-                    total_count: artistSongs.count.length
-                },
-                albums_list: albumsList,
-                total_page: totalPages
+
+            if (artistDetails) {
+
+                if (artistDetails.is_followed == "") artistDetails.is_followed = {};
+                let artistSongs = await songRepository.findAndCountAll(where, data);
+                let albumsList = await albumRepository.findAll({ artist_id: artistID, is_active: 1 }, 6)
+                let totalPages = Math.ceil(artistSongs.count.length / 20);
+                let dataResp = {
+                    artist_details: artistDetails,
+                    artist_songs: {
+                        songs: artistSongs.rows,
+                        total_count: artistSongs.count.length
+                    },
+                    albums_list: albumsList,
+                    total_page: totalPages
+                }
+
+                return res.send({
+                    status: 200,
+                    msg: responseMessages.artistSongs,
+                    data: dataResp,
+                    purpose: purpose
+                })
+            } else {
+                return res.send({
+                    status: 404,
+                    msg: responseMessages.artistNotFound,
+                    data: {},
+                    purpose: purpose
+                })
             }
 
-            return res.send({
-                status: 200,
-                msg: responseMessages.artistSongs,
-                data: dataResp,
-                purpose: purpose
-            })
+
         } catch (err) {
             console.log("Artist Wise Track List : ", err);
             return res.send({
