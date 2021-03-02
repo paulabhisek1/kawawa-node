@@ -23,7 +23,7 @@ module.exports.allRecentlyPlayed = (where, data) => {
             include: [{
                 model: SongsModel,
                 where: { is_active: 1 },
-                attributes: ['id', 'name', 'cover_picture', 'file_name', 'length', 'is_paid', 'type','artist_id','genre_id','album_id','country_id','createdAt','updatedAt'],
+                attributes: ['id', 'name', 'cover_picture', 'file_name', 'length', 'is_paid', 'type','artist_id','genre_id','album_id','country_id','is_paid','createdAt','updatedAt'],
                 include: [{
                         model: ArtistModel,
                         as: 'artist_details',
@@ -72,7 +72,7 @@ module.exports.recentlyPlayed = (where, data) => {
             include: [{
                 model: SongsModel,
                 where: { is_active: 1 },
-                attributes: ['id', 'name', 'cover_picture', 'file_name', 'length', 'is_paid', 'type','artist_id','genre_id','album_id','country_id','createdAt','updatedAt'],
+                attributes: ['id', 'name', 'cover_picture', 'file_name', 'length', 'is_paid', 'type','artist_id','genre_id','album_id','country_id','is_paid','createdAt','updatedAt'],
                 include: [{
                         model: ArtistModel,
                         as: 'artist_details',
@@ -119,7 +119,7 @@ module.exports.recentlyPlayedAllData = (where, data) => {
             include: [{
                 model: SongsModel,
                 where: { is_active: 1 },
-                attributes: ['id', 'name', 'cover_picture', 'file_name', 'length', 'is_paid', 'type','artist_id','genre_id','album_id','country_id','createdAt','updatedAt'],
+                attributes: ['id', 'name', 'cover_picture', 'file_name', 'length', 'is_paid', 'type','artist_id','genre_id','album_id','country_id','is_paid','createdAt','updatedAt'],
                 include: [{
                         model: ArtistModel,
                         as: 'artist_details',

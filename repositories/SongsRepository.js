@@ -28,6 +28,7 @@ module.exports.findAll = (whereData) => {
                 'genre_id',
                 'album_id',
                 'country_id',
+                'is_paid',
                 'createdAt',
                 'updatedAt'
             ],
@@ -214,6 +215,7 @@ module.exports.recommendedSongs = (where, data) => {
                 'genre_id',
                 'album_id',
                 'country_id',
+                'is_paid',
                 'createdAt',
                 'updatedAt'
             ],
@@ -268,6 +270,7 @@ module.exports.recommendedSongsPaginate = (where, data) => {
                 'artist_id',
                 'genre_id',
                 'album_id',
+                'is_paid',
                 'country_id',
                 'createdAt',
                 'updatedAt'
@@ -322,6 +325,7 @@ module.exports.weeklyTopTen = (where, data) => {
                 'artist_id',
                 'genre_id',
                 'album_id',
+                'is_paid',
                 'country_id',
                 'createdAt',
                 'updatedAt',
@@ -381,6 +385,7 @@ module.exports.weeklyTopTenPaginate = (where, data) => {
                 'genre_id',
                 'album_id',
                 'country_id',
+                'is_paid',
                 'createdAt',
                 'updatedAt',
                 [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id)`), 'totalFavourites']

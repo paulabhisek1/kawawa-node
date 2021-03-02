@@ -142,6 +142,22 @@ module.exports.createArtistDetails = (data, t = null) => {
     })
 }
 
+// Update
+module.exports.updateArtistDetails = (where, data, t = null) => {
+    return new Promise((resolve, reject) => {
+        let options = {
+                where: where
+            }
+            //if trunsaction exist
+        if (t != null) options.transaction = t;
+        ArtistDetailsModel.update(data, options).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
+
 // Find All
 module.exports.findAll = (whereData) => {
     return new Promise((resolve, reject) => {

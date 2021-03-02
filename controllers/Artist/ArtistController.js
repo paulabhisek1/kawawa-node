@@ -437,7 +437,7 @@ module.exports.resetPassword = (req, res) => {
 |------------------------------------------------ 
 | API name          :  saveArtistDetailsStepOne
 | Response          :  Respective response message in JSON format
-| Logic             :  Reset Password
+| Logic             :  Save Artist Details Step One
 | Request URL       :  BASE_URL/artist/artist-details/step-one
 | Request method    :  POST
 | Author            :  Suman Rana
@@ -488,6 +488,71 @@ module.exports.saveArtistDetailsStepOne = (req, res) => {
         }
         catch(err) {
             console.log("Save Artist Details Step One ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  saveArtistDeatislStepTwo
+| Response          :  Respective response message in JSON format
+| Logic             :  Save Artist Details Step Two
+| Request URL       :  BASE_URL/artist/artist-details/step-two
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.saveArtistDeatislStepTwo = (req, res) => {
+    (async()=>{
+        let purpose = "Save Artist Details Step Two"
+        try{
+            let artistID = req.headers.userID;
+            let artistCount = await artistRepositories.count({ id: artistID, is_active: 1 });
+
+            if(artistCount > 0) {
+                let body = req.body;
+                let updateData = {
+                    account_holder_name: body.account_holder_name,
+                    account_number: body.account_number,
+                    branch_name: body.branch_name,
+                    bank_country: body.bank_country,
+                    bank_state: body.bank_state,
+                    bank_city: body.bank_city,
+                    bank_zip: body.bank_zip,
+                    currency: body.currency,
+                    swift_code: body.swift_code
+                }
+
+                await artistRepositories.updateArtistDetails({ artist_id: artistID }, updateData);
+
+                let artistDetails = await artistRepositories.artistDetails({ id: artistID }, { user_id: artistID });
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.artistDetailsStepOne,
+                    data: {
+                        artist_details: artistDetails
+                    },
+                    purpose: purpose
+                })
+            }
+            else{
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.artistNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Save Artist Details Step Two ERROR : ", err);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,
