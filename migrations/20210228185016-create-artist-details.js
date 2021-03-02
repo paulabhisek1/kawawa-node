@@ -59,9 +59,6 @@ module.exports = {
       govt_id_back: {
         type: Sequelize.STRING
       },
-      profile_picture: {
-        type: Sequelize.STRING
-      },
       createdAt: {
         allowNull: false,
         defaultValue : Sequelize.literal('CURRENT_TIMESTAMP'),

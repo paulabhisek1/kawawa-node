@@ -40,4 +40,5 @@ module.exports = {
     userDetailsFetch: `User details fecthed successfully`,
     artistDetailsStepOne: `Artist details updated successfully`,
     artistProfilePictureUpdate: `Artist profile picture uploaded successfully`,
+    artistGovtIDUpdate: `File uploaded successfully`,
 }

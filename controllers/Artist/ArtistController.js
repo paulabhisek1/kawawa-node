@@ -433,12 +433,21 @@ module.exports.resetPassword = (req, res) => {
     })()
 }
 
+/*
+|------------------------------------------------ 
+| API name          :  uploadArtistProfilePicture
+| Response          :  Respective response message in JSON format
+| Logic             :  Upload Artist Profile Picture
+| Request URL       :  BASE_URL/artist/artist-details/upload-profile-picture
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
 module.exports.uploadArtistProfilePicture = (req, res) => {
     (async()=>{
         let purpose = "Upload Artist Profile Picture";
         try{
-            console.log("FILE : ", req.file);
-            let filePath = `${global.constants.profile_photo_url}/${req.file.originalname}`; 
+            let filePath = `${global.constants.profile_photo_url}/${req.file.filename}`; 
             return res.status(200).send({
                 status: 200,
                 msg: responseMessages.artistProfilePictureUpdate,
@@ -450,6 +459,78 @@ module.exports.uploadArtistProfilePicture = (req, res) => {
         }
         catch(err) {
             console.log("Upload Artist Profile Picture ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  uploadArtistGovtIDFront
+| Response          :  Respective response message in JSON format
+| Logic             :  Upload Artist Govt ID Front
+| Request URL       :  BASE_URL/artist/artist-details/upload-govt-id-front
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.uploadArtistGovtIDFront = (req, res) => {
+    (async()=>{
+        let purpose = "Upload Artist Govt ID FRONT";
+        try{
+            let filePath = `${global.constants.govt_id_url}/${req.file.filename}`; 
+            return res.status(200).send({
+                status: 200,
+                msg: responseMessages.artistGovtIDUpdate,
+                data: {
+                    filePath: filePath
+                },
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("Upload Artist Govt ID FRONT ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  uploadArtistGovtIDBack
+| Response          :  Respective response message in JSON format
+| Logic             :  Upload Artist Govt ID Back
+| Request URL       :  BASE_URL/artist/artist-details/upload-govt-id-back
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.uploadArtistGovtIDBack = (req, res) => {
+    (async()=>{
+        let purpose = "Upload Artist Govt ID BACK";
+        try{
+            let filePath = `${global.constants.govt_id_url}/${req.file.filename}`; 
+            return res.status(200).send({
+                status: 200,
+                msg: responseMessages.artistGovtIDUpdate,
+                data: {
+                    filePath: filePath
+                },
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("Upload Artist Govt ID BACK ERROR : ", err);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,

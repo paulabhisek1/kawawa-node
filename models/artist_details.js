@@ -31,7 +31,6 @@ module.exports = (sequelize, DataTypes) => {
     swift_code: DataTypes.STRING,
     govt_id_front: DataTypes.STRING,
     govt_id_back: DataTypes.STRING,
-    profile_picture: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'artist_details',
