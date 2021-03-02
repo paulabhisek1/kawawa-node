@@ -155,7 +155,7 @@ module.exports.allRecentlyPlayed = (req, res) => {
             allRecentlyPlayed.rows.forEach((item, index) => {
                 newAllRecentlyPlayed.push(item.song_details);
             });
-            let totalPages = Math.ceil(allRecentlyPlayed.count.length/20);
+            let totalPages = Math.ceil(allRecentlyPlayed.count.length / 20);
             let dataResp = {
                 recently_played: newAllRecentlyPlayed,
                 total_count: allRecentlyPlayed.count.length,
@@ -221,7 +221,7 @@ module.exports.allRecommend = (req, res) => {
             ];
             where.is_active = 1;
             let recommendedSongsData = await songRepository.recommendedSongsPaginate(where, data);
-            let totalPages = Math.ceil(recommendedSongsData.count.length/20);
+            let totalPages = Math.ceil(recommendedSongsData.count.length / 20);
             let dataResp = {
                 allrecommend: recommendedSongsData.rows,
                 total_count: recommendedSongsData.count.length,
@@ -317,7 +317,7 @@ module.exports.allArtist = (req, res) => {
             data.user_id = userID;
             where.is_active = 1;
             let allartist = await artistRepositories.artistListPaginate(where, data);
-            let totalPages = Math.ceil(allartist.count.length/20);
+            let totalPages = Math.ceil(allartist.count.length / 20);
             let dataResp = {
                 allartist: allartist.rows,
                 total_count: allartist.count.length,
@@ -367,7 +367,7 @@ module.exports.allFreeSongs = (req, res) => {
             where.is_paid = 0;
             data.user_id = userID;
             let allfreesongs = await songRepository.freeSongsPaginate(where, data);
-            let totalPages = Math.ceil(allfreesongs.count.length/20);
+            let totalPages = Math.ceil(allfreesongs.count.length / 20);
             let dataResp = {
                 allfreesongs: allfreesongs.rows,
                 total_count: allfreesongs.count.length,
@@ -484,9 +484,10 @@ module.exports.artistWiseTrack = (req, res) => {
             data.user_id = userID;
 
             let artistDetails = await artistRepositories.artistDetails({ id: artistID, is_active: 1 }, { user_id: userID });
+            if (artistDetails.is_followed == "") artistDetails.is_followed == {};
             let artistSongs = await songRepository.findAndCountAll(where, data);
             let albumsList = await albumRepository.findAll({ artist_id: artistID, is_active: 1 }, 6)
-            let totalPages = Math.ceil(artistSongs.count.length/20);
+            let totalPages = Math.ceil(artistSongs.count.length / 20);
             let dataResp = {
                 artist_details: artistDetails,
                 artist_songs: {
@@ -542,7 +543,7 @@ module.exports.albumWiseTrack = (req, res) => {
             data.user_id = userID;
 
             let albumSongs = await songRepository.findAndCountAll(where, data);
-            let totalPages = Math.ceil(albumSongs.count.length/20);
+            let totalPages = Math.ceil(albumSongs.count.length / 20);
             let dataResp = {
                 album_songs: albumSongs.rows,
                 total_count: albumSongs.count.length,
@@ -594,7 +595,7 @@ module.exports.allAlbumsList = (req, res) => {
             data.user_id = userID;
 
             let albumList = await albumRepository.findAndCountAll(where, data);
-            let totalPages = Math.ceil(albumList.count.length/20);
+            let totalPages = Math.ceil(albumList.count.length / 20);
             let dataResp = {
                 all_albums: albumList.rows,
                 total_count: albumList.count.length,
@@ -762,7 +763,7 @@ module.exports.playlistList = (req, res) => {
             where.user_id = userID;
 
             let playlist = await playlistRepository.playlistList(where, data);
-            let totalPages = Math.ceil(playlist.count.length/20);
+            let totalPages = Math.ceil(playlist.count.length / 20);
             let dataResp = {
                 playlist_list: playlist.rows,
                 total_count: playlist.count.length,
@@ -816,7 +817,7 @@ module.exports.playlistSongs = (req, res) => {
             if (playlistCount > 0) {
                 where.id = playlistID;
                 let playlistSongs = await playlistRepository.playlistSongs(where, data);
-                let totalPages = Math.ceil(playlistSongs.count.length/20);
+                let totalPages = Math.ceil(playlistSongs.count.length / 20);
                 let dataResp = {
                     playlist_songs: playlistSongs.rows,
                     total_count: playlistSongs.count.length,
