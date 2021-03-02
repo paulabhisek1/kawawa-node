@@ -484,7 +484,7 @@ module.exports.artistWiseTrack = (req, res) => {
             data.user_id = userID;
 
             let artistDetails = await artistRepositories.artistDetails({ id: artistID, is_active: 1 }, { user_id: userID });
-            if (artistDetails.is_followed == "") artistDetails.is_followed == {};
+            if (artistDetails.is_followed == "") artistDetails.is_followed = {};
             let artistSongs = await songRepository.findAndCountAll(where, data);
             let albumsList = await albumRepository.findAll({ artist_id: artistID, is_active: 1 }, 6)
             let totalPages = Math.ceil(artistSongs.count.length / 20);
