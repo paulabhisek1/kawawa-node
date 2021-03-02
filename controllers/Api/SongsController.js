@@ -144,7 +144,7 @@ module.exports.allRecentlyPlayed = (req, res) => {
             let where = {};
             let data = {};
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
-            data.limit = 10;
+            data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
             where.user_id = userID;
@@ -155,10 +155,11 @@ module.exports.allRecentlyPlayed = (req, res) => {
             allRecentlyPlayed.rows.forEach((item, index) => {
                 newAllRecentlyPlayed.push(item.song_details);
             });
-
+            let totalPages = Math.ceil(allRecentlyPlayed.count.length/20);
             let dataResp = {
                 recently_played: newAllRecentlyPlayed,
-                total_count: allRecentlyPlayed.count.length
+                total_count: allRecentlyPlayed.count.length,
+                total_page: totalPages
             }
 
             return res.send({
@@ -197,7 +198,7 @@ module.exports.allRecommend = (req, res) => {
             let where = {};
             let data = {};
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
-            data.limit = 10;
+            data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
             where.user_id = userID;
@@ -220,10 +221,11 @@ module.exports.allRecommend = (req, res) => {
             ];
             where.is_active = 1;
             let recommendedSongsData = await songRepository.recommendedSongsPaginate(where, data);
-
+            let totalPages = Math.ceil(recommendedSongsData.count.length/20);
             let dataResp = {
                 allrecommend: recommendedSongsData.rows,
-                total_count: recommendedSongsData.count.length
+                total_count: recommendedSongsData.count.length,
+                total_page: totalPages
             }
 
             return res.send({
@@ -268,7 +270,6 @@ module.exports.allWeeklyTop = (req, res) => {
             where.is_active = 1;
             data.user_id = userID;
             let allweeklytop = await songRepository.weeklyTopTenPaginate(where, data);
-
             let dataResp = {
                 allweeklytop: allweeklytop,
                 // total_count: allweeklytop.count.length
@@ -310,16 +311,17 @@ module.exports.allArtist = (req, res) => {
             let where = {};
             let data = {};
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
-            data.limit = 10;
+            data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
             data.user_id = userID;
             where.is_active = 1;
             let allartist = await artistRepositories.artistListPaginate(where, data);
-
+            let totalPages = Math.ceil(allartist.count.length/20);
             let dataResp = {
                 allartist: allartist.rows,
-                total_count: allartist.count.length
+                total_count: allartist.count.length,
+                total_page: totalPages
             }
 
             return res.send({
@@ -358,17 +360,18 @@ module.exports.allFreeSongs = (req, res) => {
             let where = {};
             let data = {};
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
-            data.limit = 10;
+            data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
             where.is_active = 1;
             where.is_paid = 0;
             data.user_id = userID;
             let allfreesongs = await songRepository.freeSongsPaginate(where, data);
-
+            let totalPages = Math.ceil(allfreesongs.count.length/20);
             let dataResp = {
                 allfreesongs: allfreesongs.rows,
-                total_count: allfreesongs.count.length
+                total_count: allfreesongs.count.length,
+                total_page: totalPages
             }
 
             return res.send({
@@ -472,7 +475,7 @@ module.exports.artistWiseTrack = (req, res) => {
             let where = {};
             let data = {};
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
-            data.limit = 10;
+            data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let artistID = queryParam.artist_id;
             where.is_active = 1;
@@ -483,14 +486,15 @@ module.exports.artistWiseTrack = (req, res) => {
             let artistDetails = await artistRepositories.artistDetails({ id: artistID, is_active: 1 }, { user_id: userID });
             let artistSongs = await songRepository.findAndCountAll(where, data);
             let albumsList = await albumRepository.findAll({ artist_id: artistID, is_active: 1 }, 6)
-
+            let totalPages = Math.ceil(artistSongs.count.length/20);
             let dataResp = {
                 artist_details: artistDetails,
                 artist_songs: {
                     songs: artistSongs.rows,
                     total_count: artistSongs.count.length
                 },
-                albums_list: albumsList
+                albums_list: albumsList,
+                total_page: totalPages
             }
 
             return res.send({
@@ -530,7 +534,7 @@ module.exports.albumWiseTrack = (req, res) => {
             let where = {};
             let data = {};
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
-            data.limit = 10;
+            data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let albumID = queryParam.album_id;
             where.is_active = 1;
@@ -538,10 +542,11 @@ module.exports.albumWiseTrack = (req, res) => {
             data.user_id = userID;
 
             let albumSongs = await songRepository.findAndCountAll(where, data);
-
+            let totalPages = Math.ceil(albumSongs.count.length/20);
             let dataResp = {
                 album_songs: albumSongs.rows,
-                total_count: albumSongs.count.length
+                total_count: albumSongs.count.length,
+                total_page: totalPages
             }
 
             return res.send({
@@ -581,7 +586,7 @@ module.exports.allAlbumsList = (req, res) => {
             let where = {};
             let data = {};
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
-            data.limit = 10;
+            data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let artistID = queryParam.artist_id;
             where.is_active = 1;
@@ -589,10 +594,11 @@ module.exports.allAlbumsList = (req, res) => {
             data.user_id = userID;
 
             let albumList = await albumRepository.findAndCountAll(where, data);
-
+            let totalPages = Math.ceil(albumList.count.length/20);
             let dataResp = {
                 all_albums: albumList.rows,
-                total_count: albumList.count.length
+                total_count: albumList.count.length,
+                total_page: totalPages
             }
 
             return res.send({
@@ -751,14 +757,16 @@ module.exports.playlistList = (req, res) => {
             let where = {};
             let data = {};
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
-            data.limit = 10;
+            data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             where.user_id = userID;
 
             let playlist = await playlistRepository.playlistList(where, data);
+            let totalPages = Math.ceil(playlist.count.length/20);
             let dataResp = {
                 playlist_list: playlist.rows,
-                total_count: playlist.count.length
+                total_count: playlist.count.length,
+                total_page: totalPages
             }
 
             return res.send({
@@ -799,7 +807,7 @@ module.exports.playlistSongs = (req, res) => {
             let where = {};
             let data = {};
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
-            data.limit = 10;
+            data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             data.user_id = userID;
 
@@ -808,9 +816,11 @@ module.exports.playlistSongs = (req, res) => {
             if (playlistCount > 0) {
                 where.id = playlistID;
                 let playlistSongs = await playlistRepository.playlistSongs(where, data);
+                let totalPages = Math.ceil(playlistSongs.count.length/20);
                 let dataResp = {
                     playlist_songs: playlistSongs.rows,
-                    total_count: playlistSongs.count.length
+                    total_count: playlistSongs.count.length,
+                    total_page: totalPages
                 }
 
                 return res.send({

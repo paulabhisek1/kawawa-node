@@ -19,25 +19,18 @@ const commonController = require('../controllers/Common/CommonController');
 
 
 // SET STORAGE FOR SONG
-var storageSong = multer.diskStorage({
+var storagePicture = multer.diskStorage({
     destination: function (req, file, cb) {
-        if(file.fieldname == 'song') {
-            const path = 'uploads/songs';
+            const path = 'uploads/profile_images';
             fs.mkdirSync(path, { recursive: true });
             cb(null, path);
-        }
-        if(file.fieldname == 'cover') {
-            const path = 'uploads/songs_cover';
-            fs.mkdirSync(path, { recursive: true });
-            cb(null, path);
-        }
     },
     filename: function (req, file, cb) {
             cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
     }
 })
 
-var uploadSong = multer({ storage: storageSong })
+var uploadProfilePicture = multer({ storage: storagePicture })
 
 router.post('/register', validateRequest.validate(artistValidationSchema.userRegisterSchema, 'body'), artistController.registerArtist); // User Registration Route
 router.post('/login', validateRequest.validate(artistValidationSchema.loginSchema, 'body'), artistController.artistLogin); // System Login Route
@@ -46,6 +39,8 @@ router.post('/forgot-password', validateRequest.validate(artistValidationSchema.
 router.post('/verify-otp', validateRequest.validate(artistValidationSchema.otpVerificationSchema, 'body'), artistController.verifyOTP); // OTP Verification Route
 router.post('/reset-password', validateRequest.validate(artistValidationSchema.resetPassSchema, 'body'), artistController.resetPassword); // Reset Password Route
 router.get('/countries', commonController.fetchCountries); // Fetch Countries
+router.post('/artist-details/upload-profile-picture', authenticationMiddleware.authenticateRequestAPI, uploadProfilePicture.single('file'), artistController.uploadArtistProfilePicture);
 router.post('/artist-details/step-one', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.artistDetailsStepOne, 'body'), artistController.saveArtistDetailsStepOne) // Save Artist Details Step One
+router.post('/artist-details/step-two', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.artistDetailsStepTwo, 'body'), artistController.saveArtistDeatislStepTwo) // Save Artist Details Step Two
 
 module.exports = router;

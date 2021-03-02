@@ -48,7 +48,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       currency: {
-        type: Sequelize.INTEGER
+        type: Sequelize.STRING
       },
       swift_code: {
         type: Sequelize.STRING

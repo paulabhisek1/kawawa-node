@@ -27,7 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     bank_state: DataTypes.STRING,
     bank_city: DataTypes.STRING,
     bank_zip: DataTypes.STRING,
-    currency: DataTypes.INTEGER,
+    currency: DataTypes.STRING,
     swift_code: DataTypes.STRING,
     govt_id_front: DataTypes.STRING,
     govt_id_back: DataTypes.STRING,

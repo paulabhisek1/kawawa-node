@@ -433,6 +433,33 @@ module.exports.resetPassword = (req, res) => {
     })()
 }
 
+module.exports.uploadArtistProfilePicture = (req, res) => {
+    (async()=>{
+        let purpose = "Upload Artist Profile Picture";
+        try{
+            console.log("FILE : ", req.file);
+            let filePath = `${global.constants.profile_photo_url}/${req.file.originalname}`; 
+            return res.status(200).send({
+                status: 200,
+                msg: responseMessages.artistProfilePictureUpdate,
+                data: {
+                    filePath: filePath
+                },
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("Upload Artist Profile Picture ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
 /*
 |------------------------------------------------ 
 | API name          :  saveArtistDetailsStepOne
