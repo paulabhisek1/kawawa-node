@@ -65,10 +65,12 @@ router.post('/forgot-password', validateRequest.validate(artistValidationSchema.
 router.post('/verify-otp', validateRequest.validate(artistValidationSchema.otpVerificationSchema, 'body'), artistController.verifyOTP); // OTP Verification Route
 router.post('/reset-password', validateRequest.validate(artistValidationSchema.resetPassSchema, 'body'), artistController.resetPassword); // Reset Password Route
 router.get('/countries', commonController.fetchCountries); // Fetch Countries
-router.post('/artist-details/upload-profile-picture', authenticationMiddleware.authenticateRequestAPI, uploadProfilePicture.single('file'), artistController.uploadArtistProfilePicture);
-router.post('/artist-details/upload-govt-id-front', authenticationMiddleware.authenticateRequestAPI, uploadGovtIDFront.single('file'), artistController.uploadArtistGovtIDFront);
-router.post('/artist-details/upload-govt-id-back', authenticationMiddleware.authenticateRequestAPI, uploadGovtIDBack.single('file'), artistController.uploadArtistGovtIDBack);
+router.post('/artist-details/upload-profile-picture', authenticationMiddleware.authenticateArtistRequestAPI, uploadProfilePicture.single('file'), artistController.uploadArtistProfilePicture);
+router.post('/artist-details/upload-govt-id-front', authenticationMiddleware.authenticateArtistRequestAPI, uploadGovtIDFront.single('file'), artistController.uploadArtistGovtIDFront);
+router.post('/artist-details/upload-govt-id-back', authenticationMiddleware.authenticateArtistRequestAPI, uploadGovtIDBack.single('file'), artistController.uploadArtistGovtIDBack);
 router.post('/artist-details/step-one', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.artistDetailsStepOne, 'body'), artistController.saveArtistDetailsStepOne) // Save Artist Details Step One
 router.post('/artist-details/step-two', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.artistDetailsStepTwo, 'body'), artistController.saveArtistDeatislStepTwo) // Save Artist Details Step Two
+router.post('/artist-details/step-three', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.artistDetailsStepThree, 'body'), artistController.saveArtistDeatislStepThree) // Save Artist Details Step Three
+router.get('/artist-details', authenticationMiddleware.authenticateArtistRequestAPI, artistController.fetchArtistDetails);
 
 module.exports = router;

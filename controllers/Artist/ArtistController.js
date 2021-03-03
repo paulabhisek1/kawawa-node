@@ -670,3 +670,117 @@ module.exports.saveArtistDeatislStepTwo = (req, res) => {
         }
     })()
 }
+
+/*
+|------------------------------------------------ 
+| API name          :  saveArtistDeatislStepThree
+| Response          :  Respective response message in JSON format
+| Logic             :  Save Artist Details Step Three
+| Request URL       :  BASE_URL/artist/artist-details/step-three
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.saveArtistDeatislStepThree = (req, res) => {
+    (async()=>{
+        let purpose = 'Save Artist Details Step Three';
+        try{
+            let artistID = req.headers.userID;
+            let artistCount = await artistRepositories.count({ id: artistID, is_active: 1 });
+
+            if(artistCount > 0) {
+                let body = req.body;
+                let updateData = {
+                    govt_id_front: body.govt_id_front,
+                    govt_id_back: body.govt_id_back,
+                }
+
+                let mainUpdateData = {
+                    profile_image: body.profile_image
+                }
+
+                await sequelize.transaction(async(t)=>{
+                    await artistRepositories.updateArtistDetails({ artist_id: artistID }, updateData, t);
+                    await artistRepositories.update({ id: artistID }, mainUpdateData, t);
+                })
+
+                let artistDetails = await artistRepositories.artistDetails({ id: artistID }, { user_id: artistID });
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.artistDetailsStepOne,
+                    data: {
+                        artist_details: artistDetails
+                    },
+                    purpose: purpose
+                })
+            }
+            else{
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.artistNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Save Artist Details Step Three ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  fetchArtistDetails
+| Response          :  Respective response message in JSON format
+| Logic             :  Save Artist Details Step Three
+| Request URL       :  BASE_URL/artist/artist-details
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.fetchArtistDetails = (req, res) => {
+    (async()=>{
+        let purpose = "Fetch Artist Details";
+        try{
+            let artistID = req.headers.userID;
+            let artistCount = await artistRepositories.count({ id: artistID, is_active: 1 });
+            if(artistCount > 0) {
+                let artistDetails = await artistRepositories.artistDetails({ id: artistID }, { user_id: artistID });
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.artistDetailsFetch,
+                    data: {
+                        artist_details: artistDetails
+                    },
+                    purpose: purpose
+                })
+            }
+            else{
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.artistNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Fetch Artist Details ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}

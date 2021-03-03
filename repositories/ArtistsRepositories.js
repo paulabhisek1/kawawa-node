@@ -8,6 +8,8 @@ const AlbumsModel = require('../models/albums')(sequelize, DataTypes);
 const FavouritesModel = require('../models/favourites')(sequelize, DataTypes);
 const FollowedArtistsModel = require('../models/followed_artists')(sequelize, DataTypes);
 const ArtistDetailsModel = require('../models/artist_details')(sequelize, DataTypes);
+const commonService = require('../helpers/commonFunctions');
+const _ = require('lodash');
 
 // Associations
 ArtistModel.belongsTo(CountryModel, { foreignKey: 'country_id' });

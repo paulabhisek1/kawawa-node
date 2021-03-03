@@ -61,7 +61,7 @@ module.exports.artistDetailsStepOne = Joi.object().keys({
     zip: Joi.string().required()
 });
 
-// Artist Details Step One Schema
+// Artist Details Step Two Schema
 module.exports.artistDetailsStepTwo = Joi.object().keys({
     account_holder_name: Joi.string().required(),
     account_number: Joi.string().required(),
@@ -72,4 +72,11 @@ module.exports.artistDetailsStepTwo = Joi.object().keys({
     bank_zip: Joi.string().required(),
     currency: Joi.string().required(),
     swift_code: Joi.string().required(),
+});
+
+// Artist Details Step Three Schema
+module.exports.artistDetailsStepThree = Joi.object().keys({
+    govt_id_front: Joi.string().required(),
+    govt_id_back: Joi.string().required(),
+    profile_image: Joi.string().required(),
 });

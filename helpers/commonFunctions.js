@@ -35,3 +35,25 @@ module.exports.sendMail = (messageData) => {
         });
     })
 }
+
+module.exports.nestedLoop = (obj) => {
+    return new Promise((resolve, reject) => {
+        const res = {};
+        function recurse(obj, current) {
+            for (const key in obj) {
+                let value = obj[key];
+                if(value != undefined) {
+                    if (value && typeof value === 'object') {
+                        recurse(value, key);
+                    } else {
+                          // Do your stuff here to var value
+                        if(value === null) value = {};  
+                        res[key] = value;
+                    }
+                }
+            }
+        }
+        recurse(obj);
+        resolve(res);
+    })
+}
