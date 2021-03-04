@@ -7,3 +7,15 @@ module.exports.loginSchema = Joi.object().keys({
     email: Joi.string().required(),
     password: Joi.string().required()
 });
+
+// Add Country Schema
+module.exports.addCountrySchema = Joi.object().keys({
+    name: Joi.string().required(),
+    country_code: Joi.string().required(),
+    telephone_code: Joi.number().required(),
+});
+
+// Add Country Schema
+module.exports.listCountrySchema = Joi.object().keys({
+    page: Joi.number().min(1).required(),
+});

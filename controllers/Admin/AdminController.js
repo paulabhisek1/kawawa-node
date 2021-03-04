@@ -94,3 +94,101 @@ module.exports.adminLogin = (req, res) => {
         }
     })()
 }
+
+/*
+|------------------------------------------------ 
+| API name          :  addCountry
+| Response          :  Respective response message in JSON format
+| Logic             :  Add Country
+| Request URL       :  BASE_URL/api/country-add
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.addCountry = (req, res) => {
+    (async()=>{
+        let purpose = "Add Country";
+        try{
+            let body = req.body;
+            let countryCount = await adminRepositories.countCountry({ country_code: body.country_code.toUpperCase() });
+
+            if(countryCount > 0) {
+                return res.status(409).send({
+                    status: 409,
+                    msg: responseMessages.duplicateCountry,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+            else{
+                let createData = {
+                    name: body.name,
+                    country_code: body.country_code.toUpperCase(),
+                    telephone_code: body.telephone_code
+                }
+
+                let countryDet = await adminRepositories.addCountry(createData);
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.countryAdd,
+                    data: countryDet,
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Add Country ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  listCountry
+| Response          :  Respective response message in JSON format
+| Logic             :  Fetch Country List
+| Request URL       :  BASE_URL/api/country-list
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.listCountry = (req, res) => {
+    (async()=>{
+        let purpose = "List Country";
+        try{
+            let queryParam = req.query;
+            let where = {};
+            let data = {};
+            let page = queryParam.page ? parseInt(queryParam.page) : 1;
+            data.limit = 20;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+
+            let countryList = await adminRepositories.listCountry(where, data);
+            let dataResp = {
+                country_list: countryList.rows,
+                total_count: countryList.count.length
+            }
+            return res.status(200).send({
+                status: 200,
+                msg: responseMessages.countryList,
+                data: dataResp,
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("List Country ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}

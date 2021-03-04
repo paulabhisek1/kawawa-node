@@ -42,4 +42,7 @@ module.exports = {
     artistProfilePictureUpdate: `Artist profile picture uploaded successfully`,
     artistGovtIDUpdate: `File uploaded successfully`,
     artistDetailsFetch: `Artist details fetched successfully`,
+    duplicateCountry: `This country is already added`,
+    countryAdd: `Country added successfully`,
+    countryList: `Country list fetched successfully`,
 }
