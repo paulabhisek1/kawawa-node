@@ -45,4 +45,11 @@ module.exports = {
     duplicateCountry: `This country is already added`,
     countryAdd: `Country added successfully`,
     countryList: `Country list fetched successfully`,
+    countryUpdate: `Country details updated successfully`,
+    countryNoyFound: `Country not found`,
+    duplicateGenre: `This genre is already added`,
+    genreAdd: `Genre added successfully`,
+    genreList: `Genre list fetched successfully`,
+    genreDelete: `Genre deleted successfully`,
+    genreNoyFound: `Genre not found`,
 }

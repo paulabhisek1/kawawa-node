@@ -15,6 +15,11 @@ module.exports.addCountrySchema = Joi.object().keys({
     telephone_code: Joi.number().required(),
 });
 
+// Add Genre Schema
+module.exports.addGenreSchema = Joi.object().keys({
+    name: Joi.string().required(),
+});
+
 // Add Country Schema
 module.exports.listCountrySchema = Joi.object().keys({
     page: Joi.number().min(1).required(),

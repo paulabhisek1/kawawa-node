@@ -36,7 +36,7 @@ const jwtOptionsRefresh = global.constants.jwtRefreshTokenOptions;
 | API name          :  userLogin
 | Response          :  Respective response message in JSON format
 | Logic             :  User Login
-| Request URL       :  BASE_URL/api/login
+| Request URL       :  BASE_URL/admin/login
 | Request method    :  POST
 | Author            :  Suman Rana
 |------------------------------------------------
@@ -100,7 +100,7 @@ module.exports.adminLogin = (req, res) => {
 | API name          :  addCountry
 | Response          :  Respective response message in JSON format
 | Logic             :  Add Country
-| Request URL       :  BASE_URL/api/country-add
+| Request URL       :  BASE_URL/admin/country-add
 | Request method    :  POST
 | Author            :  Suman Rana
 |------------------------------------------------
@@ -153,7 +153,7 @@ module.exports.addCountry = (req, res) => {
 | API name          :  listCountry
 | Response          :  Respective response message in JSON format
 | Logic             :  Fetch Country List
-| Request URL       :  BASE_URL/api/country-list
+| Request URL       :  BASE_URL/admin/country-list
 | Request method    :  GET
 | Author            :  Suman Rana
 |------------------------------------------------
@@ -183,6 +183,211 @@ module.exports.listCountry = (req, res) => {
         }
         catch(err) {
             console.log("List Country ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  statusChangeCountry
+| Response          :  Respective response message in JSON format
+| Logic             :  Country Status Change
+| Request URL       :  BASE_URL/admin/country-status-change/<< Country ID >>
+| Request method    :  PUT
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.statusChangeCountry = (req, res) => {
+    (async()=>{
+        let purpose = "Country Status Change";
+        try{
+            let countryID = req.params.id;
+
+            let countryDetails = await adminRepositories.fetchCountry({ id: countryID });
+
+            if(countryDetails) {
+                let updateData = {};
+                if(countryDetails.is_active == 1)  updateData.is_active = 0;
+                else updateData.is_active = 1;
+
+                await adminRepositories.updateCountry({ id: countryID }, updateData);
+
+                let respData = await adminRepositories.fetchCountry({ id: countryID });
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.countryUpdate,
+                    data: {
+                        country_details: respData
+                    },
+                    purpose: purpose
+                })
+
+            }
+            else{
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.countryNoyFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Country Status Change ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  addGenre
+| Response          :  Respective response message in JSON format
+| Logic             :  Add Genre
+| Request URL       :  BASE_URL/admin/genre-add
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.addGenre = (req, res) => {
+    (async()=>{
+        let purpose = "Add Genre";
+        try{
+            let body = req.body;
+            let genreCount = await adminRepositories.countGenre({ name: body.name });
+
+            if(genreCount > 0) {
+                return res.status(409).send({
+                    status: 409,
+                    msg: responseMessages.duplicateGenre,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+            else{
+                let createData = {
+                    name: body.name,
+                }
+
+                let genreDet = await adminRepositories.addGenre(createData);
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.genreAdd,
+                    data: genreDet,
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Add Genre ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  listGenre
+| Response          :  Respective response message in JSON format
+| Logic             :  Fetch Genre List
+| Request URL       :  BASE_URL/admin/genre-list
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.listGenre = (req, res) => {
+    (async()=>{
+        let purpose = "List Genre";
+        try{
+            let queryParam = req.query;
+            let where = {};
+            let data = {};
+            let page = queryParam.page ? parseInt(queryParam.page) : 1;
+            data.limit = 20;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+
+            let genreList = await adminRepositories.listGenre(where, data);
+            let dataResp = {
+                genre_list: genreList.rows,
+                total_count: genreList.count.length
+            }
+            return res.status(200).send({
+                status: 200,
+                msg: responseMessages.genreList,
+                data: dataResp,
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("List Genre ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  deleteGenre
+| Response          :  Respective response message in JSON format
+| Logic             :  Delete Genre
+| Request URL       :  BASE_URL/admin/delete-genre/<< Genre ID >>
+| Request method    :  DELETE
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.deleteGenre = (req, res) => {
+    (async()=>{
+        let purpose = "Delete Genre";
+        try{
+            let genreID = req.params.id;
+
+            let genreCount = await adminRepositories.countGenre({ id: genreID });
+
+            if(genreCount > 0) {
+                await adminRepositories.deleteGenre({ id: genreID })
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.genreDelete,
+                    data: {},
+                    purpose: purpose
+                })
+
+            }
+            else{
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.genreNoyFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Delete Genre ERROR : ", err);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,
