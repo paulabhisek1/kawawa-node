@@ -169,6 +169,10 @@ module.exports.listCountry = (req, res) => {
             data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
 
+            if(queryParam.search) {
+                where.name = { $like: `%${queryParam.search}%` };
+            }
+
             let countryList = await adminRepositories.listCountry(where, data);
             let dataResp = {
                 country_list: countryList.rows,
@@ -323,6 +327,10 @@ module.exports.listGenre = (req, res) => {
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
             data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
+            
+            if(queryParam.search) {
+                where.name = { $like: `%${queryParam.search}%` };
+            }
 
             let genreList = await adminRepositories.listGenre(where, data);
             let dataResp = {
