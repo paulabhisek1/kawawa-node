@@ -18,7 +18,7 @@ module.exports.authenticateRequestAPI = async (req, res, next) => {
                 if (err) {
                     return res.json({
                         status: 401,
-                        message: responseMessages.authFailure,
+                        msg: responseMessages.authFailure,
                     })
                 }
                 else {
@@ -31,7 +31,7 @@ module.exports.authenticateRequestAPI = async (req, res, next) => {
                     else{
                         return res.json({
                             status: 401,
-                            message: responseMessages.authFailure,
+                            msg: responseMessages.authFailure,
                         })
                     }
                 }
@@ -40,7 +40,7 @@ module.exports.authenticateRequestAPI = async (req, res, next) => {
         else {
             return res.json({
                 status: 401,
-                message: responseMessages.authRequired
+                msg: responseMessages.authRequired
             })
         }
     }
@@ -62,7 +62,7 @@ module.exports.authenticateArtistRequestAPI = async (req, res, next) => {
                 if (err) {
                     return res.json({
                         status: 401,
-                        message: responseMessages.authFailure,
+                        msg: responseMessages.authFailure,
                     })
                 }
                 else {
@@ -75,7 +75,7 @@ module.exports.authenticateArtistRequestAPI = async (req, res, next) => {
                     else{
                         return res.json({
                             status: 401,
-                            message: responseMessages.authFailure,
+                            msg: responseMessages.authFailure,
                         })
                     }
                 }
@@ -84,7 +84,7 @@ module.exports.authenticateArtistRequestAPI = async (req, res, next) => {
         else {
             return res.json({
                 status: 401,
-                message: responseMessages.authRequired
+                msg: responseMessages.authRequired
             })
         }
     }
@@ -92,7 +92,7 @@ module.exports.authenticateArtistRequestAPI = async (req, res, next) => {
         console.log("Artist Middleware Error : ", e);
         res.json({
             status: 500,
-            message: responseMessages.serverError,
+            msg: responseMessages.serverError,
         })
     }
 }
@@ -106,7 +106,7 @@ module.exports.authenticateAdminRequestAPI = async (req, res, next) => {
                 if (err) {
                     return res.json({
                         status: 401,
-                        message: responseMessages.authFailure,
+                        msg: responseMessages.authFailure,
                     })
                 }
                 else {
@@ -119,7 +119,7 @@ module.exports.authenticateAdminRequestAPI = async (req, res, next) => {
                     else{
                         return res.json({
                             status: 401,
-                            message: responseMessages.authFailure,
+                            msg: responseMessages.authFailure,
                         })
                     }
                 }
@@ -128,7 +128,7 @@ module.exports.authenticateAdminRequestAPI = async (req, res, next) => {
         else {
             return res.json({
                 status: 401,
-                message: responseMessages.authRequired
+                msg: responseMessages.authRequired
             })
         }
     }
@@ -136,7 +136,7 @@ module.exports.authenticateAdminRequestAPI = async (req, res, next) => {
         console.log("Artist Middleware Error : ", e);
         res.json({
             status: 500,
-            message: responseMessages.serverError,
+            msg: responseMessages.serverError,
         })
     }
 }
