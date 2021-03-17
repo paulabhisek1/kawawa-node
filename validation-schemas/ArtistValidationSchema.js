@@ -65,6 +65,8 @@ module.exports.artistDetailsStepOne = Joi.object().keys({
 module.exports.artistDetailsStepTwo = Joi.object().keys({
     account_holder_name: Joi.string().required(),
     account_number: Joi.string().required(),
+    routing_no: Joi.string().required(),
+    branch_address: Joi.string().required(),
     branch_name: Joi.string().required(),
     bank_country: Joi.number().required(),
     bank_state: Joi.string().required(),
@@ -79,4 +81,13 @@ module.exports.artistDetailsStepThree = Joi.object().keys({
     govt_id_front: Joi.string().required(),
     govt_id_back: Joi.string().required(),
     profile_image: Joi.string().required(),
+});
+
+// Artist Details Step Four Schema
+module.exports.artistDetailsStepFour = Joi.object().keys({
+    sample_song_name: Joi.string().required(),
+    sample_song_path: Joi.string().required(),
+    sample_song_type: Joi.number().required(),
+    sample_song_album: Joi.number().required().allow('', null),
+    sample_song_description: Joi.string().required().allow('', null),
 });

@@ -19,6 +19,8 @@ SongsModel.belongsTo(AlbumsModel, { foreignKey: 'album_id', as: 'album_details' 
 SongsModel.hasOne(FavouritesModel, { foreignKey: 'file_id', as: 'is_favourite' });
 ArtistModel.hasOne(FollowedArtistsModel, { foreignKey: 'artist_id', as: 'is_followed' });
 ArtistModel.hasOne(ArtistDetailsModel, { foreignKey: 'artist_id', as: 'artist_account_details' });
+ArtistDetailsModel.belongsTo(GenresModel, { foreignKey: 'sample_song_type', as: 'sample_song_type_details' });
+ArtistDetailsModel.belongsTo(AlbumsModel, { foreignKey: 'sample_song_album', as: 'sample_song_album_details' });
 
 
 // Count
@@ -66,6 +68,16 @@ module.exports.artistDetails = (whereData, data) => {
                 {
                     model: ArtistDetailsModel,
                     as: 'artist_account_details',
+                    include: [
+                        {
+                            model: GenresModel,
+                            as: 'sample_song_type_details'
+                        },
+                        {
+                            model: AlbumsModel,
+                            as: 'sample_song_album_details'
+                        }
+                    ],
                     required: false
                 }
             ]
@@ -120,6 +132,22 @@ module.exports.deleteArtistDetails = (where, t = null) => {
             //if trunsaction exist
         if (t != null) options.transaction = t;
         ArtistDetailsModel.destroy(options).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
+
+// Count Artist Details
+module.exports.countArtistDetails = (where, t = null) => {
+    return new Promise((resolve, reject) => {
+        let options = {
+                where: where
+            }
+            //if trunsaction exist
+        if (t != null) options.transaction = t;
+        ArtistDetailsModel.count(options).then((result) => {
             resolve(result)
         }).catch((err) => {
             reject(err);

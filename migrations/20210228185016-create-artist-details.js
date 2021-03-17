@@ -32,6 +32,12 @@ module.exports = {
       account_number: {
         type: Sequelize.STRING
       },
+      routing_no: {
+        type: Sequelize.STRING
+      },
+      branch_address: {
+        type: Sequelize.STRING
+      },
       branch_name: {
         type: Sequelize.STRING
       },
@@ -57,6 +63,21 @@ module.exports = {
         type: Sequelize.STRING
       },
       govt_id_back: {
+        type: Sequelize.STRING
+      },
+      sample_song_name: {
+        type: Sequelize.STRING
+      },
+      sample_song_path: {
+        type: Sequelize.STRING
+      },
+      sample_song_type: {
+        type: Sequelize.INTEGER
+      },
+      sample_song_album: {
+        type: Sequelize.INTEGER
+      },
+      sample_song_description: {
         type: Sequelize.STRING
       },
       createdAt: {

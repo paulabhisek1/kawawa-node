@@ -12,6 +12,8 @@
 
 // ################################ Repositories ################################ //
 const artistRepositories = require('../../repositories/ArtistsRepositories');
+const genresRepositories = require('../../repositories/GenresRepositories');
+const albumRepositories = require('../../repositories/AlbumRepositories');
 
 // ################################ Sequelize ################################ //
 const sequelize = require('../../config/dbConfig').sequelize;
@@ -543,6 +545,42 @@ module.exports.uploadArtistGovtIDBack = (req, res) => {
 
 /*
 |------------------------------------------------ 
+| API name          :  uploadSampleSong
+| Response          :  Respective response message in JSON format
+| Logic             :  Upload Sample Song
+| Request URL       :  BASE_URL/artist/artist-details/upload-sample-song
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.uploadSampleSong = (req, res) => {
+    (async()=>{
+        let purpose = "Upload Sample Song";
+        try{
+            let filePath = `${global.constants.sample_songs_url}/${req.file.filename}`; 
+            return res.status(200).send({
+                status: 200,
+                msg: responseMessages.sampleSong,
+                data: {
+                    filePath: filePath
+                },
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("Upload Sample Song : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
 | API name          :  saveArtistDetailsStepOne
 | Response          :  Respective response message in JSON format
 | Logic             :  Save Artist Details Step One
@@ -561,7 +599,8 @@ module.exports.saveArtistDetailsStepOne = (req, res) => {
             if(artistCount > 0) {
                 let body = req.body;
                 await sequelize.transaction(async(t)=>{
-                    await artistRepositories.deleteArtistDetails({ artist_id: artistID }, t);
+                    // await artistRepositories.deleteArtistDetails({ artist_id: artistID }, t);
+                    let artistDetailsCount = await artistRepositories.countArtistDetails({ artist_id: artistID }, t);
 
                     let createData = {
                         artist_id: artistID,
@@ -571,7 +610,13 @@ module.exports.saveArtistDetailsStepOne = (req, res) => {
                         state: body.state,
                         zip: body.zip
                     }
-                    await artistRepositories.createArtistDetails(createData, t);
+
+                    if(artistDetailsCount > 0) {
+                        await artistRepositories.updateArtistDetails({ artist_id: artistID }, createData, t);
+                    }
+                    else{
+                        await artistRepositories.createArtistDetails(createData, t);
+                    }
                 });
 
                 let artistDetails = await artistRepositories.artistDetails({ id: artistID }, { user_id: artistID });
@@ -628,6 +673,8 @@ module.exports.saveArtistDeatislStepTwo = (req, res) => {
                 let updateData = {
                     account_holder_name: body.account_holder_name,
                     account_number: body.account_number,
+                    routing_no: body.routing_no,
+                    branch_address: body.branch_address,
                     branch_name: body.branch_name,
                     bank_country: body.bank_country,
                     bank_state: body.bank_state,
@@ -738,6 +785,69 @@ module.exports.saveArtistDeatislStepThree = (req, res) => {
 
 /*
 |------------------------------------------------ 
+| API name          :  saveArtistDeatislStepFour
+| Response          :  Respective response message in JSON format
+| Logic             :  Save Artist Details Step Four
+| Request URL       :  BASE_URL/artist/artist-details/step-four
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.saveArtistDeatislStepFour = (req, res) => {
+    (async()=>{
+        let purpose = 'Save Artist Details Step Four';
+        try{
+            let artistID = req.headers.userID;
+            let artistCount = await artistRepositories.count({ id: artistID, is_active: 1 });
+
+            if(artistCount > 0) {
+                let body = req.body;
+                let updateData = {
+                    sample_song_name: body.sample_song_name,
+                    sample_song_path: body.sample_song_path,
+                    sample_song_type: body.sample_song_type,
+                    sample_song_album: body.sample_song_album ? body.sample_song_album : null,
+                    sample_song_description: body.sample_song_description,
+                }
+
+                await sequelize.transaction(async(t)=>{
+                    await artistRepositories.updateArtistDetails({ artist_id: artistID }, updateData, t);
+                })
+
+                let artistDetails = await artistRepositories.artistDetails({ id: artistID }, { user_id: artistID });
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.artistDetailsStepOne,
+                    data: {
+                        artist_details: artistDetails
+                    },
+                    purpose: purpose
+                })
+            }
+            else{
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.artistNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Save Artist Details Step Three ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
 | API name          :  fetchArtistDetails
 | Response          :  Respective response message in JSON format
 | Logic             :  Save Artist Details Step Three
@@ -775,6 +885,46 @@ module.exports.fetchArtistDetails = (req, res) => {
         }
         catch(err) {
             console.log("Fetch Artist Details ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  fetchCommonDetails
+| Response          :  Respective response message in JSON format
+| Logic             :  Fetch Common Details
+| Request URL       :  BASE_URL/artist/common-details
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.fetchCommonDetails = (req, res) => {
+    (async()=>{
+        let purpose = "Fetch Common Details";
+        try{
+            let artistID = req.headers.userID;
+            let genres = await genresRepositories.findAll({});
+            let albums = await albumRepositories.findAll({ artist_id: artistID }, { limit: null })
+
+            return res.status(200).send({
+                status: 200,
+                msg: responseMessages.commonDetails,
+                data: {
+                    genres: genres,
+                    albums: albums
+                },
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("Fetch Common Details ERROR : ", err);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,

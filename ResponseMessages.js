@@ -41,6 +41,7 @@ module.exports = {
     artistDetailsStepOne: `Artist details updated successfully`,
     artistProfilePictureUpdate: `Artist profile picture uploaded successfully`,
     artistGovtIDUpdate: `File uploaded successfully`,
+    sampleSong: `Sample song uploaded successfully`,
     artistDetailsFetch: `Artist details fetched successfully`,
     duplicateCountry: `This country is already added`,
     countryAdd: `Country added successfully`,
@@ -52,4 +53,5 @@ module.exports = {
     genreList: `Genre list fetched successfully`,
     genreDelete: `Genre deleted successfully`,
     genreNoyFound: `Genre not found`,
+    commonDetails: `Common details fetched successfully`,
 }

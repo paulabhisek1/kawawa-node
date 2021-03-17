@@ -2,6 +2,7 @@ module.exports = {
     allowMimeType: ['image/jpeg', 'image/png', 'application/pdf','video/mp4', 'image/svg'],
     profile_photo_url: '/uploads/profile_images',
     govt_id_url: '/uploads/govt_ids',
+    sample_songs_url: '/uploads/songs/sample',
     jwtAccessTokenOptions: {
         secret: 'KawawaMusicApp#@2021',
         options: {
