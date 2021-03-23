@@ -80,6 +80,7 @@ if ((process.env.ENVIRONMENT == 'development_no') && fs.existsSync(process.env.S
 const io = require('socket.io')(server);
 io.on('connection', (socket) => { 
   console.log("Socket is Connected...");
+  socketFunc.socketResponse(socket);
 });
 
 

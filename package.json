@@ -34,7 +34,7 @@
     "nodemailer": "^6.4.17",
     "os": "^0.1.1",
     "sequelize": "^6.5.0",
-    "socket.io": "^4.0.0"
+    "socket.io": "^2.1.1"
   },
   "devDependencies": {
     "sequelize-cli": "^6.2.0"

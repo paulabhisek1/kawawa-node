@@ -154,3 +154,47 @@ module.exports.recentlyPlayedAllData = (where, data) => {
         })
     })
 }
+
+// Count
+module.exports.findOne = (whereData) => {
+    return new Promise((resolve, reject) => {
+        PlayedHistoryModel.findOne({
+            where: whereData,
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
+// Delete
+module.exports.destroy = (where, t = null) => {
+    return new Promise((resolve, reject) => {
+        let options = {
+                where: where
+            }
+            //if trunsaction exist
+        if (t != null) options.transaction = t;
+        PlayedHistoryModel.destroy(options).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
+
+// Create
+module.exports.create = (data, t = null) => {
+    return new Promise((resolve, reject) => {
+        let options = {}
+            //if trunsaction exist
+        if (t != null) options.transaction = t;
+        PlayedHistoryModel.create(data).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
