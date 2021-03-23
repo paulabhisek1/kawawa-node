@@ -20,56 +20,56 @@ const commonController = require('../controllers/Common/CommonController');
 
 // SET STORAGE FOR PROFILE PICTURE
 var storagePicture = multer.diskStorage({
-    destination: function (req, file, cb) {
-            const path = 'uploads/profile_images';
-            fs.mkdirSync(path, { recursive: true });
-            cb(null, path);
+    destination: function(req, file, cb) {
+        const path = 'uploads/profile_images';
+        fs.mkdirSync(path, { recursive: true });
+        cb(null, path);
     },
-    filename: function (req, file, cb) {
-            cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+    filename: function(req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
     }
 })
 
 // SET STORAGE FOR GOVT ID FRONT
 var storagePictureGovtIDFront = multer.diskStorage({
-        destination: function (req, file, cb) {
-                const path = 'uploads/govt_ids';
-                fs.mkdirSync(path, { recursive: true });
-                cb(null, path);
-        },
-        filename: function (req, file, cb) {
-                cb(null, file.fieldname + '-' + Date.now() + '_front' + path.extname(file.originalname))
-        }
+    destination: function(req, file, cb) {
+        const path = 'uploads/govt_ids';
+        fs.mkdirSync(path, { recursive: true });
+        cb(null, path);
+    },
+    filename: function(req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + '_front' + path.extname(file.originalname))
+    }
 })
 
 // SET STORAGE FOR GOVT ID BACK
 var storagePictureGovtIDBack = multer.diskStorage({
-        destination: function (req, file, cb) {
-                const path = 'uploads/govt_ids';
-                fs.mkdirSync(path, { recursive: true });
-                cb(null, path);
-        },
-        filename: function (req, file, cb) {
-                cb(null, file.fieldname + '-' + Date.now() + '_back' + path.extname(file.originalname))
-        }
+    destination: function(req, file, cb) {
+        const path = 'uploads/govt_ids';
+        fs.mkdirSync(path, { recursive: true });
+        cb(null, path);
+    },
+    filename: function(req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + '_back' + path.extname(file.originalname))
+    }
 })
 
 // SET STORAGE FOR SAMPLE SONG
-var storagePictureGovtIDBack = multer.diskStorage({
-        destination: function (req, file, cb) {
-                const path = 'uploads/songs/sample';
-                fs.mkdirSync(path, { recursive: true });
-                cb(null, path);
-        },
-        filename: function (req, file, cb) {
-                cb(null, 'sample_' + Date.now() + path.extname(file.originalname))
-        }
+var storageSampleSong = multer.diskStorage({
+    destination: function(req, file, cb) {
+        const path = 'uploads/songs/sample';
+        fs.mkdirSync(path, { recursive: true });
+        cb(null, path);
+    },
+    filename: function(req, file, cb) {
+        cb(null, 'sample_' + Date.now() + path.extname(file.originalname))
+    }
 })
 
 var uploadProfilePicture = multer({ storage: storagePicture });
 var uploadGovtIDFront = multer({ storage: storagePictureGovtIDFront });
 var uploadGovtIDBack = multer({ storage: storagePictureGovtIDBack });
-var uploadSampleSong = multer({ storage: storagePictureGovtIDBack });
+var uploadSampleSong = multer({ storage: storageSampleSong });
 
 router.post('/register', validateRequest.validate(artistValidationSchema.userRegisterSchema, 'body'), artistController.registerArtist); // User Registration Route
 router.post('/login', validateRequest.validate(artistValidationSchema.loginSchema, 'body'), artistController.artistLogin); // System Login Route
