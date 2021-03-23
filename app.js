@@ -54,6 +54,7 @@ require(global.appPath + '/helpers/events')(app)
 var apiRouter = require('./routes/apiRoutes');
 var adminRoutes = require('./routes/adminRoutes');
 var artistRoutes = require('./routes/artistRoutes');
+var socketFunc = require('./helpers/socketFunctions');
 
 /**
  * Get port from environment and store in Express.
@@ -65,7 +66,6 @@ app.set('port', port);
  * Create HTTP / HTTPS server.
  */
 if ((process.env.ENVIRONMENT == 'development_no') && fs.existsSync(process.env.SSL_PRIVATE_KEY)) {
-    console.log("HTTPS SERVER");
     var options = {
         key: fs.readFileSync(process.env.SSL_PRIVATE_KEY),
         cert: fs.readFileSync(process.env.SSL_CERT_KEY),
@@ -73,9 +73,14 @@ if ((process.env.ENVIRONMENT == 'development_no') && fs.existsSync(process.env.S
     };
     var server = require('https').createServer(options, app);
 } else {
-    console.log("HTTP SERVER");
     var server = require('http').createServer(app); // Create HTTP Server
 }
+
+// Socket Configuration
+const io = require('socket.io')(server);
+io.on('connection', (socket) => { 
+  console.log("Socket is Connected...");
+});
 
 
 
@@ -104,12 +109,6 @@ app.use(InterceptorForAllResponse);
 app.use('/api', apiRouter); // API Routes
 app.use('/admin', adminRoutes); // ADMIN Routes
 app.use('/artist', artistRoutes); // ARTIST Routes
-app.use('/', function(req, res) {
-    res.send({
-        "status": 200,
-        "message": "App Running Successfully"
-    });
-}); // Root Route (FOR TESTING)
 //------------------------------------------- ROUTES ----------------------------------------------//
 
 // catch 404 and forward to error handler

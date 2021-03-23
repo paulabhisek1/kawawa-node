@@ -33,7 +33,8 @@
     "mysql2": "^2.2.5",
     "nodemailer": "^6.4.17",
     "os": "^0.1.1",
-    "sequelize": "^6.5.0"
+    "sequelize": "^6.5.0",
+    "socket.io": "^4.0.0"
   },
   "devDependencies": {
     "sequelize-cli": "^6.2.0"
