@@ -26,6 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     genre_id: DataTypes.INTEGER,
     is_active: DataTypes.INTEGER,
     price: DataTypes.INTEGER,
+    playedCount: DataTypes.INTEGER,
     type: DataTypes.STRING
   }, {
     sequelize,

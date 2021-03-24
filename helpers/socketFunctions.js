@@ -68,4 +68,59 @@ module.exports.socketResponse = (socket) => {
             })
         }
     })
+
+    // Update Song Played Count
+    socket.on('song-played', async (data, callback)=>{
+        let songID = data.songID;
+        let accessToken = data.accessToken;
+        try{
+            jwt.verify(accessToken, jwtOptionsAccess.secret, async (err, decodedToken) => {
+                if (err) {
+                    callback({
+                        status: 0,
+                        msg: responseMessages.authFailure,
+                    }) 
+                }
+                else {
+                    let userCount = await userRepositories.count({ where: { id: decodedToken.user_id } });
+                    
+                    if(userCount > 0) {
+                        let songDet = await songRepositories.findOne({ id: songID, is_active: 1 });
+    
+                        if(songDet) {
+                            let updateData = {};
+                            if(songDet.playedCount) updateData.playedCount = songDet.playedCount + 1;
+                            else updateData.playedCount = 1;
+
+                            await songRepositories.update({ id: songID }, updateData)
+    
+                            callback({
+                                status: 1,
+                                msg: `Song Played Count Updated`,
+                            })
+                        }
+                        else{
+                            callback({
+                                status: 0,
+                                msg: `Invalid Song ID Provided`,
+                            })
+                        }
+                    }
+                    else{
+                        callback({
+                            status: 0,
+                            msg: responseMessages.authFailure,
+                        })
+                    }
+                }
+            })
+        }
+        catch(err) {
+            console.log("ERR : ", err);
+            callback({
+                status: 0,
+                msg: responseMessages.serverError,
+            })
+        }
+    })
 }

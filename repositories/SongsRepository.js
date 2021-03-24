@@ -470,3 +470,19 @@ module.exports.favouriteFindDetails = (where) => {
             });
     })
 }
+
+// Update
+module.exports.update = (where, data, t = null) => {
+    return new Promise((resolve, reject) => {
+        let options = {
+            where: where
+        }
+            //if trunsaction exist
+        if (t != null) options.transaction = t;
+        SongsModel.update(data, options).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
