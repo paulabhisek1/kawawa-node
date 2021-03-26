@@ -168,6 +168,14 @@ module.exports.listCountry = (req, res) => {
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
             data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
+            data.order = [];
+
+            if(queryParam.sortKey && queryParam.sortType) {
+                data.order = [[queryParam.sortKey, queryParam.sortType.toUpperCase()]];
+            }
+            else{
+                data.order = [ ['is_active','DESC'], ['id', 'DESC'] ]
+            }
 
             if(queryParam.search) {
                 where.name = { $like: `%${queryParam.search}%` };

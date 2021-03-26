@@ -54,3 +54,42 @@ module.exports.fetchCountries = (req, res) => {
         }
     })()
 }
+
+/*
+|------------------------------------------------ 
+| API name          :  fetchActiveCountries
+| Response          :  Respective response message in JSON format
+| Logic             :  Fetch Active Countries
+| Request URL       :  BASE_URL/api/active-countries
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.fetchActiveCountries = (req, res) => {
+    (async() => {
+        let purpose = "Fetch Active Countries";
+        try {
+            let whereData = { is_active: 1 };
+            let countriesData = await countryRepository.findAll(whereData);
+
+            let data = {
+                countries: countriesData
+            }
+
+            return res.send({
+                status: 200,
+                msg: responseMessages.countryFetch,
+                data: data,
+                purpose: purpose
+            })
+        } catch (e) {
+            console.log("Fetch Active Countries Error : ", e);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}

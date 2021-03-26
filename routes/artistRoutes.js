@@ -78,6 +78,7 @@ router.post('/forgot-password', validateRequest.validate(artistValidationSchema.
 router.post('/verify-otp', validateRequest.validate(artistValidationSchema.otpVerificationSchema, 'body'), artistController.verifyOTP); // OTP Verification Route
 router.post('/reset-password', validateRequest.validate(artistValidationSchema.resetPassSchema, 'body'), artistController.resetPassword); // Reset Password Route
 router.get('/countries', commonController.fetchCountries); // Fetch Countries
+router.get('/active-countries', commonController.fetchActiveCountries); // Fetch Active Countries
 router.post('/artist-details/upload-profile-picture', authenticationMiddleware.authenticateArtistRequestAPI, uploadProfilePicture.single('file'), artistController.uploadArtistProfilePicture); // Upload Artist Profile Picture
 router.post('/artist-details/upload-govt-id-front', authenticationMiddleware.authenticateArtistRequestAPI, uploadGovtIDFront.single('file'), artistController.uploadArtistGovtIDFront); // Upload Artist Govt ID Front
 router.post('/artist-details/upload-govt-id-back', authenticationMiddleware.authenticateArtistRequestAPI, uploadGovtIDBack.single('file'), artistController.uploadArtistGovtIDBack); // Upload Artist Govt ID Back

@@ -23,5 +23,7 @@ module.exports.addGenreSchema = Joi.object().keys({
 // Add Country Schema
 module.exports.listCountrySchema = Joi.object().keys({
     page: Joi.number().min(1).required(),
-    search: Joi.string().required().allow('', null)
+    search: Joi.string().required().allow('', null),
+    sortKey: Joi.string().required().allow('', null),
+    sortType: Joi.string().required().allow('', null),
 });

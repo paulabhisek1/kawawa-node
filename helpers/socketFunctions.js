@@ -10,7 +10,7 @@ module.exports.socketResponse = (socket) => {
     // Connection Tester
     socket.on('test-socket', (data)=>{
         console.log("Socket Configured Successfully...");
-    })
+    });
 
     // Save Song Details
     socket.on('user-played', async (data, callback)=>{
@@ -67,7 +67,7 @@ module.exports.socketResponse = (socket) => {
                 msg: responseMessages.serverError,
             })
         }
-    })
+    });
 
     // Update Song Played Count
     socket.on('song-played', async (data, callback)=>{
@@ -122,5 +122,5 @@ module.exports.socketResponse = (socket) => {
                 msg: responseMessages.serverError,
             })
         }
-    })
+    });
 }

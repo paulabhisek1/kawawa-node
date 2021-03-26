@@ -96,7 +96,7 @@ module.exports.listCountry = (whereData, data) => {
             limit: data.limit,
             offset: data.offset,
             group: ['id'],
-            order: [ ['is_active','DESC'], ['id', 'DESC']]
+            order: data.order
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
             resolve(result);
