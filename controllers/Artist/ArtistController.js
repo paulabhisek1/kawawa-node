@@ -152,7 +152,6 @@ module.exports.artistLogin = (req, res) => {
                 delete userData.otp;
                 delete userData.otp_expire_time;
                 delete userData.otp_status;
-                delete userData.is_active;
 
                 userData['access_token'] = accessToken;
                 userData['refresh_token'] = refreshToken;
