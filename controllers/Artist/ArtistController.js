@@ -138,7 +138,6 @@ module.exports.artistLogin = (req, res) => {
             let whereData = {
                 email: body.email,
                 password: md5(body.password),
-                is_active: 1
             }
             let userData = await artistRepositories.findOne(whereData);
 
@@ -290,7 +289,7 @@ module.exports.forgotPassword = (req, res) => {
         let purpose = "Forgot Password"
         try {
             let body = req.body;
-            let userDetails = await artistRepositories.findOne({ email: body.email, is_active: 1 });
+            let userDetails = await artistRepositories.findOne({ email: body.email });
 
             if (!userDetails) {
                 return res.status(404).send({
