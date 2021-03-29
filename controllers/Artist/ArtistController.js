@@ -740,13 +740,13 @@ module.exports.saveArtistDeatislStepThree = (req, res) => {
                     govt_id_back: body.govt_id_back,
                 }
 
-                let mainUpdateData = {
-                    profile_image: body.profile_image
-                }
+                // let mainUpdateData = {
+                //     profile_image: body.profile_image
+                // }
 
                 await sequelize.transaction(async(t)=>{
                     await artistRepositories.updateArtistDetails({ artist_id: artistID }, updateData, t);
-                    await artistRepositories.update({ id: artistID }, mainUpdateData, t);
+                    // await artistRepositories.update({ id: artistID }, mainUpdateData, t);
                 })
 
                 let artistDetails = await artistRepositories.artistDetails({ id: artistID }, { user_id: artistID });

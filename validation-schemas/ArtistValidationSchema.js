@@ -80,7 +80,6 @@ module.exports.artistDetailsStepTwo = Joi.object().keys({
 module.exports.artistDetailsStepThree = Joi.object().keys({
     govt_id_front: Joi.string().required(),
     govt_id_back: Joi.string().required(),
-    profile_image: Joi.string().required(),
 });
 
 // Artist Details Step Four Schema
