@@ -185,31 +185,30 @@ module.exports.socialLogin = (req, res) => {
             let body = req.body;
             let userDetails = await userRepositories.findOne({ email: body.email });
             if (userDetails) {
-                if(userDetails.login_type == body.login_type) {
+                if (userDetails.login_type == body.login_type) {
                     delete userDetails.password;
                     delete userDetails.login_type;
                     delete userDetails.otp;
                     delete userDetails.otp_expire_time;
                     delete userDetails.otp_status;
                     delete userDetails.is_active;
-    
+
                     // userDetails['country_id'] = {};
                     userDetails['Country'] = {};
-    
+
                     let accessToken = jwt.sign({ user_id: userDetails.id, email: userDetails.email }, jwtOptionsAccess.secret, jwtOptionsAccess.options);
                     let refreshToken = jwt.sign({ user_id: userDetails.id, email: userDetails.email }, jwtOptionsRefresh.secret, jwtOptionsRefresh.options);
-    
+
                     userDetails['access_token'] = accessToken;
                     userDetails['refresh_token'] = refreshToken;
-    
+
                     return res.send({
                         status: 200,
                         msg: responseMessages.loginSuccess,
                         data: userDetails,
                         purpose: purpose
                     })
-                }
-                else{
+                } else {
                     return res.send({
                         status: 409,
                         msg: responseMessages.duplicateEmail,
@@ -310,7 +309,7 @@ module.exports.forgotPassword = (req, res) => {
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding:60px 40px;text-align: left; background:#fff;">
                       <tr>
                         <th scope="col">
-                        <p style="font-size:17px; font-weight:500; color:#000; line-height:24px;">Hi,</p>
+                        <p style="font-size:17px; font-weight:500; color:#000; line-height:24px;">Hi ${userDetails.full_name},</p>
                         <p style="font-size:17px; font-weight:500; color:#000; line-height:24px; margin-top: 20px;">Please use the following code to authorize your device: <strong style="font-size:20px; color:#ff301e;"> ${otpValue}</strong></p>
                         <p style="font-size:17px; font-weight:500; color:#000; line-height:24px; margin-top: 20px;">If you don't recognize this activity, please <a href="#" style="color:#ff301e; margin:0 2px;">reset your password</a>
                           immediately. You can also reach us by responding to this email.</p>
@@ -469,14 +468,14 @@ module.exports.resetPassword = (req, res) => {
 |------------------------------------------------
 */
 module.exports.fetchUserDetails = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Fetch User Details";
-        try{
+        try {
             let userID = req.headers.userID;
 
             let userCount = await userRepositories.count({ id: userID, is_active: 1 });
 
-            if(userCount > 0) {
+            if (userCount > 0) {
                 let userDetails = await userRepositories.findOne({ id: userID });
                 delete userDetails.password;
                 delete userDetails.login_type;
@@ -493,8 +492,7 @@ module.exports.fetchUserDetails = (req, res) => {
                     },
                     purpose: purpose
                 })
-            }
-            else{
+            } else {
                 return res.send({
                     status: 500,
                     msg: responseMessages.userNotFound,
@@ -502,8 +500,7 @@ module.exports.fetchUserDetails = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Fetch User Details ERROR : ", e);
             return res.send({
                 status: 500,
@@ -526,14 +523,14 @@ module.exports.fetchUserDetails = (req, res) => {
 |------------------------------------------------
 */
 module.exports.updateUserName = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Update User Name";
-        try{
+        try {
             let userID = req.headers.userID;
 
             let userCount = await userRepositories.count({ id: userID, is_active: 1 });
 
-            if(userCount > 0) {
+            if (userCount > 0) {
                 await userRepositories.update({ id: userID }, { full_name: req.body.full_name });
                 let userDetails = await userRepositories.findOne({ id: userID });
                 delete userDetails.password;
@@ -551,8 +548,7 @@ module.exports.updateUserName = (req, res) => {
                     },
                     purpose: purpose
                 })
-            }
-            else{
+            } else {
                 return res.send({
                     status: 500,
                     msg: responseMessages.userNotFound,
@@ -560,8 +556,7 @@ module.exports.updateUserName = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Reset Password ERROR : ", e);
             return res.send({
                 status: 500,
@@ -584,14 +579,14 @@ module.exports.updateUserName = (req, res) => {
 |------------------------------------------------
 */
 module.exports.updateProfilePicture = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Update Profile Picture";
-        try{
+        try {
             let userID = req.headers.userID;
 
             let userCount = await userRepositories.count({ id: userID, is_active: 1 });
 
-            if(userCount > 0) {
+            if (userCount > 0) {
                 await userRepositories.update({ id: userID }, { profile_image: `${global.constants.profile_photo_url}/${req.file.filename}` });
                 let userDetails = await userRepositories.findOne({ id: userID });
                 delete userDetails.password;
@@ -609,8 +604,7 @@ module.exports.updateProfilePicture = (req, res) => {
                     },
                     purpose: purpose
                 })
-            }
-            else{
+            } else {
                 return res.send({
                     status: 500,
                     msg: responseMessages.userNotFound,
@@ -618,8 +612,7 @@ module.exports.updateProfilePicture = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Reset Password ERROR : ", e);
             return res.send({
                 status: 500,
