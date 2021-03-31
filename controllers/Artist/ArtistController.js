@@ -304,7 +304,7 @@ module.exports.forgotPassword = (req, res) => {
             if (updateData[0] == 1) {
                 let mailData = {
                     toEmail: userDetails.email,
-                    subject: 'Forgot Password',
+                    subject: 'We sent you an OTP to reset your password',
                     html: `<body style="background: #f2f2f2;">
                     <div style="width:100%; max-width:600px; margin:0 auto; padding:40px 15px;">
                     <table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding:8px 0;text-align: center; background:#7f7e7e;">
