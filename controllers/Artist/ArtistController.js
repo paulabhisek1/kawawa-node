@@ -54,8 +54,8 @@ module.exports.registerArtist = (req, res) => {
             let userDate = moment(body.dob);
 
             let dateDiff = userDate.diff(currentDate, 'days');
-            
-            if(dateDiff >= 0) {
+
+            if (dateDiff >= 0) {
                 return res.status(422).json({
                     status: 422,
                     msg: "Date of Birth can't be in futute or current date ",
@@ -199,28 +199,27 @@ module.exports.socialLogin = (req, res) => {
             let body = req.body;
             let userDetails = await artistRepositories.findOne({ email: body.email });
             if (userDetails) {
-                if(userDetails.login_type == body.login_type) {
+                if (userDetails.login_type == body.login_type) {
                     delete userDetails.password;
                     delete userDetails.login_type;
                     delete userDetails.otp;
                     delete userDetails.otp_expire_time;
                     delete userDetails.otp_status;
                     delete userDetails.is_active;
-    
+
                     let accessToken = jwt.sign({ user_id: userDetails.id, email: userDetails.email }, jwtOptionsAccess.secret, jwtOptionsAccess.options);
                     let refreshToken = jwt.sign({ user_id: userDetails.id, email: userDetails.email }, jwtOptionsRefresh.secret, jwtOptionsRefresh.options);
-    
+
                     userDetails['access_token'] = accessToken;
                     userDetails['refresh_token'] = refreshToken;
-    
+
                     return res.status(200).send({
                         status: 200,
                         msg: responseMessages.loginSuccess,
                         data: userDetails,
                         purpose: purpose
                     })
-                }
-                else{
+                } else {
                     return res.send({
                         status: 409,
                         msg: responseMessages.duplicateEmail,
@@ -306,7 +305,38 @@ module.exports.forgotPassword = (req, res) => {
                 let mailData = {
                     toEmail: userDetails.email,
                     subject: 'Forgot Password',
-                    html: `<p>Your OTP is <b>${otpValue}</b></p>`
+                    html: `<body style="background: #f2f2f2;">
+                    <div style="width:100%; max-width:600px; margin:0 auto; padding:40px 15px;">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding:8px 0;text-align: center; background:#7f7e7e;">
+                      <tr>
+                        <th scope="col"><img src="logo.png" alt="" width="150" /></th>
+                      </tr>
+                    </table>
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding:60px 40px;text-align: left; background:#fff;">
+                      <tr>
+                        <th scope="col">
+                        <p style="font-size:17px; font-weight:500; color:#000; line-height:24px;">Hi,</p>
+                        <p style="font-size:17px; font-weight:500; color:#000; line-height:24px; margin-top: 20px;">Please use the following code to authorize your device: <strong style="font-size:20px; color:#ff301e;"> ${otpValue}</strong></p>
+                        <p style="font-size:17px; font-weight:500; color:#000; line-height:24px; margin-top: 20px;">If you don't recognize this activity, please <a href="#" style="color:#ff301e; margin:0 2px;">reset your password</a>
+                          immediately. You can also reach us by responding to this email.</p>
+                        <p style="font-size:17px; font-weight:500; color:#000; line-height:24px; margin-top: 20px;">Thanks for your time,</p>
+                        <p style="font-size:17px; font-weight:500; color:#000; line-height:24px;">The Kawawa Sound Team </p>    
+                        
+                        </th>
+                      </tr>
+                    </table>
+                    
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding:20px 0;text-align: center; background:#f2f2f2;">
+                      <tr>
+                        <th scope="col">
+                        <p style="font-size:15px; font-weight:500; color:rgb(82, 82, 82)"><a href="#" style="color:rgb(82, 82, 82); margin:0 2px;">Terms & Condition</a> I <a href="#" style="color:rgb(82, 82, 82); margin:0 2px;">Privacy Policy</a> I <a href="#" style="color:rgb(82, 82, 82); margin:0 2px;">Rate App</a></p>
+                        <p style="font-size:15px; font-weight:500; color:rgb(82, 82, 82); margin-top: 8px;">655 Montgomery Street, Suite 490, Dpt 17022, San Francisco, CA 94111</p>
+                        <p style="font-size:15px; font-weight:500; color:rgb(82, 82, 82); margin-top: 8px;">© 2021 Kawawa Sound Inc.</p>
+                        </th>
+                      </tr>
+                    </table>
+                    </div>
+                    </body>`
                 }
                 await commonFunction.sendMail(mailData);
 
@@ -444,10 +474,10 @@ module.exports.resetPassword = (req, res) => {
 |------------------------------------------------
 */
 module.exports.uploadArtistProfilePicture = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Upload Artist Profile Picture";
-        try{
-            let filePath = `${global.constants.profile_photo_url}/${req.file.filename}`; 
+        try {
+            let filePath = `${global.constants.profile_photo_url}/${req.file.filename}`;
             return res.status(200).send({
                 status: 200,
                 msg: responseMessages.artistProfilePictureUpdate,
@@ -456,8 +486,7 @@ module.exports.uploadArtistProfilePicture = (req, res) => {
                 },
                 purpose: purpose
             })
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Upload Artist Profile Picture ERROR : ", err);
             return res.status(500).send({
                 status: 500,
@@ -480,10 +509,10 @@ module.exports.uploadArtistProfilePicture = (req, res) => {
 |------------------------------------------------
 */
 module.exports.uploadArtistGovtIDFront = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Upload Artist Govt ID FRONT";
-        try{
-            let filePath = `${global.constants.govt_id_url}/${req.file.filename}`; 
+        try {
+            let filePath = `${global.constants.govt_id_url}/${req.file.filename}`;
             return res.status(200).send({
                 status: 200,
                 msg: responseMessages.artistGovtIDUpdate,
@@ -492,8 +521,7 @@ module.exports.uploadArtistGovtIDFront = (req, res) => {
                 },
                 purpose: purpose
             })
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Upload Artist Govt ID FRONT ERROR : ", err);
             return res.status(500).send({
                 status: 500,
@@ -516,10 +544,10 @@ module.exports.uploadArtistGovtIDFront = (req, res) => {
 |------------------------------------------------
 */
 module.exports.uploadArtistGovtIDBack = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Upload Artist Govt ID BACK";
-        try{
-            let filePath = `${global.constants.govt_id_url}/${req.file.filename}`; 
+        try {
+            let filePath = `${global.constants.govt_id_url}/${req.file.filename}`;
             return res.status(200).send({
                 status: 200,
                 msg: responseMessages.artistGovtIDUpdate,
@@ -528,8 +556,7 @@ module.exports.uploadArtistGovtIDBack = (req, res) => {
                 },
                 purpose: purpose
             })
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Upload Artist Govt ID BACK ERROR : ", err);
             return res.status(500).send({
                 status: 500,
@@ -552,10 +579,10 @@ module.exports.uploadArtistGovtIDBack = (req, res) => {
 |------------------------------------------------
 */
 module.exports.uploadSampleSong = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Upload Sample Song";
-        try{
-            let filePath = `${global.constants.sample_songs_url}/${req.file.filename}`; 
+        try {
+            let filePath = `${global.constants.sample_songs_url}/${req.file.filename}`;
             return res.status(200).send({
                 status: 200,
                 msg: responseMessages.sampleSong,
@@ -564,8 +591,7 @@ module.exports.uploadSampleSong = (req, res) => {
                 },
                 purpose: purpose
             })
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Upload Sample Song : ", err);
             return res.status(500).send({
                 status: 500,
@@ -588,15 +614,15 @@ module.exports.uploadSampleSong = (req, res) => {
 |------------------------------------------------
 */
 module.exports.saveArtistDetailsStepOne = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Save Artist Details Step One";
-        try{
+        try {
             let artistID = req.headers.userID;
             let artistCount = await artistRepositories.count({ id: artistID, is_active: 1 });
 
-            if(artistCount > 0) {
+            if (artistCount > 0) {
                 let body = req.body;
-                await sequelize.transaction(async(t)=>{
+                await sequelize.transaction(async(t) => {
                     // await artistRepositories.deleteArtistDetails({ artist_id: artistID }, t);
                     let artistDetailsCount = await artistRepositories.countArtistDetails({ artist_id: artistID }, t);
 
@@ -609,10 +635,9 @@ module.exports.saveArtistDetailsStepOne = (req, res) => {
                         zip: body.zip
                     }
 
-                    if(artistDetailsCount > 0) {
+                    if (artistDetailsCount > 0) {
                         await artistRepositories.updateArtistDetails({ artist_id: artistID }, createData, t);
-                    }
-                    else{
+                    } else {
                         await artistRepositories.createArtistDetails(createData, t);
                     }
                 });
@@ -627,17 +652,15 @@ module.exports.saveArtistDetailsStepOne = (req, res) => {
                     },
                     purpose: purpose
                 })
-            }
-            else{
+            } else {
                 return res.status(404).send({
                     status: 404,
                     msg: responseMessages.artistNotFound,
                     data: {},
                     purpose: purpose
-                }) 
+                })
             }
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Save Artist Details Step One ERROR : ", err);
             return res.status(500).send({
                 status: 500,
@@ -660,13 +683,13 @@ module.exports.saveArtistDetailsStepOne = (req, res) => {
 |------------------------------------------------
 */
 module.exports.saveArtistDeatislStepTwo = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Save Artist Details Step Two"
-        try{
+        try {
             let artistID = req.headers.userID;
             let artistCount = await artistRepositories.count({ id: artistID, is_active: 1 });
 
-            if(artistCount > 0) {
+            if (artistCount > 0) {
                 let body = req.body;
                 let updateData = {
                     account_holder_name: body.account_holder_name,
@@ -694,8 +717,7 @@ module.exports.saveArtistDeatislStepTwo = (req, res) => {
                     },
                     purpose: purpose
                 })
-            }
-            else{
+            } else {
                 return res.status(404).send({
                     status: 404,
                     msg: responseMessages.artistNotFound,
@@ -703,8 +725,7 @@ module.exports.saveArtistDeatislStepTwo = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Save Artist Details Step Two ERROR : ", err);
             return res.status(500).send({
                 status: 500,
@@ -727,13 +748,13 @@ module.exports.saveArtistDeatislStepTwo = (req, res) => {
 |------------------------------------------------
 */
 module.exports.saveArtistDeatislStepThree = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = 'Save Artist Details Step Three';
-        try{
+        try {
             let artistID = req.headers.userID;
             let artistCount = await artistRepositories.count({ id: artistID, is_active: 1 });
 
-            if(artistCount > 0) {
+            if (artistCount > 0) {
                 let body = req.body;
                 let updateData = {
                     govt_id_front: body.govt_id_front,
@@ -744,7 +765,7 @@ module.exports.saveArtistDeatislStepThree = (req, res) => {
                 //     profile_image: body.profile_image
                 // }
 
-                await sequelize.transaction(async(t)=>{
+                await sequelize.transaction(async(t) => {
                     await artistRepositories.updateArtistDetails({ artist_id: artistID }, updateData, t);
                     // await artistRepositories.update({ id: artistID }, mainUpdateData, t);
                 })
@@ -759,8 +780,7 @@ module.exports.saveArtistDeatislStepThree = (req, res) => {
                     },
                     purpose: purpose
                 })
-            }
-            else{
+            } else {
                 return res.status(404).send({
                     status: 404,
                     msg: responseMessages.artistNotFound,
@@ -768,8 +788,7 @@ module.exports.saveArtistDeatislStepThree = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Save Artist Details Step Three ERROR : ", err);
             return res.status(500).send({
                 status: 500,
@@ -792,13 +811,13 @@ module.exports.saveArtistDeatislStepThree = (req, res) => {
 |------------------------------------------------
 */
 module.exports.saveArtistDeatislStepFour = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = 'Save Artist Details Step Four';
-        try{
+        try {
             let artistID = req.headers.userID;
             let artistCount = await artistRepositories.count({ id: artistID, is_active: 1 });
 
-            if(artistCount > 0) {
+            if (artistCount > 0) {
                 let body = req.body;
                 let updateData = {
                     sample_song_name: body.sample_song_name,
@@ -808,7 +827,7 @@ module.exports.saveArtistDeatislStepFour = (req, res) => {
                     sample_song_description: body.sample_song_description,
                 }
 
-                await sequelize.transaction(async(t)=>{
+                await sequelize.transaction(async(t) => {
                     await artistRepositories.updateArtistDetails({ artist_id: artistID }, updateData, t);
                 })
 
@@ -822,8 +841,7 @@ module.exports.saveArtistDeatislStepFour = (req, res) => {
                     },
                     purpose: purpose
                 })
-            }
-            else{
+            } else {
                 return res.status(404).send({
                     status: 404,
                     msg: responseMessages.artistNotFound,
@@ -831,8 +849,7 @@ module.exports.saveArtistDeatislStepFour = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Save Artist Details Step Three ERROR : ", err);
             return res.status(500).send({
                 status: 500,
@@ -855,12 +872,12 @@ module.exports.saveArtistDeatislStepFour = (req, res) => {
 |------------------------------------------------
 */
 module.exports.fetchArtistDetails = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Fetch Artist Details";
-        try{
+        try {
             let artistID = req.headers.userID;
             let artistCount = await artistRepositories.count({ id: artistID, is_active: 1 });
-            if(artistCount > 0) {
+            if (artistCount > 0) {
                 let artistDetails = await artistRepositories.artistDetails({ id: artistID }, { user_id: artistID });
 
                 return res.status(200).send({
@@ -871,8 +888,7 @@ module.exports.fetchArtistDetails = (req, res) => {
                     },
                     purpose: purpose
                 })
-            }
-            else{
+            } else {
                 return res.status(404).send({
                     status: 404,
                     msg: responseMessages.artistNotFound,
@@ -880,8 +896,7 @@ module.exports.fetchArtistDetails = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Fetch Artist Details ERROR : ", err);
             return res.status(500).send({
                 status: 500,
@@ -904,9 +919,9 @@ module.exports.fetchArtistDetails = (req, res) => {
 |------------------------------------------------
 */
 module.exports.fetchCommonDetails = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Fetch Common Details";
-        try{
+        try {
             let artistID = req.headers.userID;
             let genres = await genresRepositories.findAll({});
             let albums = await albumRepositories.findAll({ artist_id: artistID }, { limit: null })
@@ -920,8 +935,7 @@ module.exports.fetchCommonDetails = (req, res) => {
                 },
                 purpose: purpose
             })
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Fetch Common Details ERROR : ", err);
             return res.status(500).send({
                 status: 500,
