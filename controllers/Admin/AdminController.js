@@ -12,6 +12,7 @@
 
 // ################################ Repositories ################################ //
 const adminRepositories = require('../../repositories/AdminRepositories');
+const artistRepositories = require('../../repositories/ArtistsRepositories');
 
 // ################################ Sequelize ################################ //
 const sequelize = require('../../config/dbConfig').sequelize;
@@ -404,6 +405,41 @@ module.exports.deleteGenre = (req, res) => {
         }
         catch(err) {
             console.log("Delete Genre ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+module.exports.listArtists = (req, res) => {
+    (async()=>{
+        let purpose = "Artists List"
+        try{
+            let queryParam = req.query;
+            let where = {};
+            let data = {};
+            let page = queryParam.page ? parseInt(queryParam.page) : 1;
+            data.limit = 20;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+
+            let artistList = await artistRepositories.artistListAdmin(where, data);
+
+            return res.status(200).json({
+                status: 200,
+                msg: responseMessages.serverError,
+                data: {
+                    artistList: artistList.rows,
+                    totalCount: artistList.count.length
+                },
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("Artists List ERROR : ", err);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,

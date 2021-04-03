@@ -54,4 +54,5 @@ module.exports = {
     genreDelete: `Genre deleted successfully`,
     genreNoyFound: `Genre not found`,
     commonDetails: `Common details fetched successfully`,
+    artistListAdmin: `Artist list fetched successfully`,
 }

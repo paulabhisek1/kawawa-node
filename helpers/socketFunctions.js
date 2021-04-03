@@ -15,7 +15,7 @@ module.exports.socketResponse = (socket) => {
     // Save Song Details
     socket.on('user-played', async (data, callback)=>{
         let songID = data.songID;
-        let accessToken = data.accessToken;
+        let accessToken = data.accessToken.split(' ')[1];
         try{
             jwt.verify(accessToken, jwtOptionsAccess.secret, async (err, decodedToken) => {
                 if (err) {
@@ -72,7 +72,7 @@ module.exports.socketResponse = (socket) => {
     // Update Song Played Count
     socket.on('song-played', async (data, callback)=>{
         let songID = data.songID;
-        let accessToken = data.accessToken;
+        let accessToken = data.accessToken.split(' ')[1];
         try{
             jwt.verify(accessToken, jwtOptionsAccess.secret, async (err, decodedToken) => {
                 if (err) {
