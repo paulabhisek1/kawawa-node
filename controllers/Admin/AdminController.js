@@ -415,6 +415,16 @@ module.exports.deleteGenre = (req, res) => {
     })()
 }
 
+/*
+|------------------------------------------------ 
+| API name          :  artistList
+| Response          :  Respective response message in JSON format
+| Logic             :  Fetch Artist List
+| Request URL       :  BASE_URL/admin/genre-list
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
 module.exports.listArtists = (req, res) => {
     (async()=>{
         let purpose = "Artists List"
@@ -426,11 +436,15 @@ module.exports.listArtists = (req, res) => {
             data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
 
+            if(queryParam.search) {
+                where.full_name = { $like: `%${queryParam.search}%` };
+            }
+
             let artistList = await artistRepositories.artistListAdmin(where, data);
 
             return res.status(200).json({
                 status: 200,
-                msg: responseMessages.serverError,
+                msg: responseMessages.artistListAdmin,
                 data: {
                     artistList: artistList.rows,
                     totalCount: artistList.count.length
@@ -440,6 +454,102 @@ module.exports.listArtists = (req, res) => {
         }
         catch(err) {
             console.log("Artists List ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  artistDetails
+| Response          :  Respective response message in JSON format
+| Logic             :  Fetch Artist Details
+| Request URL       :  BASE_URL/admin/artist-details/<< Artist ID >>
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.artistDetails = (req, res) => {
+    (async()=>{
+        let purpose = "Artist Details"
+        try {
+            let artistID = req.params.id;
+
+            let artistCount = await artistRepositories.count({ id: artistID });
+            if (artistCount > 0) {
+                let artistDetails = await artistRepositories.artistDetailsAdmin({ id: artistID });
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.artistDetailsFetch,
+                    data: {
+                        artist_details: artistDetails
+                    },
+                    purpose: purpose
+                })
+            } else {
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.artistNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Artist Details ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+module.exports.verifyArtist = (req, res) => {
+    (async()=>{
+        let purpose = "Verify Artist";
+        try {
+            let artistID = req.params.id;
+
+            let artistCount = await artistRepositories.count({ id: artistID });
+
+            if (artistCount > 0) {
+                let artistDetails = await artistRepositories.artistDetailsAdmin({ id: artistID });
+
+                let updateData = {};
+                updateData.is_active = !artistDetails.is_active;
+
+                await artistRepositories.updateArtist({ id: artistID }, updateData);
+
+                let msg = '';
+                if(artistDetails.is_active == 0) msg = 'Artist verified successfully';
+                else msg = 'Artist unverified successfully';
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: msg,
+                    data: {},
+                    purpose: purpose
+                })
+            } else {
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.artistNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Verify Artist ERROR : ", err);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,

@@ -38,7 +38,8 @@ module.exports.socketResponse = (socket) => {
                                 await userPlayedHistoryRepositories.destroy({ id: historyDet.id })
                             }
     
-                            await userPlayedHistoryRepositories.create({ user_id: userID, file_id: songID, last_played_length: data.lastPlayedLength, type: 'song' });
+                            // await userPlayedHistoryRepositories.create({ user_id: userID, file_id: songID, last_played_length: data.lastPlayedLength, type: 'song' });
+                            await userPlayedHistoryRepositories.create({ user_id: userID, file_id: songID, type: 'song' });
     
                             callback({
                                 status: 1,

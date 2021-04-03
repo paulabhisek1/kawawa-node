@@ -20,5 +20,8 @@ router.put('/country-status-change/:id',authenticationMiddleware.authenticateAdm
 router.post('/genre-add',authenticationMiddleware.authenticateAdminRequestAPI, validateRequest.validate(adminValidationSchema.addGenreSchema, 'body'), adminController.addGenre); // Add Country
 router.get('/genre-list',authenticationMiddleware.authenticateAdminRequestAPI, validateRequest.validate(adminValidationSchema.listCountrySchema, 'query'), adminController.listGenre); // List Genre
 router.delete('/delete-genre/:id',authenticationMiddleware.authenticateAdminRequestAPI, adminController.deleteGenre); // Delete Genre
+router.get('/artist-list',authenticationMiddleware.authenticateAdminRequestAPI, validateRequest.validate(adminValidationSchema.listCountrySchema, 'query'), adminController.listArtists); // List Artists
+router.get('/artist-details/:id',authenticationMiddleware.authenticateAdminRequestAPI, adminController.artistDetails); // Artists Details
+router.put('/artist-verify/:id',authenticationMiddleware.authenticateAdminRequestAPI, adminController.verifyArtist); // Artists Details
 
 module.exports = router;

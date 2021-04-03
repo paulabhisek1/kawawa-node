@@ -90,6 +90,38 @@ module.exports.artistDetails = (whereData, data) => {
     })
 }
 
+// Artist Details Admin
+module.exports.artistDetailsAdmin = (whereData, data) => {
+    return new Promise((resolve, reject) => {
+        ArtistModel.findOne({
+            where: whereData,
+            attributes: ['id','full_name','email','mobile_no','dob','login_type','is_active','current_reg_step','reg_steps_completed','profile_image','country_id'],
+            include: [
+                {
+                    model: ArtistDetailsModel,
+                    as: 'artist_account_details',
+                    include: [
+                        {
+                            model: GenresModel,
+                            as: 'sample_song_type_details'
+                        },
+                        {
+                            model: AlbumsModel,
+                            as: 'sample_song_album_details'
+                        }
+                    ],
+                    required: false
+                }
+            ]
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
 // Create 
 module.exports.create = (data, t = null) => {
     return new Promise((resolve, reject) => {
@@ -169,6 +201,22 @@ module.exports.createArtistDetails = (data, t = null) => {
             .catch((err) => {
                 reject(err);
             });
+    })
+}
+
+// Update
+module.exports.updateArtist = (where, data, t = null) => {
+    return new Promise((resolve, reject) => {
+        let options = {
+                where: where
+            }
+            //if trunsaction exist
+        if (t != null) options.transaction = t;
+        ArtistModel.update(data, options).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            reject(err);
+        })
     })
 }
 
