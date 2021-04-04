@@ -513,6 +513,16 @@ module.exports.artistDetails = (req, res) => {
     })()
 }
 
+/*
+|------------------------------------------------ 
+| API name          :  verifyArtist
+| Response          :  Respective response message in JSON format
+| Logic             :  Verify Artist
+| Request URL       :  BASE_URL/admin/artist-verify/<< Artist ID >>
+| Request method    :  PUT
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
 module.exports.verifyArtist = (req, res) => {
     (async()=>{
         let purpose = "Verify Artist";

@@ -288,7 +288,7 @@ module.exports.artistListAdmin = (whereData, data) => {
     return new Promise((resolve, reject) => {
         ArtistModel.findAndCountAll({
             where: whereData,
-            attributes: ['id','full_name','email','mobile_no','profile_image','is_active','current_reg_step','reg_steps_completed'],
+            attributes: ['id','full_name','email','mobile_no','profile_image','is_active','current_reg_step','login_type','reg_steps_completed'],
             offset: data.offset,
             limit: data.limit,
             group: ['id']
