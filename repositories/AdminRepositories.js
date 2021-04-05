@@ -1,8 +1,9 @@
 const sequelize = require('../config/dbConfig').sequelize;
 var DataTypes = require('sequelize/lib/data-types');
-const AdminsModel = require('../models/admins')(sequelize,DataTypes);
+const AdminsModel = require('../models/admins')(sequelize, DataTypes);
 const CountryModel = require('../models/countries')(sequelize, DataTypes);
 const GenreModel = require('../models/genres')(sequelize, DataTypes);
+const PodcastCategoryModel = require('../models/podcast_categories')(sequelize, DataTypes);
 
 // Find One
 module.exports.findOne = (whereData) => {
@@ -186,12 +187,76 @@ module.exports.listGenre = (whereData, data) => {
             limit: data.limit,
             offset: data.offset,
             group: ['id'],
-            order: [['id', 'DESC']]
+            order: [
+                ['id', 'DESC']
+            ]
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
             resolve(result);
         }).catch((error) => {
             reject(error);
+        })
+    })
+}
+
+// Count Podcast Category
+module.exports.countPodcastCategory = (whereData) => {
+    return new Promise((resolve, reject) => {
+        PodcastCategoryModel.count({
+            where: whereData
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
+// Add Podcast Category
+module.exports.addPodcastCategory = (data) => {
+    return new Promise((resolve, reject) => {
+        PodcastCategoryModel.create(data).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
+// List Podcast Category
+module.exports.listPodcastCategory = (whereData, data) => {
+    return new Promise((resolve, reject) => {
+        PodcastCategoryModel.findAndCountAll({
+            where: whereData,
+            limit: data.limit,
+            offset: data.offset,
+            group: ['id'],
+            order: [
+                ['id', 'DESC']
+            ]
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
+// Delete Podcast Category
+module.exports.deletePodcastCategory = (where, t = null) => {
+    return new Promise((resolve, reject) => {
+        let options = {
+                where: where
+            }
+            //if trunsaction exist
+        if (t != null) options.transaction = t;
+        PodcastCategoryModel.destroy(options).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            reject(err);
         })
     })
 }

@@ -52,7 +52,12 @@ module.exports = {
     genreAdd: `Genre added successfully`,
     genreList: `Genre list fetched successfully`,
     genreDelete: `Genre deleted successfully`,
-    genreNoyFound: `Genre not found`,
+    genreNotFound: `Genre not found`,
     commonDetails: `Common details fetched successfully`,
     artistListAdmin: `Artist list fetched successfully`,
+    duplicatePodcastcategory: `This category is already added`,
+    podcastcategoryAdd: `Category added successfully`,
+    podcastcategoryList: `Category list fetched successfully`,
+    podcastCategoryDelete: `Category deleted successfully`,
+    podcastNotFound: `Category not found`,
 }

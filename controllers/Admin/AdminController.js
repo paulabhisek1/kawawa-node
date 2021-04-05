@@ -107,21 +107,20 @@ module.exports.adminLogin = (req, res) => {
 |------------------------------------------------
 */
 module.exports.addCountry = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Add Country";
-        try{
+        try {
             let body = req.body;
             let countryCount = await adminRepositories.countCountry({ country_code: body.country_code.toUpperCase() });
 
-            if(countryCount > 0) {
+            if (countryCount > 0) {
                 return res.status(409).send({
                     status: 409,
                     msg: responseMessages.duplicateCountry,
                     data: {},
                     purpose: purpose
                 })
-            }
-            else{
+            } else {
                 let createData = {
                     name: body.name,
                     country_code: body.country_code.toUpperCase(),
@@ -136,8 +135,7 @@ module.exports.addCountry = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Add Country ERROR : ", err);
             return res.status(500).send({
                 status: 500,
@@ -160,9 +158,9 @@ module.exports.addCountry = (req, res) => {
 |------------------------------------------------
 */
 module.exports.listCountry = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "List Country";
-        try{
+        try {
             let queryParam = req.query;
             let where = {};
             let data = {};
@@ -171,14 +169,18 @@ module.exports.listCountry = (req, res) => {
             data.offset = data.limit ? data.limit * (page - 1) : null;
             data.order = [];
 
-            if(queryParam.sortKey && queryParam.sortType) {
-                data.order = [[queryParam.sortKey, queryParam.sortType.toUpperCase()]];
-            }
-            else{
-                data.order = [ ['is_active','DESC'], ['id', 'DESC'] ]
+            if (queryParam.sortKey && queryParam.sortType) {
+                data.order = [
+                    [queryParam.sortKey, queryParam.sortType.toUpperCase()]
+                ];
+            } else {
+                data.order = [
+                    ['is_active', 'DESC'],
+                    ['id', 'DESC']
+                ]
             }
 
-            if(queryParam.search) {
+            if (queryParam.search) {
                 where.name = { $like: `%${queryParam.search}%` };
             }
 
@@ -193,8 +195,7 @@ module.exports.listCountry = (req, res) => {
                 data: dataResp,
                 purpose: purpose
             })
-        }
-        catch(err) {
+        } catch (err) {
             console.log("List Country ERROR : ", err);
             return res.status(500).send({
                 status: 500,
@@ -217,16 +218,16 @@ module.exports.listCountry = (req, res) => {
 |------------------------------------------------
 */
 module.exports.statusChangeCountry = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Country Status Change";
-        try{
+        try {
             let countryID = req.params.id;
 
             let countryDetails = await adminRepositories.fetchCountry({ id: countryID });
 
-            if(countryDetails) {
+            if (countryDetails) {
                 let updateData = {};
-                if(countryDetails.is_active == 1)  updateData.is_active = 0;
+                if (countryDetails.is_active == 1) updateData.is_active = 0;
                 else updateData.is_active = 1;
 
                 await adminRepositories.updateCountry({ id: countryID }, updateData);
@@ -242,8 +243,7 @@ module.exports.statusChangeCountry = (req, res) => {
                     purpose: purpose
                 })
 
-            }
-            else{
+            } else {
                 return res.status(404).send({
                     status: 404,
                     msg: responseMessages.countryNoyFound,
@@ -251,8 +251,7 @@ module.exports.statusChangeCountry = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Country Status Change ERROR : ", err);
             return res.status(500).send({
                 status: 500,
@@ -275,21 +274,20 @@ module.exports.statusChangeCountry = (req, res) => {
 |------------------------------------------------
 */
 module.exports.addGenre = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Add Genre";
-        try{
+        try {
             let body = req.body;
             let genreCount = await adminRepositories.countGenre({ name: body.name });
 
-            if(genreCount > 0) {
+            if (genreCount > 0) {
                 return res.status(409).send({
                     status: 409,
                     msg: responseMessages.duplicateGenre,
                     data: {},
                     purpose: purpose
                 })
-            }
-            else{
+            } else {
                 let createData = {
                     name: body.name,
                 }
@@ -303,8 +301,7 @@ module.exports.addGenre = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Add Genre ERROR : ", err);
             return res.status(500).send({
                 status: 500,
@@ -327,17 +324,17 @@ module.exports.addGenre = (req, res) => {
 |------------------------------------------------
 */
 module.exports.listGenre = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "List Genre";
-        try{
+        try {
             let queryParam = req.query;
             let where = {};
             let data = {};
             let page = queryParam.page ? parseInt(queryParam.page) : 1;
             data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
-            
-            if(queryParam.search) {
+
+            if (queryParam.search) {
                 where.name = { $like: `%${queryParam.search}%` };
             }
 
@@ -352,8 +349,7 @@ module.exports.listGenre = (req, res) => {
                 data: dataResp,
                 purpose: purpose
             })
-        }
-        catch(err) {
+        } catch (err) {
             console.log("List Genre ERROR : ", err);
             return res.status(500).send({
                 status: 500,
@@ -376,14 +372,14 @@ module.exports.listGenre = (req, res) => {
 |------------------------------------------------
 */
 module.exports.deleteGenre = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Delete Genre";
-        try{
+        try {
             let genreID = req.params.id;
 
             let genreCount = await adminRepositories.countGenre({ id: genreID });
 
-            if(genreCount > 0) {
+            if (genreCount > 0) {
                 await adminRepositories.deleteGenre({ id: genreID })
 
                 return res.status(200).send({
@@ -393,17 +389,15 @@ module.exports.deleteGenre = (req, res) => {
                     purpose: purpose
                 })
 
-            }
-            else{
+            } else {
                 return res.status(404).send({
                     status: 404,
-                    msg: responseMessages.genreNoyFound,
+                    msg: responseMessages.genreNotFound,
                     data: {},
                     purpose: purpose
                 })
             }
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Delete Genre ERROR : ", err);
             return res.status(500).send({
                 status: 500,
@@ -426,9 +420,9 @@ module.exports.deleteGenre = (req, res) => {
 |------------------------------------------------
 */
 module.exports.listArtists = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Artists List"
-        try{
+        try {
             let queryParam = req.query;
             let where = {};
             let data = {};
@@ -436,7 +430,7 @@ module.exports.listArtists = (req, res) => {
             data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
 
-            if(queryParam.search) {
+            if (queryParam.search) {
                 where.full_name = { $like: `%${queryParam.search}%` };
             }
 
@@ -451,8 +445,7 @@ module.exports.listArtists = (req, res) => {
                 },
                 purpose: purpose
             })
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Artists List ERROR : ", err);
             return res.status(500).send({
                 status: 500,
@@ -475,7 +468,7 @@ module.exports.listArtists = (req, res) => {
 |------------------------------------------------
 */
 module.exports.artistDetails = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Artist Details"
         try {
             let artistID = req.params.id;
@@ -500,8 +493,7 @@ module.exports.artistDetails = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Artist Details ERROR : ", err);
             return res.status(500).send({
                 status: 500,
@@ -524,7 +516,7 @@ module.exports.artistDetails = (req, res) => {
 |------------------------------------------------
 */
 module.exports.verifyArtist = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Verify Artist";
         try {
             let artistID = req.params.id;
@@ -540,7 +532,7 @@ module.exports.verifyArtist = (req, res) => {
                 await artistRepositories.updateArtist({ id: artistID }, updateData);
 
                 let msg = '';
-                if(artistDetails.is_active == 0) msg = 'Artist verified successfully';
+                if (artistDetails.is_active == 0) msg = 'Artist verified successfully';
                 else msg = 'Artist unverified successfully';
 
                 return res.status(200).send({
@@ -557,9 +549,154 @@ module.exports.verifyArtist = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Verify Artist ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  addPodcastCategory
+| Response          :  Respective response message in JSON format
+| Logic             :  Add Podcast Category
+| Request URL       :  BASE_URL/admin/poscast-category-add
+| Request method    :  POST
+| Author            :  Abhisek Paul
+|------------------------------------------------
+*/
+module.exports.addPodcastCategory = (req, res) => {
+    (async() => {
+        let purpose = "Add Podcast Category";
+        try {
+            let body = req.body;
+            let genreCount = await adminRepositories.countPodcastCategory({ name: body.name });
+
+            if (genreCount > 0) {
+                return res.status(409).send({
+                    status: 409,
+                    msg: responseMessages.duplicatePodcastcategory,
+                    data: {},
+                    purpose: purpose
+                })
+            } else {
+                let createData = {
+                    name: body.name,
+                }
+
+                let podcastCatDet = await adminRepositories.addPodcastCategory(createData);
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.podcastcategoryAdd,
+                    data: podcastCatDet,
+                    purpose: purpose
+                })
+            }
+        } catch (err) {
+            console.log("Add Podcast Category ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  listPodcastCategory
+| Response          :  Respective response message in JSON format
+| Logic             :  Fetch Podcast Category List
+| Request URL       :  BASE_URL/admin/poscast-category-list
+| Request method    :  GET
+| Author            :  Abhisek Paul
+|------------------------------------------------
+*/
+module.exports.listPodcastCategory = (req, res) => {
+    (async() => {
+        let purpose = "List Podcast Category";
+        try {
+            let queryParam = req.query;
+            let where = {};
+            let data = {};
+            let page = queryParam.page ? parseInt(queryParam.page) : 1;
+            data.limit = 20;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+
+            if (queryParam.search) {
+                where.name = { $like: `%${queryParam.search}%` };
+            }
+
+            let podcastCategoryList = await adminRepositories.listPodcastCategory(where, data);
+            let dataResp = {
+                podcast_category_list: podcastCategoryList.rows,
+                total_count: podcastCategoryList.count.length
+            }
+            return res.status(200).send({
+                status: 200,
+                msg: responseMessages.podcastcategoryList,
+                data: dataResp,
+                purpose: purpose
+            })
+        } catch (err) {
+            console.log("List Podcast Category ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  deletePodcastCategory
+| Response          :  Respective response message in JSON format
+| Logic             :  Delete Podcast Category
+| Request URL       :  BASE_URL/admin/delete-podcast-category/<< Category ID >>
+| Request method    :  DELETE
+| Author            :  Abhisek Paul
+|------------------------------------------------
+*/
+module.exports.deletePodcastCategory = (req, res) => {
+    (async() => {
+        let purpose = "Delete Podcast Category";
+        try {
+            let genreID = req.params.id;
+
+            let genreCount = await adminRepositories.countPodcastCategory({ id: genreID });
+
+            if (genreCount > 0) {
+                await adminRepositories.deletePodcastCategory({ id: genreID })
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.podcastCategoryDelete,
+                    data: {},
+                    purpose: purpose
+                })
+
+            } else {
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.podcastNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        } catch (err) {
+            console.log("Delete Podcast Category ERROR : ", err);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,
