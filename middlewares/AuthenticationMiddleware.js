@@ -60,7 +60,7 @@ module.exports.authenticateArtistRequestAPI = async (req, res, next) => {
             let accessToken = req.headers.authorization.split(' ')[1];
             jwt.verify(accessToken, jwtOptionsAccess.secret, async (err, decodedToken) => {
                 if (err) {
-                    return res.json({
+                    return res.status(401).json({
                         status: 401,
                         msg: responseMessages.authFailure,
                     })
@@ -73,7 +73,7 @@ module.exports.authenticateArtistRequestAPI = async (req, res, next) => {
                         next();
                     }
                     else{
-                        return res.json({
+                        return res.status(401).json({
                             status: 401,
                             msg: responseMessages.authFailure,
                         })
@@ -82,7 +82,7 @@ module.exports.authenticateArtistRequestAPI = async (req, res, next) => {
             });
         }
         else {
-            return res.json({
+            return res.status(401).json({
                 status: 401,
                 msg: responseMessages.authRequired
             })
@@ -90,7 +90,7 @@ module.exports.authenticateArtistRequestAPI = async (req, res, next) => {
     }
     catch(err) {
         console.log("Artist Middleware Error : ", e);
-        res.json({
+        res.status(500).json({
             status: 500,
             msg: responseMessages.serverError,
         })
@@ -104,7 +104,7 @@ module.exports.authenticateAdminRequestAPI = async (req, res, next) => {
             let accessToken = req.headers.authorization.split(' ')[1];
             jwt.verify(accessToken, jwtOptionsAccess.secret, async (err, decodedToken) => {
                 if (err) {
-                    return res.json({
+                    return res.status(401).json({
                         status: 401,
                         msg: responseMessages.authFailure,
                     })
@@ -117,7 +117,7 @@ module.exports.authenticateAdminRequestAPI = async (req, res, next) => {
                         next();
                     }
                     else{
-                        return res.json({
+                        return res.status(401).json({
                             status: 401,
                             msg: responseMessages.authFailure,
                         })
@@ -126,7 +126,7 @@ module.exports.authenticateAdminRequestAPI = async (req, res, next) => {
             });
         }
         else {
-            return res.json({
+            return res.status(401).json({
                 status: 401,
                 msg: responseMessages.authRequired
             })
@@ -134,7 +134,7 @@ module.exports.authenticateAdminRequestAPI = async (req, res, next) => {
     }
     catch(err) {
         console.log("Artist Middleware Error : ", e);
-        res.json({
+        res.status(500).json({
             status: 500,
             msg: responseMessages.serverError,
         })

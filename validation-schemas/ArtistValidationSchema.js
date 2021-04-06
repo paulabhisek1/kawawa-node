@@ -90,3 +90,8 @@ module.exports.artistDetailsStepFour = Joi.object().keys({
     sample_song_album: Joi.number().required().allow('', null),
     sample_song_description: Joi.string().required().allow('', null),
 });
+
+// Album Create Schema
+module.exports.createAlbum = Joi.object().keys({
+    name: Joi.string().required(),
+});

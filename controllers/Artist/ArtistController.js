@@ -945,3 +945,109 @@ module.exports.fetchCommonDetails = (req, res) => {
         }
     })()
 }
+
+/*
+|------------------------------------------------ 
+| API name          :  createAlbum
+| Response          :  Respective response message in JSON format
+| Logic             :  Create Album
+| Request URL       :  BASE_URL/artist/create-album
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.createAlbum = (req, res) => {
+    (async()=>{
+        let purpose = "Create Album"
+        try {
+            let artistID = req.headers.userID;
+            let body = req.body;
+            let filePath = `${global.constants.album_cover_url}/${req.file.filename}`;
+
+            let createData = {
+                name: body.name,
+                cover_picture: filePath,
+                artist_id: artistID,
+                total_songs: 0,
+                is_active: 1,
+                type: 'song'
+            }
+
+            let albumDetails = await albumRepositories.createAlbum(createData);
+
+            return res.status(200).json({
+                status: 200,
+                msg: responseMessages.albumCreate,
+                data: albumDetails,
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("Create Album ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  updateAlbum
+| Response          :  Respective response message in JSON format
+| Logic             :  Update Album
+| Request URL       :  BASE_URL/artist/update-album/<< Album ID >>
+| Request method    :  PUT
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.updateAlbum = (req, res) => {
+    (async()=>{
+        let purpose = "Update Album";
+        try {
+            let artistID = req.headers.userID;
+            let albumID = req.params.id;
+            let body = req.body;
+
+            let albumCount = await albumRepositories.count({ id: albumID });
+
+            if(albumCount > 0) {
+                let updateData = {};
+                updateData.name = body.name;
+
+                if(req.file) {
+                    updateData.cover_picture = `${global.constants.album_cover_url}/${req.file.filename}`;
+                }
+
+                await albumRepositories.update({ id: albumID }, updateData);
+
+                return res.status(200).json({
+                    status: 200,
+                    msg: responseMessages.albumUpdate,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+            else {
+                return res.status(404).json({
+                    status: 404,
+                    msg: responseMessages.albumNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Create Album ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}

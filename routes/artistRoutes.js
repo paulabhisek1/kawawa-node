@@ -54,6 +54,18 @@ var storagePictureGovtIDBack = multer.diskStorage({
     }
 })
 
+// SET STORAGE FOR ARTIST COVER
+var storagePictureAlbumCover = multer.diskStorage({
+    destination: function(req, file, cb) {
+        const path = 'uploads/album_covers';
+        fs.mkdirSync(path, { recursive: true });
+        cb(null, path);
+    },
+    filename: function(req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now() + '_cover' + path.extname(file.originalname))
+    }
+})
+
 // SET STORAGE FOR SAMPLE SONG
 var storageSampleSong = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -70,6 +82,7 @@ var uploadProfilePicture = multer({ storage: storagePicture });
 var uploadGovtIDFront = multer({ storage: storagePictureGovtIDFront });
 var uploadGovtIDBack = multer({ storage: storagePictureGovtIDBack });
 var uploadSampleSong = multer({ storage: storageSampleSong });
+var uploadAlbumCover = multer({ storage: storagePictureAlbumCover });
 
 router.post('/register', validateRequest.validate(artistValidationSchema.userRegisterSchema, 'body'), artistController.registerArtist); // User Registration Route
 router.post('/login', validateRequest.validate(artistValidationSchema.loginSchema, 'body'), artistController.artistLogin); // System Login Route
@@ -89,5 +102,7 @@ router.post('/artist-details/step-three', authenticationMiddleware.authenticateA
 router.post('/artist-details/step-four', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.artistDetailsStepFour, 'body'), artistController.saveArtistDeatislStepFour) // Save Artist Details Step Four
 router.get('/artist-details', authenticationMiddleware.authenticateArtistRequestAPI, artistController.fetchArtistDetails); // Fetch Artist Details
 router.get('/common-details', authenticationMiddleware.authenticateArtistRequestAPI, artistController.fetchCommonDetails); // Fetch Common Details
+router.post('/create-album', authenticationMiddleware.authenticateArtistRequestAPI, uploadAlbumCover.single('file'), validateRequest.validate(artistValidationSchema.createAlbum, 'body'), artistController.createAlbum); // Create Album
+router.put('/update-album/:id', authenticationMiddleware.authenticateArtistRequestAPI, uploadAlbumCover.single('file'), validateRequest.validate(artistValidationSchema.createAlbum, 'body'), artistController.updateAlbum); // Update Album
 
 module.exports = router;

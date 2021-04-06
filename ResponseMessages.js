@@ -60,4 +60,7 @@ module.exports = {
     podcastcategoryList: `Category list fetched successfully`,
     podcastCategoryDelete: `Category deleted successfully`,
     podcastNotFound: `Category not found`,
+    albumCreate: `Album created successfully`,
+    albumNotFound: `Album not found`,
+    albumUpdate: `Album details updated successfully`,
 }
