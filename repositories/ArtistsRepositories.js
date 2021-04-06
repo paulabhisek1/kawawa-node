@@ -21,6 +21,7 @@ ArtistModel.hasOne(FollowedArtistsModel, { foreignKey: 'artist_id', as: 'is_foll
 ArtistModel.hasOne(ArtistDetailsModel, { foreignKey: 'artist_id', as: 'artist_account_details' });
 ArtistDetailsModel.belongsTo(GenresModel, { foreignKey: 'sample_song_type', as: 'sample_song_type_details' });
 ArtistDetailsModel.belongsTo(AlbumsModel, { foreignKey: 'sample_song_album', as: 'sample_song_album_details' });
+ArtistDetailsModel.belongsTo(CountryModel, { foreignKey: 'bank_country', as: 'country_details' });
 
 
 // Count
@@ -102,6 +103,10 @@ module.exports.artistDetailsAdmin = (whereData, data) => {
                     as: 'artist_account_details',
                     include: [
                         {
+                            model: CountryModel,
+                            as: 'country_details'
+                        },  
+                        {
                             model: GenresModel,
                             as: 'sample_song_type_details'
                         },
@@ -111,6 +116,9 @@ module.exports.artistDetailsAdmin = (whereData, data) => {
                         }
                     ],
                     required: false
+                },
+                {
+                    model: CountryModel,
                 }
             ]
         }).then(result => {
