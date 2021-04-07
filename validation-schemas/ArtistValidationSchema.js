@@ -95,3 +95,11 @@ module.exports.artistDetailsStepFour = Joi.object().keys({
 module.exports.createAlbum = Joi.object().keys({
     name: Joi.string().required(),
 });
+
+// List Albums Schema
+module.exports.listAlbums = Joi.object().keys({
+    page: Joi.number().min(1).required(),
+    search: Joi.string().required().allow('', null),
+    sortKey: Joi.string().required().allow('', null),
+    sortType: Joi.string().required().allow('', null),
+});

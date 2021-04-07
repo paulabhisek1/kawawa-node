@@ -63,4 +63,6 @@ module.exports = {
     albumCreate: `Album created successfully`,
     albumNotFound: `Album not found`,
     albumUpdate: `Album details updated successfully`,
+    albumDetails: `Album details fetched successfully`,
+    albumList: `Album list fetched successfully`,
 }

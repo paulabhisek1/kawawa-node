@@ -28,6 +28,7 @@ const commonFunction = require('../../helpers/commonFunctions');
 const md5 = require('md5');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
+const e = require('express');
 
 // ################################ Globals ################################ //
 const jwtOptionsAccess = global.constants.jwtAccessTokenOptions;
@@ -1012,7 +1013,7 @@ module.exports.updateAlbum = (req, res) => {
             let albumID = req.params.id;
             let body = req.body;
 
-            let albumCount = await albumRepositories.count({ id: albumID });
+            let albumCount = await albumRepositories.count({ id: albumID, artist_id: artistID });
 
             if(albumCount > 0) {
                 let updateData = {};
@@ -1039,6 +1040,115 @@ module.exports.updateAlbum = (req, res) => {
                     purpose: purpose
                 })
             }
+        }
+        catch(err) {
+            console.log("Update Album ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  albumDetails
+| Response          :  Respective response message in JSON format
+| Logic             :  Album Details
+| Request URL       :  BASE_URL/artist/album-details/<< Album ID >>
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.albumDetails = (req, res) => {
+    (async() => {
+        let purpose = "Album Details"
+        try {
+            let artistID = req.headers.userID;
+            let albumID = req.params.id;
+
+            let albumCount = await albumRepositories.count({ id: albumID, artist_id: artistID })
+
+            if(albumCount > 0) {
+                let albumDetails = await albumRepositories.artistDetails({ id: albumID });
+
+                return res.status(200).json({
+                    status: 200,
+                    msg: responseMessages.albumDetails,
+                    data: {
+                        albumDetails: albumDetails
+                    },
+                    purpose: purpose
+                })
+            }
+            else {
+                return res.status(404).json({
+                    status: 404,
+                    msg: responseMessages.albumNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Create Album ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  albumDetails
+| Response          :  Respective response message in JSON format
+| Logic             :  List Of Albums
+| Request URL       :  BASE_URL/artist/album-list
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.alubumsList = (req, res) => {
+    (async()=>{
+        let purpose = "Albums List";
+        try {
+            let artistID = req.headers.userID;
+
+            let queryParam = req.query;
+            let where = {};
+            let data = {};
+            let page = queryParam.page ? parseInt(queryParam.page) : 1;
+            data.limit = 20;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+            data.order = [
+                ['id', 'DESC']
+            ];
+            where.artist_id = artistID;
+
+            if (queryParam.search) {
+                where.name = { $like: `%${queryParam.search}%` };
+            }
+
+            let albumsList = await albumRepositories.listAlbums(where, data);
+
+            let dataResp = {
+                albumsList: albumsList.rows,
+                totalCount: albumsList.count.length
+            }
+
+            return res.status(200).json({
+                status: 200,
+                msg: responseMessages.albumList,
+                data: dataResp,
+                purpose: purpose
+            })
         }
         catch(err) {
             console.log("Create Album ERROR : ", err);

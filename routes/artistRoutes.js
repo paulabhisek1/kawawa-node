@@ -104,5 +104,7 @@ router.get('/artist-details', authenticationMiddleware.authenticateArtistRequest
 router.get('/common-details', authenticationMiddleware.authenticateArtistRequestAPI, artistController.fetchCommonDetails); // Fetch Common Details
 router.post('/create-album', authenticationMiddleware.authenticateArtistRequestAPI, uploadAlbumCover.single('file'), validateRequest.validate(artistValidationSchema.createAlbum, 'body'), artistController.createAlbum); // Create Album
 router.put('/update-album/:id', authenticationMiddleware.authenticateArtistRequestAPI, uploadAlbumCover.single('file'), validateRequest.validate(artistValidationSchema.createAlbum, 'body'), artistController.updateAlbum); // Update Album
+router.get('/album-details/:id', authenticationMiddleware.authenticateArtistRequestAPI, artistController.albumDetails); // Album Details
+router.get('/album-list', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.listAlbums, 'query'), artistController.alubumsList); // Album List
 
 module.exports = router;

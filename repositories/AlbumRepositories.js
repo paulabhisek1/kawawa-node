@@ -1,6 +1,9 @@
 const sequelize = require('../config/dbConfig').sequelize;
 var DataTypes = require('sequelize/lib/data-types');
 const AlbumModel = require('../models/albums')(sequelize, DataTypes);
+const ArtistModel = require('../models/artists')(sequelize, DataTypes);
+
+AlbumModel.belongsTo(ArtistModel, { foreignKey: 'artist_id' })
 
 // Find All
 module.exports.findAll = (where, data) => {
@@ -20,11 +23,55 @@ module.exports.findAll = (where, data) => {
     })
 }
 
+// Find And Count All
+module.exports.listAlbums = (where, data) => {
+    return new Promise((resolve, reject) => {
+        AlbumModel.findAndCountAll({
+            where: where,
+            include: [
+                {
+                    model: ArtistModel,
+                    attributes: ['full_name']
+                }
+            ],
+            offset: data.offset,
+            limit: data.limit,
+            order: data.order,
+            group: ['id'],
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
 // Find All
 module.exports.count = (where) => {
     return new Promise((resolve, reject) => {
         AlbumModel.count({
             where: where,
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
+// Find All
+module.exports.artistDetails = (where) => {
+    return new Promise((resolve, reject) => {
+        AlbumModel.findOne({
+            where: where,
+            include: [
+                {
+                    model: ArtistModel,
+                    attributes: ['full_name']
+                }
+            ]
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
             resolve(result);
