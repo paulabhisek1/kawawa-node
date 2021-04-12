@@ -547,20 +547,20 @@ module.exports.albumWiseTrack = (req, res) => {
             let userID = req.headers.userID;
             let where = {};
             let data = {};
-            let page = queryParam.page ? parseInt(queryParam.page) : 1;
-            data.limit = 20;
-            data.offset = data.limit ? data.limit * (page - 1) : null;
+            // let page = queryParam.page ? parseInt(queryParam.page) : 1;
+            // data.limit = 20;
+            // data.offset = data.limit ? data.limit * (page - 1) : null;
             let albumID = queryParam.album_id;
             where.is_active = 1;
             where.album_id = albumID;
             data.user_id = userID;
 
             let albumSongs = await songRepository.findAndCountAll(where, data);
-            let totalPages = Math.ceil(albumSongs.count.length / 20);
+            // let totalPages = Math.ceil(albumSongs.count.length / 20);
             let dataResp = {
                 album_songs: albumSongs.rows,
-                total_count: albumSongs.count.length,
-                total_page: totalPages
+                // total_count: albumSongs.count.length,
+                // total_page: totalPages
             }
 
             return res.send({
