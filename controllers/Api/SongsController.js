@@ -143,16 +143,26 @@ module.exports.allRecentlyPlayed = (req, res) => {
             let queryParam = req.query;
             let where = {};
             let data = {};
-            let page = queryParam.page ? parseInt(queryParam.page) : 1;
+            let page = queryParam.page > 0 ? parseInt(queryParam.page) : 1;
             data.limit = 20;
-            data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
+            let numberOfItems = queryParam.number_of_items;
+            if (numberOfItems > 0) data.limit = parseInt(numberOfItems);
+            let playlistId = queryParam.playlist_id;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+            if (playlistId > 0) where.id = { $lt: playlistId };
             where.user_id = userID;
             data.user_id = userID;
+            // console.log('data', data);
+
+
             let allRecentlyPlayed = await userPlayedHistoryRepo.allRecentlyPlayed(where, data);
+
+            // console.log('allRecentlyPlayed', allRecentlyPlayed);
 
             let newAllRecentlyPlayed = [];
             allRecentlyPlayed.rows.forEach((item, index) => {
+                item.song_details.playListId = item.id; // Push the playlist item id it the array
                 newAllRecentlyPlayed.push(item.song_details);
             });
             let totalPages = Math.ceil(allRecentlyPlayed.count.length / 20);

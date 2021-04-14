@@ -4,7 +4,9 @@ const Joi = JoiBase.extend(JoiDate); // extend Joi with Joi Date
 
 // All Recently Played Schema
 module.exports.allRecentlyPlayed = Joi.object().keys({
-    page: Joi.number().min(1).required(),
+    page: Joi.number().min(0).required(),
+    playlist_id: Joi.number().min(0),
+    number_of_items: Joi.number().min(0),
 });
 
 // Artist Wise Songs Schema
