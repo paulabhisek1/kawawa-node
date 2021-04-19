@@ -207,12 +207,17 @@ module.exports.allRecommend = (req, res) => {
             let queryParam = req.query;
             let where = {};
             let data = {};
-            let page = queryParam.page ? parseInt(queryParam.page) : 1;
+            let page = queryParam.page > 0 ? parseInt(queryParam.page) : 1;
             data.limit = 20;
-            data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
-            where.user_id = userID;
+            let numberOfItems = queryParam.number_of_items;
+            if (numberOfItems > 0) data.limit = parseInt(numberOfItems);
+            let playlistId = queryParam.playlist_id;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+            if (playlistId > 0) where.id = { $lt: playlistId };
+            // where.user_id = userID;
             data.user_id = userID;
+
             let allRecenData = await userPlayedHistoryRepo.recentlyPlayedAllData({ user_id: userID });
             let recommendArtistList = [];
             let recommentGenreList = [];
@@ -224,7 +229,6 @@ module.exports.allRecommend = (req, res) => {
                     recommentGenreList.push(item.song_details.genre_details.id)
                 }
             })
-            where = {};
             where.$or = [
                 { artist_id: { $in: recommendArtistList } },
                 { genre_id: { $in: recommentGenreList } },
@@ -232,6 +236,11 @@ module.exports.allRecommend = (req, res) => {
             where.is_active = 1;
             let recommendedSongsData = await songRepository.recommendedSongsPaginate(where, data);
             let totalPages = Math.ceil(recommendedSongsData.count.length / 20);
+
+            recommendedSongsData.rows.forEach(element => {
+                element.playListId = element.id // add a new key `playListId` in the response
+            });
+
             let dataResp = {
                 allrecommend: recommendedSongsData.rows,
                 total_count: recommendedSongsData.count.length,
@@ -273,13 +282,21 @@ module.exports.allWeeklyTop = (req, res) => {
             let queryParam = req.query;
             let where = {};
             let data = {};
-            let page = queryParam.page ? parseInt(queryParam.page) : 1;
+            let page = queryParam.page > 0 ? parseInt(queryParam.page) : 1;
             data.limit = 10;
-            data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
+            let numberOfItems = queryParam.number_of_items;
+            if (numberOfItems > 0) data.limit = parseInt(numberOfItems);
+            let playlistId = queryParam.playlist_id;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+            if (playlistId > 0) where.id = { $gt: playlistId };
             where.is_active = 1;
             data.user_id = userID;
             let allweeklytop = await songRepository.weeklyTopTenPaginate(where, data);
+            allweeklytop.forEach(element => {
+                element.playListId = element.id // add a new key `playListId` in the response
+            });
+
             let dataResp = {
                 allweeklytop: allweeklytop,
                 // total_count: allweeklytop.count.length
@@ -369,14 +386,21 @@ module.exports.allFreeSongs = (req, res) => {
             let queryParam = req.query;
             let where = {};
             let data = {};
-            let page = queryParam.page ? parseInt(queryParam.page) : 1;
+            let page = queryParam.page > 0 ? parseInt(queryParam.page) : 1;
             data.limit = 20;
-            data.offset = data.limit ? data.limit * (page - 1) : null;
             let userID = req.headers.userID;
+            let numberOfItems = queryParam.number_of_items;
+            if (numberOfItems > 0) data.limit = parseInt(numberOfItems);
+            let playlistId = queryParam.playlist_id;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+            if (playlistId > 0) where.id = { $lt: playlistId };
             where.is_active = 1;
             where.is_paid = 0;
             data.user_id = userID;
             let allfreesongs = await songRepository.freeSongsPaginate(where, data);
+            allfreesongs.rows.forEach(element => {
+                element.playListId = element.id // add a new key `playListId` in the response
+            });
             let totalPages = Math.ceil(allfreesongs.count.length / 20);
             let dataResp = {
                 allfreesongs: allfreesongs.rows,
