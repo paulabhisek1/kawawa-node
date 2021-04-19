@@ -60,6 +60,7 @@ module.exports.fetchHomePageData = (req, res) => {
             let allRecentlyPlayed = await userPlayedHistoryRepo.recentlyPlayed(where, data);
             let newAllRecentlyPlayed = [];
             allRecentlyPlayed.forEach((item, index) => {
+                item.song_details.playListId = item.id; // Push the playlist item id it the array
                 newAllRecentlyPlayed.push(item.song_details);
             });
             allRecentlyPlayed = newAllRecentlyPlayed;
@@ -69,6 +70,9 @@ module.exports.fetchHomePageData = (req, res) => {
             where.is_active = 1;
             where.is_paid = 0;
             let freeSongs = await songRepository.freeSongs(where, data);
+            freeSongs.forEach(element => {
+                element.playListId = element.id // add a new key `playListId` in the response
+            });
 
             // Artist List
             where = {};
@@ -95,10 +99,17 @@ module.exports.fetchHomePageData = (req, res) => {
             where.is_active = 1;
             let recommendedSongsData = await songRepository.recommendedSongs(where, data);
 
+            recommendedSongsData.forEach(element => {
+                element.playListId = element.id // add a new key `playListId` in the response
+            });
+
             // Weekly Top 10
             where = {};
             where.is_active = 1;
             let topTenSongsData = await songRepository.weeklyTopTen(where, data);
+            topTenSongsData.forEach(element => {
+                element.playListId = element.id // add a new key `playListId` in the response
+            });
 
             let dataResp = {
                 recently_played: allRecentlyPlayed,
