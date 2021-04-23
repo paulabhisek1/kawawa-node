@@ -706,3 +706,149 @@ module.exports.deletePodcastCategory = (req, res) => {
         }
     })()
 }
+
+/*
+|------------------------------------------------ 
+| API name          :  acceptArtist
+| Response          :  Respective response message in JSON format
+| Logic             :  Accept Artist
+| Request URL       :  BASE_URL/admin/accept-artist/<< Artist ID >>
+| Request method    :  PUT
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.acceptArtist = (req, res) => {
+    (async() => {
+        let purpose = "Approve Artist";
+        try {
+            let artistID = req.params.id;
+
+            let artistCount = await artistRepositories.count({ id: artistID });
+
+            if (artistCount > 0) {
+                await artistRepositories.artistDetailsAdmin({ id: artistID });
+
+                let updateData = {};
+                updateData.is_active = 1;
+
+                await artistRepositories.updateArtist({ id: artistID }, updateData);
+
+                let msg = 'Artist approved successfully';
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: msg,
+                    data: {},
+                    purpose: purpose
+                })
+            } else {
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.artistNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        } catch (err) {
+            console.log("Approve Artist ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  declineArtist
+| Response          :  Respective response message in JSON format
+| Logic             :  Decline Artist
+| Request URL       :  BASE_URL/admin/decline-artist/<< Artist ID >>
+| Request method    :  PUT
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.declineArtist = (req, res) => {
+    (async() => {
+        let purpose = "Decline Artist";
+        try {
+            let artistID = req.params.id;
+
+            let artistCount = await artistRepositories.count({ id: artistID });
+
+            if (artistCount > 0) {
+                await artistRepositories.artistDetailsAdmin({ id: artistID });
+
+                let updateData = {};
+                updateData.is_active = 2;
+                updateData.declined_reason = req.body.declined_reason;
+
+                await artistRepositories.updateArtist({ id: artistID }, updateData);
+                let artistDetails = await artistRepositories.findOne({ id: artistID });
+
+                let mailData = {
+                    toEmail: artistDetails.email,
+                    subject: 'Account has been declined',
+                    html: `<body style="background: #f2f2f2;">
+                    <div style="width:100%; max-width:600px; margin:0 auto; padding:40px 15px;">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding:8px 0;text-align: center; background:#7f7e7e;">
+                      <tr>
+                        <th scope="col"><img src="logo.png" alt="" width="150" /></th>
+                      </tr>
+                    </table>
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding:60px 40px;text-align: left; background:#fff;">
+                      <tr>
+                        <th scope="col">
+                        <p style="font-size:17px; font-weight:500; color:#000; line-height:24px;">Hi ${artistDetails.full_name},</p>
+                        <p style="font-size:17px; font-weight:500; color:#000; line-height:24px; margin-top: 20px;">Your artist account has been declined for <strong style="font-size:20px; color:#ff301e;"> ${artistDetails.declined_reason}</strong></p>
+                        <p style="font-size:17px; font-weight:500; color:#000; line-height:24px; margin-top: 20px;">Thanks for your time, Please contact the administrator to approve your account</p>
+                        <p style="font-size:17px; font-weight:500; color:#000; line-height:24px;">The Kawawa Sound Team </p>    
+                        
+                        </th>
+                      </tr>
+                    </table>
+                    
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding:20px 0;text-align: center; background:#f2f2f2;">
+                      <tr>
+                        <th scope="col">
+                        <p style="font-size:15px; font-weight:500; color:rgb(82, 82, 82)"><a href="#" style="color:rgb(82, 82, 82); margin:0 2px;">Terms & Condition</a> I <a href="#" style="color:rgb(82, 82, 82); margin:0 2px;">Privacy Policy</a> I <a href="#" style="color:rgb(82, 82, 82); margin:0 2px;">Rate App</a></p>
+                        <p style="font-size:15px; font-weight:500; color:rgb(82, 82, 82); margin-top: 8px;">655 Montgomery Street, Suite 490, Dpt 17022, San Francisco, CA 94111</p>
+                        <p style="font-size:15px; font-weight:500; color:rgb(82, 82, 82); margin-top: 8px;">© 2021 Kawawa Sound Inc.</p>
+                        </th>
+                      </tr>
+                    </table>
+                    </div>
+                    </body>`
+                }
+                await commonFunction.sendMail(mailData);
+
+                let msg = 'Artist declined successfully';
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: msg,
+                    data: {},
+                    purpose: purpose
+                })
+            } else {
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.artistNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        } catch (err) {
+            console.log("Verify Artist ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}

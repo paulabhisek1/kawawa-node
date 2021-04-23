@@ -42,7 +42,10 @@ module.exports = {
       is_active: {
         type: Sequelize.INTEGER,
         defaultValue: 0,
-        comment: '0 => Inactive, 1 => Active'
+        comment: '0 => Default, 1 => Approved, 2 => Declined'
+      },
+      declined_reason: {
+        type: Sequelize.STRING,
       },
       current_reg_step: {
         type: Sequelize.INTEGER,

@@ -29,6 +29,7 @@ module.exports = (sequelize, DataTypes) => {
     otp_expire_time: DataTypes.DATE,
     profile_image: DataTypes.STRING,
     is_active: DataTypes.INTEGER,
+    declined_reason: DataTypes.STRING,
     current_reg_step: DataTypes.INTEGER,
     reg_steps_completed: DataTypes.INTEGER,
     type: DataTypes.STRING

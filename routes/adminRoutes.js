@@ -23,6 +23,8 @@ router.delete('/delete-genre/:id', authenticationMiddleware.authenticateAdminReq
 router.get('/artist-list', authenticationMiddleware.authenticateAdminRequestAPI, validateRequest.validate(adminValidationSchema.listCountrySchema, 'query'), adminController.listArtists); // List Artists
 router.get('/artist-details/:id', authenticationMiddleware.authenticateAdminRequestAPI, adminController.artistDetails); // Artists Details
 router.put('/artist-verify/:id', authenticationMiddleware.authenticateAdminRequestAPI, adminController.verifyArtist); // Artists verify
+router.put('/accept-artist/:id', authenticationMiddleware.authenticateAdminRequestAPI, adminController.acceptArtist); // Accept verify
+router.put('/decline-artist/:id', authenticationMiddleware.authenticateAdminRequestAPI, validateRequest.validate(adminValidationSchema.declineArtistSchema, 'body'),adminController.declineArtist); // Decline Artist
 router.post('/podcast-category-add', authenticationMiddleware.authenticateAdminRequestAPI, validateRequest.validate(adminValidationSchema.addPodcastCategorySchema, 'body'), adminController.addPodcastCategory); // Add Podcast Category
 router.get('/podcast-category-list', authenticationMiddleware.authenticateAdminRequestAPI, validateRequest.validate(adminValidationSchema.listPodcastcategorySchema, 'query'), adminController.listPodcastCategory); // List Podcast Category
 router.delete('/delete-podcast-category/:id', authenticationMiddleware.authenticateAdminRequestAPI, adminController.deletePodcastCategory); // Delete Podcast Category

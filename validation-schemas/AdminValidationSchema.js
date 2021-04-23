@@ -33,6 +33,11 @@ module.exports.addPodcastCategorySchema = Joi.object().keys({
     name: Joi.string().required(),
 });
 
+// Add Podcast Category Schema
+module.exports.declineArtistSchema = Joi.object().keys({
+    declined_reason: Joi.string().required(),
+});
+
 // List Podcast Category Schema
 module.exports.listPodcastcategorySchema = Joi.object().keys({
     page: Joi.number().min(1).required(),
