@@ -164,18 +164,34 @@ module.exports.allRecentlyPlayed = (req, res) => {
             if (playlistId > 0) where.id = { $lt: playlistId };
             where.user_id = userID;
             data.user_id = userID;
-            // console.log('data', data);
 
 
             let allRecentlyPlayed = await userPlayedHistoryRepo.allRecentlyPlayed(where, data);
-
-            // console.log('allRecentlyPlayed', allRecentlyPlayed);
 
             let newAllRecentlyPlayed = [];
             allRecentlyPlayed.rows.forEach((item, index) => {
                 item.song_details.playListId = item.id; // Push the playlist item id it the array
                 newAllRecentlyPlayed.push(item.song_details);
             });
+
+            // Implementing Circular Queue
+            if(allRecentlyPlayed.count.length < 20 && playlistId > 0) {
+                data.limit = 20 - parseInt(allRecentlyPlayed.count.length);
+                data.offset = data.limit ? data.limit * (page - 1) : null;
+                if (playlistId > 0) where.id = { $gt: playlistId };
+
+                let newRecentlyPlayed = await userPlayedHistoryRepo.allRecentlyPlayed(where, data);
+
+                let newAllRecentlyPlayed2 = [];
+                newRecentlyPlayed.rows.forEach((item, index) => {
+                    item.song_details.playListId = item.id; // Push the playlist item id it the array
+                    newAllRecentlyPlayed2.push(item.song_details);
+                });
+
+                allRecentlyPlayed.count.length = allRecentlyPlayed.count.length + newRecentlyPlayed.count.length;
+                newAllRecentlyPlayed = newAllRecentlyPlayed.concat(newAllRecentlyPlayed2);
+            }
+
             let totalPages = Math.ceil(allRecentlyPlayed.count.length / 20);
             let dataResp = {
                 recently_played: newAllRecentlyPlayed,
@@ -252,6 +268,21 @@ module.exports.allRecommend = (req, res) => {
                 element.playListId = element.id // add a new key `playListId` in the response
             });
 
+            // Implementing Circular Queue
+            if(recommendedSongsData.count.length < 20 && playlistId > 0) {
+                data.limit = 20 - parseInt(recommendedSongsData.count.length);
+                data.offset = data.limit ? data.limit * (page - 1) : null;
+                if (playlistId > 0) where.id = { $gt: playlistId };
+
+                let newRecomendedSongs = await songRepository.recommendedSongsPaginate(where, data);
+                newRecomendedSongs.rows.forEach(element => {
+                    element.playListId = element.id // add a new key `playListId` in the response
+                });
+
+                recommendedSongsData.count.length = recommendedSongsData.count.length + newRecomendedSongs.count.length;
+                recommendedSongsData.rows = recommendedSongsData.rows.concat(newRecomendedSongs.rows);
+            }
+
             let dataResp = {
                 allrecommend: recommendedSongsData.rows,
                 total_count: recommendedSongsData.count.length,
@@ -300,13 +331,27 @@ module.exports.allWeeklyTop = (req, res) => {
             if (numberOfItems > 0) data.limit = parseInt(numberOfItems);
             let playlistId = queryParam.playlist_id;
             data.offset = data.limit ? data.limit * (page - 1) : null;
-            if (playlistId > 0) where.id = { $gt: playlistId };
+            if (playlistId > 0) where.id = { $lt: playlistId };
             where.is_active = 1;
             data.user_id = userID;
             let allweeklytop = await songRepository.weeklyTopTenPaginate(where, data);
             allweeklytop.forEach(element => {
                 element.playListId = element.id // add a new key `playListId` in the response
             });
+
+            // // Implementing Circular Queue
+            // if(allweeklytop.length < 10 && playlistId > 0) {
+            //     data.limit = 10 - parseInt(allweeklytop.count.length);
+            //     data.offset = data.limit ? data.limit * (page - 1) : null;
+            //     if (playlistId > 0) where.id = { $gt: playlistId };
+
+            //     let newWeeklyTop = await songRepository.weeklyTopTenPaginate(where, data);
+            //     newWeeklyTop.rows.forEach((item, index) => {
+            //         element.playListId = element.id
+            //     });
+
+            //     allweeklytop = allweeklytop.concat(newWeeklyTop);
+            // }
 
             let dataResp = {
                 allweeklytop: allweeklytop,
@@ -412,6 +457,22 @@ module.exports.allFreeSongs = (req, res) => {
             allfreesongs.rows.forEach(element => {
                 element.playListId = element.id // add a new key `playListId` in the response
             });
+
+            // Implementing Circular Queue
+            if(allfreesongs.count.length < 20 && playlistId > 0) {
+                data.limit = 20 - parseInt(allweeklytop.count.length);
+                data.offset = data.limit ? data.limit * (page - 1) : null;
+                if (playlistId > 0) where.id = { $gt: playlistId };
+
+                let newAllFreeSongs = await songRepository.freeSongsPaginate(where, data);
+                newAllFreeSongs.rows.forEach((item, index) => {
+                    element.playListId = element.id
+                });
+
+                allfreesongs.count.length = allfreesongs.count.length + newAllFreeSongs.count.length
+                allfreesongs.rows = allfreesongs.rows.concat(newAllFreeSongs.rows);
+            }
+
             let totalPages = Math.ceil(allfreesongs.count.length / 20);
             let dataResp = {
                 allfreesongs: allfreesongs.rows,
