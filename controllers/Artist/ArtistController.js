@@ -825,6 +825,7 @@ module.exports.saveArtistDeatislStepFour = (req, res) => {
                     sample_song_type: body.sample_song_type,
                     sample_song_album: body.sample_song_album ? body.sample_song_album : null,
                     sample_song_description: body.sample_song_description,
+                    is_active: 3
                 }
 
                 await sequelize.transaction(async(t) => {
