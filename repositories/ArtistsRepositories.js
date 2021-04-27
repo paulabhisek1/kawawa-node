@@ -58,7 +58,7 @@ module.exports.artistDetails = (whereData, data) => {
     return new Promise((resolve, reject) => {
         ArtistModel.findOne({
             where: whereData,
-            attributes: ['id','full_name','profile_image','country_id'],
+            attributes: ['id','full_name','profile_image','country_id', 'is_active'],
             include: [
                 {
                     model: FollowedArtistsModel,

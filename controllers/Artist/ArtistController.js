@@ -1162,3 +1162,28 @@ module.exports.alubumsList = (req, res) => {
         }
     })()
 }
+
+module.exports.uploadSong = (req, res) => {
+    (async() => {
+        let purpose = "Upload Sample Song";
+        try {
+            let filePath = `${global.constants.sample_songs_url}/${req.file.filename}`;
+            return res.status(200).send({
+                status: 200,
+                msg: responseMessages.sampleSong,
+                data: {
+                    filePath: filePath
+                },
+                purpose: purpose
+            })
+        } catch (err) {
+            console.log("Upload Song : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}

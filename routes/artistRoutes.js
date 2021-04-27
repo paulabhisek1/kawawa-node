@@ -78,11 +78,24 @@ var storageSampleSong = multer.diskStorage({
     }
 })
 
+// SET STORAGE FOR SAMPLE SONG
+var storageSong = multer.diskStorage({
+    destination: function(req, file, cb) {
+        const path = 'uploads/songs';
+        fs.mkdirSync(path, { recursive: true });
+        cb(null, path);
+    },
+    filename: function(req, file, cb) {
+        cb(null, 'song_' + Date.now() + path.extname(file.originalname))
+    }
+})
+
 var uploadProfilePicture = multer({ storage: storagePicture });
 var uploadGovtIDFront = multer({ storage: storagePictureGovtIDFront });
 var uploadGovtIDBack = multer({ storage: storagePictureGovtIDBack });
 var uploadSampleSong = multer({ storage: storageSampleSong });
 var uploadAlbumCover = multer({ storage: storagePictureAlbumCover });
+var uploadSong = multer({ storage: storageSong });
 
 router.post('/register', validateRequest.validate(artistValidationSchema.userRegisterSchema, 'body'), artistController.registerArtist); // User Registration Route
 router.post('/login', validateRequest.validate(artistValidationSchema.loginSchema, 'body'), artistController.artistLogin); // System Login Route
