@@ -78,7 +78,7 @@ var storageSampleSong = multer.diskStorage({
     }
 })
 
-// SET STORAGE FOR SAMPLE SONG
+// SET STORAGE FOR SONG
 var storageSong = multer.diskStorage({
     destination: function(req, file, cb) {
         const path = 'uploads/songs';
@@ -90,12 +90,25 @@ var storageSong = multer.diskStorage({
     }
 })
 
+// SET STORAGE FOR SONG COVER IMAGE
+var storageSongCover = multer.diskStorage({
+    destination: function(req, file, cb) {
+        const path = 'uploads/songs_cover';
+        fs.mkdirSync(path, { recursive: true });
+        cb(null, path);
+    },
+    filename: function(req, file, cb) {
+        cb(null, 'song_cover_' + Date.now() + path.extname(file.originalname))
+    }
+})
+
 var uploadProfilePicture = multer({ storage: storagePicture });
 var uploadGovtIDFront = multer({ storage: storagePictureGovtIDFront });
 var uploadGovtIDBack = multer({ storage: storagePictureGovtIDBack });
 var uploadSampleSong = multer({ storage: storageSampleSong });
 var uploadAlbumCover = multer({ storage: storagePictureAlbumCover });
 var uploadSong = multer({ storage: storageSong });
+var uploadSongCover = multer({ storage: storageSongCover });
 
 router.post('/register', validateRequest.validate(artistValidationSchema.userRegisterSchema, 'body'), artistController.registerArtist); // User Registration Route
 router.post('/login', validateRequest.validate(artistValidationSchema.loginSchema, 'body'), artistController.artistLogin); // System Login Route
@@ -119,5 +132,9 @@ router.post('/create-album', authenticationMiddleware.authenticateArtistRequestA
 router.put('/update-album/:id', authenticationMiddleware.authenticateArtistRequestAPI, uploadAlbumCover.single('file'), validateRequest.validate(artistValidationSchema.createAlbum, 'body'), artistController.updateAlbum); // Update Album
 router.get('/album-details/:id', authenticationMiddleware.authenticateArtistRequestAPI, artistController.albumDetails); // Album Details
 router.get('/album-list', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.listAlbums, 'query'), artistController.alubumsList); // Album List
+router.post('/upload-song', authenticationMiddleware.authenticateArtistRequestAPI, uploadSong.single('file'), artistController.uploadSong); // Upload Song
+router.post('/upload-song-cover-image', authenticationMiddleware.authenticateArtistRequestAPI, uploadSongCover.single('file'), artistController.uploadSongCover); // Upload Song Cover Image
+router.post('/create-song', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.createSong, 'body'), artistController.createNewSong) // Create New Song
+
 
 module.exports = router;

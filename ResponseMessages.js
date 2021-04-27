@@ -65,4 +65,7 @@ module.exports = {
     albumUpdate: `Album details updated successfully`,
     albumDetails: `Album details fetched successfully`,
     albumList: `Album list fetched successfully`,
+    songUpload: `Song uploaded successfully`,
+    songCoverUpload: `Song cover image uploaded successfully`,
+    songCreate: `Song created successfully`,
 }

@@ -15,7 +15,7 @@ module.exports = {
                 type: Sequelize.STRING
             },
             length: {
-                type: Sequelize.INTEGER
+                type: Sequelize.STRING
             },
             file_name: {
                 type: Sequelize.STRING

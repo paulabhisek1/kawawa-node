@@ -486,3 +486,17 @@ module.exports.update = (where, data, t = null) => {
         })
     })
 }
+
+// Create
+module.exports.create = (data, t = null) => {
+    return new Promise((resolve, reject) => {
+        let options = {}
+        //if trunsaction exist
+        if (t != null) options.transaction = t;
+        SongsModel.create(data, options).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}

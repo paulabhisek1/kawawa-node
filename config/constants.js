@@ -4,6 +4,8 @@ module.exports = {
     govt_id_url: '/uploads/govt_ids',
     sample_songs_url: '/uploads/songs/sample',
     album_cover_url: '/uploads/album_covers',
+    songs_cover_url: '/uploads/songs_covers',
+    songs_url: '/uploads/songs',
     jwtAccessTokenOptions: {
         secret: 'KawawaMusicApp#@2021',
         options: {

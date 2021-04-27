@@ -14,6 +14,7 @@
 const artistRepositories = require('../../repositories/ArtistsRepositories');
 const genresRepositories = require('../../repositories/GenresRepositories');
 const albumRepositories = require('../../repositories/AlbumRepositories');
+const songsRepositories = require('../../repositories/SongsRepository');
 
 // ################################ Sequelize ################################ //
 const sequelize = require('../../config/dbConfig').sequelize;
@@ -1163,14 +1164,24 @@ module.exports.alubumsList = (req, res) => {
     })()
 }
 
+/*
+|------------------------------------------------ 
+| API name          :  uploadSong
+| Response          :  Respective response message in JSON format
+| Logic             :  Upload Song
+| Request URL       :  BASE_URL/artist/upload-song
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
 module.exports.uploadSong = (req, res) => {
     (async() => {
-        let purpose = "Upload Sample Song";
+        let purpose = "Upload Song";
         try {
-            let filePath = `${global.constants.sample_songs_url}/${req.file.filename}`;
+            let filePath = `${global.constants.songs_url}/${req.file.filename}`;
             return res.status(200).send({
                 status: 200,
-                msg: responseMessages.sampleSong,
+                msg: responseMessages.songUpload,
                 data: {
                     filePath: filePath
                 },
@@ -1178,6 +1189,102 @@ module.exports.uploadSong = (req, res) => {
             })
         } catch (err) {
             console.log("Upload Song : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  uploadSongCover
+| Response          :  Respective response message in JSON format
+| Logic             :  Upload Song Cover Image
+| Request URL       :  BASE_URL/artist/upload-song-cover-image
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.uploadSongCover = (req, res) => {
+    (async() => {
+        let purpose = "Upload Song Cover Image";
+        try {
+            let filePath = `${global.constants.songs_cover_url}/${req.file.filename}`;
+            return res.status(200).send({
+                status: 200,
+                msg: responseMessages.songCoverUpload,
+                data: {
+                    filePath: filePath
+                },
+                purpose: purpose
+            })
+        } catch (err) {
+            console.log("Upload Song Cover Image : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  createNewSong
+| Response          :  Respective response message in JSON format
+| Logic             :  Create New Song
+| Request URL       :  BASE_URL/artist/create-song
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.createNewSong = (req, res) => {
+    (async()=>{
+        let purpose = "Create New Song";
+        try {
+            let artistID = req.headers.userID;
+            let body = req.body;
+            let songDetails = null;
+
+            await sequelize.transaction(async(t) => {
+                let insertData = {
+                    name: body.name,
+                    cover_picture: body.cover_picture,
+                    length: body.length,
+                    file_name: body.file_name,
+                    details: body.details,
+                    artist_id: artistID,
+                    album_id: body.album_id ? body.album_id : 0,
+                    is_paid: body.is_paid ? body.is_paid : 0,
+                    genre_id: body.genre_id ? body.genre_id : null,
+                    price: body.price ? body.price : null,
+                    playedCount: 0,
+                    is_active: 1,
+                    type: 'song'
+                }
+
+                songDetails = await songsRepositories.create(insertData, t);
+
+                if(body.album_id) {
+                    await albumRepositories.update({ id: body.album_id }, { total_songs: sequelize.literal(`total_songs + 1`) }, t)
+                }
+            })
+
+            return res.status(200).send({
+                status: 200,
+                msg: responseMessages.songCreate,
+                data: songDetails,
+                purpose: purpose
+            })
+        }   
+        catch(err) {
+            console.log("Create New Song Error : ", err);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,

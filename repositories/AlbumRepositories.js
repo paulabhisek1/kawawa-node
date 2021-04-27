@@ -119,6 +119,8 @@ module.exports.createAlbum = (data, t = null) => {
 
 // Update
 module.exports.update = (where, data, t = null) => {
+    console.log("WHERE : ", where);
+    console.log("DATA : ", data);
     return new Promise((resolve, reject) => {
         let options = {
                 where: where

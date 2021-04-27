@@ -103,3 +103,16 @@ module.exports.listAlbums = Joi.object().keys({
     sortKey: Joi.string().required().allow('', null),
     sortType: Joi.string().required().allow('', null),
 });
+
+// List Albums Schema
+module.exports.createSong = Joi.object().keys({
+    name: Joi.string().required(),
+    cover_picture: Joi.string().required(),
+    length: Joi.string().required(),
+    file_name: Joi.string().required(),
+    details: Joi.string().required(),
+    album_id: Joi.number().optional(),
+    is_paid: Joi.number().valid(0,1).required(),
+    genre_id: Joi.number().optional(),
+    price: Joi.number().optional(),
+});
