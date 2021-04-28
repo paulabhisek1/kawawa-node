@@ -1294,3 +1294,75 @@ module.exports.createNewSong = (req, res) => {
         }
     })()
 }
+
+module.exports.updateSong = (req, res) => {
+    (async()=>{
+        let purpose = "Update Song"
+        try {
+            let artistID = req.headers.userID;
+            let songID = req.params.id;
+            let body = req.body;
+
+            let songDetails = await songsRepositories.findOne({ id: songID });
+
+            if(songDetails) {
+                await sequelize.transaction(async(t)=>{
+                    let updateData = {
+                        name: body.name,
+                        cover_picture: body.cover_picture,
+                        length: body.length,
+                        file_name: body.file_name,
+                        details: body.details,
+                        artist_id: artistID,
+                        album_id: body.album_id ? body.album_id : 0,
+                        is_paid: body.is_paid ? body.is_paid : 0,
+                        genre_id: body.genre_id ? body.genre_id : null,
+                        price: body.price ? body.price : null,
+                        is_active: 1,
+                        type: 'song'
+                    }
+
+                    await songsRepositories.update({ id: songID }, updateData, t);
+
+                    if(body.album_id !== songDetails.album_id) {
+                        let albumDetails = await albumRepositories.findOne({ id: songDetails.album_id });
+
+                        if(albumDetails) {
+                            let updatePrevAlbum = {};
+                            if(albumDetails.total_songs > 0) updatePrevAlbum.total_songs = (albumDetails.total_songs - 1);
+                            else updatePrevAlbum.total_songs = 0;
+    
+                            await albumRepositories.update({ id: songDetails.album_id }, updatePrevAlbum, t);
+                        }
+                        
+                        if(body.album_id !== 0) await albumRepositories.update({ id: body.album_id }, { total_songs: sequelize.literal(`total_songs + 1`) }, t)
+                    }
+                })
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.songUpdate,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+            else {
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.songNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Update Error : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}

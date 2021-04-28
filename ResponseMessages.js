@@ -68,4 +68,5 @@ module.exports = {
     songUpload: `Song uploaded successfully`,
     songCoverUpload: `Song cover image uploaded successfully`,
     songCreate: `Song created successfully`,
+    songUpdate: `Song details updated successfully`,
 }

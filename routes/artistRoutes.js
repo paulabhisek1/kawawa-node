@@ -135,6 +135,7 @@ router.get('/album-list', authenticationMiddleware.authenticateArtistRequestAPI,
 router.post('/upload-song', authenticationMiddleware.authenticateArtistRequestAPI, uploadSong.single('file'), artistController.uploadSong); // Upload Song
 router.post('/upload-song-cover-image', authenticationMiddleware.authenticateArtistRequestAPI, uploadSongCover.single('file'), artistController.uploadSongCover); // Upload Song Cover Image
 router.post('/create-song', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.createSong, 'body'), artistController.createNewSong) // Create New Song
+router.put('/update-song/:id', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.createSong, 'body'), artistController.updateSong) // Update Song
 
 
 module.exports = router;

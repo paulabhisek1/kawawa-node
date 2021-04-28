@@ -61,6 +61,19 @@ module.exports.count = (where) => {
     })
 }
 
+module.exports.findOne = (where) => {
+    return new Promise((resolve, reject) => {
+        AlbumModel.findOne({
+            where: where,
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
 // Find All
 module.exports.artistDetails = (where) => {
     return new Promise((resolve, reject) => {
@@ -119,8 +132,6 @@ module.exports.createAlbum = (data, t = null) => {
 
 // Update
 module.exports.update = (where, data, t = null) => {
-    console.log("WHERE : ", where);
-    console.log("DATA : ", data);
     return new Promise((resolve, reject) => {
         let options = {
                 where: where

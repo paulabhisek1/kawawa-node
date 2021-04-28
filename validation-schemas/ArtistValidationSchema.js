@@ -87,7 +87,6 @@ module.exports.artistDetailsStepFour = Joi.object().keys({
     sample_song_name: Joi.string().required(),
     sample_song_path: Joi.string().required(),
     sample_song_type: Joi.number().required(),
-    sample_song_album: Joi.number().required().allow('', null),
     sample_song_description: Joi.string().required().allow('', null),
 });
 
