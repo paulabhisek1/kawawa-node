@@ -826,11 +826,11 @@ module.exports.saveArtistDeatislStepFour = (req, res) => {
                     sample_song_type: body.sample_song_type,
                     sample_song_album: body.sample_song_album ? body.sample_song_album : null,
                     sample_song_description: body.sample_song_description,
-                    is_active: 3
                 }
 
                 await sequelize.transaction(async(t) => {
                     await artistRepositories.updateArtistDetails({ artist_id: artistID }, updateData, t);
+                    await artistRepositories.update({ id: artistID }, { is_active: 3 });
                 })
 
                 let artistDetails = await artistRepositories.artistDetails({ id: artistID }, { user_id: artistID });
