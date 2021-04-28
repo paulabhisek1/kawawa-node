@@ -1295,6 +1295,16 @@ module.exports.createNewSong = (req, res) => {
     })()
 }
 
+/*
+|------------------------------------------------ 
+| API name          :  updateSong
+| Response          :  Respective response message in JSON format
+| Logic             :  Update Song
+| Request URL       :  BASE_URL/artist/update-song/<< Song ID >>
+| Request method    :  PUT
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
 module.exports.updateSong = (req, res) => {
     (async()=>{
         let purpose = "Update Song"
@@ -1303,7 +1313,7 @@ module.exports.updateSong = (req, res) => {
             let songID = req.params.id;
             let body = req.body;
 
-            let songDetails = await songsRepositories.findOne({ id: songID });
+            let songDetails = await songsRepositories.findOne({ id: songID, artist_id: artistID });
 
             if(songDetails) {
                 await sequelize.transaction(async(t)=>{
@@ -1343,6 +1353,56 @@ module.exports.updateSong = (req, res) => {
                     status: 200,
                     msg: responseMessages.songUpdate,
                     data: {},
+                    purpose: purpose
+                })
+            }
+            else {
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.songNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Update Error : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  songDetails
+| Response          :  Respective response message in JSON format
+| Logic             :  Create New Song
+| Request URL       :  BASE_URL/artist/artist-details/<< Song ID >>
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.songDetails = (req, res) => {
+    (async() => {
+        let purpose = "Song Details"
+        try {
+            let artistID = req.headers.userID;
+            let songID = req.params.id;
+            
+            let songCount = await songsRepositories.count({ id: songID, artist_id: artistID });
+
+            if(songCount > 0) {
+                let songDetails = await songsRepositories.songDetails({ id: songID });
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.songUpdate,
+                    data: songDetails,
                     purpose: purpose
                 })
             }

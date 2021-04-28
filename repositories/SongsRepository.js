@@ -500,3 +500,32 @@ module.exports.create = (data, t = null) => {
         })
     })
 }
+
+module.exports.songDetails = (where) => {
+    return new Promise((resolve, reject) => {
+        SongsModel.findOne({
+            where: where,
+            include: [{
+                    model: ArtistModel,
+                    as: 'artist_details',
+                    attributes: ['id', 'full_name', 'profile_image', 'type']
+                },
+                {
+                    model: GenresModel,
+                    as: 'genre_details',
+                    attributes: ['id', 'name']
+                },
+                {
+                    model: AlbumsModel,
+                    as: 'album_details',
+                    attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                }
+            ],
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
