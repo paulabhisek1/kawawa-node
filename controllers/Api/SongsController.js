@@ -161,7 +161,7 @@ module.exports.allRecentlyPlayed = (req, res) => {
             if (numberOfItems > 0) data.limit = parseInt(numberOfItems);
             let playlistId = queryParam.playlist_id;
             data.offset = data.limit ? data.limit * (page - 1) : null;
-            if (playlistId > 0) where.id = { $lt: playlistId };
+            if (playlistId > 0) where.id = { $lte: playlistId };
             where.user_id = userID;
             data.user_id = userID;
 
@@ -175,10 +175,10 @@ module.exports.allRecentlyPlayed = (req, res) => {
             });
 
             // Implementing Circular Queue
-            if(allRecentlyPlayed.count.length < 20 && playlistId > 0) {
+            if (allRecentlyPlayed.count.length < 20 && playlistId > 0) {
                 data.limit = 20 - parseInt(allRecentlyPlayed.count.length);
                 data.offset = data.limit ? data.limit * (page - 1) : null;
-                if (playlistId > 0) where.id = { $gt: playlistId };
+                if (playlistId > 0) where.id = { $gte: playlistId };
 
                 let newRecentlyPlayed = await userPlayedHistoryRepo.allRecentlyPlayed(where, data);
 
@@ -269,10 +269,10 @@ module.exports.allRecommend = (req, res) => {
             });
 
             // Implementing Circular Queue
-            if(recommendedSongsData.count.length < 20 && playlistId > 0) {
+            if (recommendedSongsData.count.length < 20 && playlistId > 0) {
                 data.limit = 20 - parseInt(recommendedSongsData.count.length);
                 data.offset = data.limit ? data.limit * (page - 1) : null;
-                if (playlistId > 0) where.id = { $gt: playlistId };
+                if (playlistId > 0) where.id = { $gte: playlistId };
 
                 let newRecomendedSongs = await songRepository.recommendedSongsPaginate(where, data);
                 newRecomendedSongs.rows.forEach(element => {
@@ -331,7 +331,7 @@ module.exports.allWeeklyTop = (req, res) => {
             if (numberOfItems > 0) data.limit = parseInt(numberOfItems);
             let playlistId = queryParam.playlist_id;
             data.offset = data.limit ? data.limit * (page - 1) : null;
-            if (playlistId > 0) where.id = { $lt: playlistId };
+            if (playlistId > 0) where.id = { $lte: playlistId };
             where.is_active = 1;
             data.user_id = userID;
             let allweeklytop = await songRepository.weeklyTopTenPaginate(where, data);
@@ -459,7 +459,7 @@ module.exports.allFreeSongs = (req, res) => {
             });
 
             // Implementing Circular Queue
-            if(allfreesongs.count.length < 20 && playlistId > 0) {
+            if (allfreesongs.count.length < 20 && playlistId > 0) {
                 data.limit = 20 - parseInt(allfreesongs.count.length);
                 data.offset = data.limit ? data.limit * (page - 1) : null;
                 if (playlistId > 0) where.id = { $gt: playlistId };
