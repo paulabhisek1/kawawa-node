@@ -241,7 +241,7 @@ module.exports.allRecommend = (req, res) => {
             if (numberOfItems > 0) data.limit = parseInt(numberOfItems);
             let playlistId = queryParam.playlist_id;
             data.offset = data.limit ? data.limit * (page - 1) : null;
-            if (playlistId > 0) where.id = { $lt: playlistId };
+            if (playlistId > 0) where.id = { $lte: playlistId };
             // where.user_id = userID;
             data.user_id = userID;
 
@@ -272,7 +272,7 @@ module.exports.allRecommend = (req, res) => {
             if (recommendedSongsData.count.length < 20 && playlistId > 0) {
                 data.limit = 20 - parseInt(recommendedSongsData.count.length);
                 data.offset = data.limit ? data.limit * (page - 1) : null;
-                if (playlistId > 0) where.id = { $gte: playlistId };
+                if (playlistId > 0) where.id = { $gt: playlistId };
 
                 let newRecomendedSongs = await songRepository.recommendedSongsPaginate(where, data);
                 newRecomendedSongs.rows.forEach(element => {
