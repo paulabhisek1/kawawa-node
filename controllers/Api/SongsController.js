@@ -466,7 +466,7 @@ module.exports.allFreeSongs = (req, res) => {
 
                 let newAllFreeSongs = await songRepository.freeSongsPaginate(where, data);
                 newAllFreeSongs.rows.forEach((item, index) => {
-                    element.playListId = element.id
+                    item.playListId = item.id
                 });
 
                 allfreesongs.count.length = allfreesongs.count.length + newAllFreeSongs.count.length
