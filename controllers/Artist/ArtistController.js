@@ -30,6 +30,7 @@ const md5 = require('md5');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
 const fs = require('fs');
+const path = require('path');
 
 // ################################ Globals ################################ //
 const jwtOptionsAccess = global.constants.jwtAccessTokenOptions;
@@ -1178,6 +1179,7 @@ module.exports.uploadSong = (req, res) => {
     (async() => {
         let purpose = "Upload Song";
         try {
+            console.log("FILE : ", req.file);
             let filePath = `${global.constants.songs_url}/${req.file.filename}`;
             return res.status(200).send({
                 status: 200,
@@ -1494,8 +1496,11 @@ module.exports.songDelete = (req, res) => {
             let songDetails = await songsRepositories.findOne({ id: songID, artist_id: artistID });
 
             if(songDetails) {
-                let songFilePath = songDetails.file_name;
-                let coverFilePath = songDetails.cover_picture;
+                let songFilePath = path.join(global.appPath, songDetails.file_name);
+                let coverFilePath = path.join(global.appPath,songDetails.cover_picture);
+
+                console.log("PATH 1 : ", songFilePath);
+                console.log("PATH 2 : ", coverFilePath);
 
                 fs.unlink(songFilePath, (err)=>{
                     if(err) console.log("Song Delete Error...", err);

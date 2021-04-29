@@ -613,7 +613,7 @@ module.exports.updateProfilePicture = (req, res) => {
                 })
             }
         } catch (err) {
-            console.log("Reset Password ERROR : ", e);
+            console.log("Reset Password ERROR : ", err);
             return res.send({
                 status: 500,
                 msg: responseMessages.serverError,
