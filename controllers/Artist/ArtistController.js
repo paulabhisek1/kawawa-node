@@ -1486,6 +1486,16 @@ module.exports.songList = (req, res) => {
     })()
 }
 
+/*
+|------------------------------------------------ 
+| API name          :  songDelete
+| Response          :  Respective response message in JSON format
+| Logic             :  Song Delete
+| Request URL       :  BASE_URL/artist/song-delete/<< Song ID >>
+| Request method    :  DELETE
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
 module.exports.songDelete = (req, res) => {
     (async()=> {
         let purpose = "Song Delete";
@@ -1496,23 +1506,34 @@ module.exports.songDelete = (req, res) => {
             let songDetails = await songsRepositories.findOne({ id: songID, artist_id: artistID });
 
             if(songDetails) {
-                let songFilePath = path.join(global.appPath, songDetails.file_name);
-                let coverFilePath = path.join(global.appPath,songDetails.cover_picture);
-
-                console.log("PATH 1 : ", songFilePath);
-                console.log("PATH 2 : ", coverFilePath);
-
-                fs.unlink(songFilePath, (err)=>{
-                    if(err) console.log("Song Delete Error...", err);
-                    else console.log("Song Deleted");
+                await sequelize.transaction(async(t)=>{
+                    let songFilePath = path.join(global.appPath, songDetails.file_name);
+                    let coverFilePath = path.join(global.appPath,songDetails.cover_picture);
+                    
+                    fs.unlink(songFilePath, (err)=>{
+                        if(err) console.log("Song Delete Error...", err);
+                        else console.log("Song Deleted");
+                    })
+    
+                    fs.unlink(coverFilePath, (err)=>{
+                        if(err) console.log("Song Cover Image Delete Error...", err);
+                        else console.log("Song Cover Image Deleted");
+                    })
+    
+                    if(songDetails.album_id > 0) {
+                        let albumDetails = await albumRepositories.findOne({ id: songDetails.album_id });
+    
+                        if(albumDetails) {
+                            let updatePrevAlbum = {};
+                            if(albumDetails.total_songs > 0) updatePrevAlbum.total_songs = (albumDetails.total_songs - 1);
+                            else updatePrevAlbum.total_songs = 0;
+    
+                            await albumRepositories.update({ id: songDetails.album_id }, updatePrevAlbum, t);
+                        }
+                    }
+    
+                    await songsRepositories.songDelete({ id: songID }, t);
                 })
-
-                fs.unlink(coverFilePath, (err)=>{
-                    if(err) console.log("Song Cover Image Delete Error...", err);
-                    else console.log("Song Cover Image Deleted");
-                })
-
-                await songsRepositories.songDelete({ id: songID });
 
                 return res.status(200).send({
                     status: 200,
