@@ -5,12 +5,14 @@ const ArtistModel = require('../models/artists')(sequelize, DataTypes);
 const GenresModel = require('../models/genres')(sequelize, DataTypes);
 const AlbumsModel = require('../models/albums')(sequelize, DataTypes);
 const FavouritesModel = require('../models/favourites')(sequelize, DataTypes);
+const CountryModel = require('../models/countries')(sequelize, DataTypes);
 
 
 SongsModel.belongsTo(ArtistModel, { foreignKey: 'artist_id', as: 'artist_details' });
 SongsModel.belongsTo(GenresModel, { foreignKey: 'genre_id', as: 'genre_details' });
 SongsModel.belongsTo(AlbumsModel, { foreignKey: 'album_id', as: 'album_details' });
 SongsModel.hasMany(FavouritesModel, { foreignKey: 'file_id', as: 'is_favourite' });
+SongsModel.belongsTo(CountryModel, { foreignKey: 'country_id', as: 'country_details' });
 
 // Find All
 module.exports.findAll = (whereData) => {
@@ -534,6 +536,10 @@ module.exports.songDetails = (where) => {
                     model: AlbumsModel,
                     as: 'album_details',
                     attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                },
+                {
+                    model: CountryModel,
+                    as: 'country_details',
                 }
             ],
         }).then(result => {
@@ -545,7 +551,6 @@ module.exports.songDetails = (where) => {
     })
 }
 
-// Free Songs Without Pagination
 module.exports.songsList = (where, data) => {
     return new Promise((resolve, reject) => {
         SongsModel.findAndCountAll({
@@ -567,6 +572,10 @@ module.exports.songsList = (where, data) => {
                     model: AlbumsModel,
                     as: 'album_details',
                     attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                },
+                {
+                    model: CountryModel,
+                    as: 'country_details',
                 }
             ],
             offset: data.offset,

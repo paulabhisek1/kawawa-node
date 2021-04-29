@@ -1255,6 +1255,8 @@ module.exports.createNewSong = (req, res) => {
             let songDetails = null;
 
             await sequelize.transaction(async(t) => {
+                let artistDetails = await artistRepositories.findOne({ id: artistID });
+
                 let insertData = {
                     name: body.name,
                     cover_picture: body.cover_picture,
@@ -1262,6 +1264,7 @@ module.exports.createNewSong = (req, res) => {
                     file_name: body.file_name,
                     details: body.details,
                     artist_id: artistID,
+                    country_id: artistDetails.country_id,
                     album_id: body.album_id ? body.album_id : 0,
                     is_paid: body.is_paid ? body.is_paid : 0,
                     genre_id: body.genre_id ? body.genre_id : null,
