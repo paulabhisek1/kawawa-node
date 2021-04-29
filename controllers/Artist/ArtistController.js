@@ -1497,14 +1497,22 @@ module.exports.songDelete = (req, res) => {
                 let songFilePath = songDetails.file_name;
                 let coverFilePath = songDetails.cover_picture;
 
-                // fs.unlink(songFilePath, (err)=>{
-                //     if(err) 
-                // })
+                fs.unlink(songFilePath, (err)=>{
+                    if(err) console.log("Song Delete Error...", err);
+                    else console.log("Song Deleted");
+                })
+
+                fs.unlink(coverFilePath, (err)=>{
+                    if(err) console.log("Song Cover Image Delete Error...", err);
+                    else console.log("Song Cover Image Deleted");
+                })
+
+                await songsRepositories.songDelete({ id: songID });
 
                 return res.status(200).send({
                     status: 200,
-                    msg: responseMessages.songUpdate,
-                    data: songDetails,
+                    msg: responseMessages.songDelete,
+                    data: {},
                     purpose: purpose
                 })
             }

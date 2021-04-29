@@ -449,7 +449,7 @@ module.exports.allFreeSongs = (req, res) => {
             if (numberOfItems > 0) data.limit = parseInt(numberOfItems);
             let playlistId = queryParam.playlist_id;
             data.offset = data.limit ? data.limit * (page - 1) : null;
-            if (playlistId > 0) where.id = { $lt: playlistId };
+            if (playlistId > 0) where.id = { $lte: playlistId };
             where.is_active = 1;
             where.is_paid = 0;
             data.user_id = userID;

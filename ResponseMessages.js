@@ -71,4 +71,5 @@ module.exports = {
     songUpdate: `Song details updated successfully`,
     songDetails: `Song details fetched successfully`,
     songList: `Song list fetched successfully`,
+    songDelete: `Song deleted successfully`,
 }

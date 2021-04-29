@@ -487,6 +487,21 @@ module.exports.update = (where, data, t = null) => {
     })
 }
 
+module.exports.songDelete = (where, t = null) => {
+    return new Promise((resolve, reject) => {
+        let options = {
+            where: where
+        }
+            //if trunsaction exist
+        if (t != null) options.transaction = t;
+        SongsModel.destroy(options).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
+
 // Create
 module.exports.create = (data, t = null) => {
     return new Promise((resolve, reject) => {
