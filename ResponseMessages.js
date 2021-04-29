@@ -70,4 +70,5 @@ module.exports = {
     songCreate: `Song created successfully`,
     songUpdate: `Song details updated successfully`,
     songDetails: `Song details fetched successfully`,
+    songList: `Song list fetched successfully`,
 }

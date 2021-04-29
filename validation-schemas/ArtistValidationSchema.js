@@ -115,3 +115,9 @@ module.exports.createSong = Joi.object().keys({
     genre_id: Joi.number().optional(),
     price: Joi.number().optional(),
 });
+
+// List Albums Schema
+module.exports.songList = Joi.object().keys({
+    page: Joi.number().min(1).required(),
+    search: Joi.string().required().allow('', null),
+});

@@ -529,3 +529,39 @@ module.exports.songDetails = (where) => {
         })
     })
 }
+
+// Free Songs Without Pagination
+module.exports.songsList = (where, data) => {
+    return new Promise((resolve, reject) => {
+        SongsModel.findAndCountAll({
+            where: where,
+            order: [
+                ['createdAt', 'desc']
+            ],
+            include: [{
+                    model: ArtistModel,
+                    as: 'artist_details',
+                    attributes: ['id', 'full_name', 'profile_image', 'type']
+                },
+                {
+                    model: GenresModel,
+                    as: 'genre_details',
+                    attributes: ['id', 'name']
+                },
+                {
+                    model: AlbumsModel,
+                    as: 'album_details',
+                    attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                }
+            ],
+            offset: data.offset,
+            limit: data.limit,
+            group: ['id']
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}

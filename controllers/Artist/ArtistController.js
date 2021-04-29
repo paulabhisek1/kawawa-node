@@ -29,7 +29,7 @@ const commonFunction = require('../../helpers/commonFunctions');
 const md5 = require('md5');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
-const e = require('express');
+const fs = require('fs');
 
 // ################################ Globals ################################ //
 const jwtOptionsAccess = global.constants.jwtAccessTokenOptions;
@@ -1417,6 +1417,108 @@ module.exports.songDetails = (req, res) => {
         }
         catch(err) {
             console.log("Update Error : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  songList
+| Response          :  Respective response message in JSON format
+| Logic             :  Song List
+| Request URL       :  BASE_URL/artist/song-list
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.songList = (req, res) => {
+    (async()=> {
+        let purpose = "Song Listing";
+        try {
+            let artistID = req.headers.userID;
+
+            let queryParam = req.query;
+            let where = {};
+            let data = {};
+            let page = queryParam.page ? parseInt(queryParam.page) : 1;
+            data.limit = 20;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+            data.order = [
+                ['id', 'DESC']
+            ];
+            where.artist_id = artistID;
+
+            if (queryParam.search) {
+                where.name = { $like: `%${queryParam.search}%` };
+            }
+
+            let songsList = await songsRepositories.songsList(where, data);
+
+            let dataResp = {
+                songsList: songsList.rows,
+                totalCount: songsList.count.length
+            }
+
+            return res.status(200).json({
+                status: 200,
+                msg: responseMessages.songList,
+                data: dataResp,
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("Song Listing Error : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+module.exports.songDelete = (req, res) => {
+    (async()=> {
+        let purpose = "Song Delete";
+        try {
+            let artistID = req.headers.userID;
+            let songID = req.params.id;
+            
+            let songDetails = await songsRepositories.findOne({ id: songID, artist_id: artistID });
+
+            if(songDetails) {
+                let songFilePath = songDetails.file_name;
+                let coverFilePath = songDetails.cover_picture;
+
+                // fs.unlink(songFilePath, (err)=>{
+                //     if(err) 
+                // })
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.songUpdate,
+                    data: songDetails,
+                    purpose: purpose
+                })
+            }
+            else {
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.songNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Song Listing Error : ", err);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,
