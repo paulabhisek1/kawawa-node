@@ -178,7 +178,7 @@ module.exports.allRecentlyPlayed = (req, res) => {
             if (allRecentlyPlayed.count.length < 20 && playlistId > 0) {
                 data.limit = 20 - parseInt(allRecentlyPlayed.count.length);
                 data.offset = data.limit ? data.limit * (page - 1) : null;
-                if (playlistId > 0) where.id = { $gte: playlistId };
+                if (playlistId > 0) where.id = { $gt: playlistId };
 
                 let newRecentlyPlayed = await userPlayedHistoryRepo.allRecentlyPlayed(where, data);
 
