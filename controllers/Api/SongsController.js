@@ -62,10 +62,10 @@ module.exports.fetchHomePageData = (req, res) => {
             allRecentlyPlayed.forEach((item, index) => {
                 item.song_details.playListId = item.id; // Push the playlist item id it the array
                 if (item.song_details.genre_details == '') {
-                    item.genre_details = {};
+                    item.song_details.genre_details = {};
                 }
                 if (item.song_details.album_details == '') {
-                    item.album_details = {};
+                    item.song_details.album_details = {};
                 }
                 newAllRecentlyPlayed.push(item.song_details);
             });
@@ -196,10 +196,10 @@ module.exports.allRecentlyPlayed = (req, res) => {
             allRecentlyPlayed.rows.forEach((item, index) => {
                 item.song_details.playListId = item.id; // Push the playlist item id it the array
                 if (item.song_details.genre_details == '') {
-                    item.genre_details = {};
+                    item.song_details.genre_details = {};
                 }
                 if (item.song_details.album_details == '') {
-                    item.album_details = {};
+                    item.song_details.album_details = {};
                 }
                 newAllRecentlyPlayed.push(item.song_details);
             });
@@ -216,10 +216,10 @@ module.exports.allRecentlyPlayed = (req, res) => {
                 newRecentlyPlayed.rows.forEach((item, index) => {
                     item.song_details.playListId = item.id; // Push the playlist item id it the array
                     if (item.song_details.genre_details == '') {
-                        item.genre_details = {};
+                        item.song_details.genre_details = {};
                     }
                     if (item.song_details.album_details == '') {
-                        item.album_details = {};
+                        item.song_details.album_details = {};
                     }
                     newAllRecentlyPlayed2.push(item.song_details);
                 });
