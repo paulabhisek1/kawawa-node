@@ -109,6 +109,13 @@ module.exports.fetchHomePageData = (req, res) => {
             let topTenSongsData = await songRepository.weeklyTopTen(where, data);
             topTenSongsData.forEach(element => {
                 element.playListId = element.id // add a new key `playListId` in the response
+
+                if (element.genre_details == '') {
+                    element.genre_details = {};
+                }
+                if (element.album_details == '') {
+                    element.album_details = {};
+                }
             });
 
             let dataResp = {
