@@ -61,6 +61,12 @@ module.exports.fetchHomePageData = (req, res) => {
             let newAllRecentlyPlayed = [];
             allRecentlyPlayed.forEach((item, index) => {
                 item.song_details.playListId = item.id; // Push the playlist item id it the array
+                if (item.song_details.genre_details == '') {
+                    item.genre_details = {};
+                }
+                if (item.song_details.album_details == '') {
+                    item.album_details = {};
+                }
                 newAllRecentlyPlayed.push(item.song_details);
             });
             allRecentlyPlayed = newAllRecentlyPlayed;
@@ -72,6 +78,12 @@ module.exports.fetchHomePageData = (req, res) => {
             let freeSongs = await songRepository.freeSongs(where, data);
             freeSongs.forEach(element => {
                 element.playListId = element.id // add a new key `playListId` in the response
+                if (element.genre_details == '') {
+                    element.genre_details = {};
+                }
+                if (element.album_details == '') {
+                    element.album_details = {};
+                }
             });
 
             // Artist List
@@ -101,6 +113,12 @@ module.exports.fetchHomePageData = (req, res) => {
 
             recommendedSongsData.forEach(element => {
                 element.playListId = element.id // add a new key `playListId` in the response
+                if (element.genre_details == '') {
+                    element.genre_details = {};
+                }
+                if (element.album_details == '') {
+                    element.album_details = {};
+                }
             });
 
             // Weekly Top 10
@@ -109,7 +127,6 @@ module.exports.fetchHomePageData = (req, res) => {
             let topTenSongsData = await songRepository.weeklyTopTen(where, data);
             topTenSongsData.forEach(element => {
                 element.playListId = element.id // add a new key `playListId` in the response
-
                 if (element.genre_details == '') {
                     element.genre_details = {};
                 }
@@ -178,6 +195,12 @@ module.exports.allRecentlyPlayed = (req, res) => {
             let newAllRecentlyPlayed = [];
             allRecentlyPlayed.rows.forEach((item, index) => {
                 item.song_details.playListId = item.id; // Push the playlist item id it the array
+                if (item.song_details.genre_details == '') {
+                    item.genre_details = {};
+                }
+                if (item.song_details.album_details == '') {
+                    item.album_details = {};
+                }
                 newAllRecentlyPlayed.push(item.song_details);
             });
 
@@ -192,6 +215,12 @@ module.exports.allRecentlyPlayed = (req, res) => {
                 let newAllRecentlyPlayed2 = [];
                 newRecentlyPlayed.rows.forEach((item, index) => {
                     item.song_details.playListId = item.id; // Push the playlist item id it the array
+                    if (item.song_details.genre_details == '') {
+                        item.genre_details = {};
+                    }
+                    if (item.song_details.album_details == '') {
+                        item.album_details = {};
+                    }
                     newAllRecentlyPlayed2.push(item.song_details);
                 });
 
@@ -273,6 +302,12 @@ module.exports.allRecommend = (req, res) => {
 
             recommendedSongsData.rows.forEach(element => {
                 element.playListId = element.id // add a new key `playListId` in the response
+                if (element.genre_details == '') {
+                    element.genre_details = {};
+                }
+                if (element.album_details == '') {
+                    element.album_details = {};
+                }
             });
 
             // Implementing Circular Queue
@@ -284,6 +319,12 @@ module.exports.allRecommend = (req, res) => {
                 let newRecomendedSongs = await songRepository.recommendedSongsPaginate(where, data);
                 newRecomendedSongs.rows.forEach(element => {
                     element.playListId = element.id // add a new key `playListId` in the response
+                    if (element.genre_details == '') {
+                        element.genre_details = {};
+                    }
+                    if (element.album_details == '') {
+                        element.album_details = {};
+                    }
                 });
 
                 recommendedSongsData.count.length = recommendedSongsData.count.length + newRecomendedSongs.count.length;
@@ -344,6 +385,12 @@ module.exports.allWeeklyTop = (req, res) => {
             let allweeklytop = await songRepository.weeklyTopTenPaginate(where, data);
             allweeklytop.forEach(element => {
                 element.playListId = element.id // add a new key `playListId` in the response
+                if (element.genre_details == '') {
+                    element.genre_details = {};
+                }
+                if (element.album_details == '') {
+                    element.album_details = {};
+                }
             });
 
             // // Implementing Circular Queue
@@ -463,6 +510,12 @@ module.exports.allFreeSongs = (req, res) => {
             let allfreesongs = await songRepository.freeSongsPaginate(where, data);
             allfreesongs.rows.forEach(element => {
                 element.playListId = element.id // add a new key `playListId` in the response
+                if (element.genre_details == '') {
+                    element.genre_details = {};
+                }
+                if (element.album_details == '') {
+                    element.album_details = {};
+                }
             });
 
             // Implementing Circular Queue
@@ -474,6 +527,12 @@ module.exports.allFreeSongs = (req, res) => {
                 let newAllFreeSongs = await songRepository.freeSongsPaginate(where, data);
                 newAllFreeSongs.rows.forEach((item, index) => {
                     item.playListId = item.id
+                    if (item.genre_details == '') {
+                        item.genre_details = {};
+                    }
+                    if (item.album_details == '') {
+                        item.album_details = {};
+                    }
                 });
 
                 allfreesongs.count.length = allfreesongs.count.length + newAllFreeSongs.count.length
