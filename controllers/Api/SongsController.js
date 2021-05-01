@@ -205,8 +205,8 @@ module.exports.allRecentlyPlayed = (req, res) => {
             });
 
             // Implementing Circular Queue
-            if (allRecentlyPlayed.count.length < 20 && playlistId > 0 && (numberOfItems > allRecentlyPlayed.count.length)) {
-                data.limit = 20 - parseInt(allRecentlyPlayed.count.length);
+            if (allRecentlyPlayed.count.length < data.limit && playlistId > 0 && (numberOfItems > allRecentlyPlayed.count.length)) {
+                data.limit = data.limit - parseInt(allRecentlyPlayed.count.length);
                 data.offset = data.limit ? data.limit * (page - 1) : null;
                 if (playlistId > 0) where.id = { $gt: playlistId };
 
@@ -228,7 +228,7 @@ module.exports.allRecentlyPlayed = (req, res) => {
                 newAllRecentlyPlayed = newAllRecentlyPlayed.concat(newAllRecentlyPlayed2);
             }
 
-            let totalPages = Math.ceil(allRecentlyPlayed.count.length / 20);
+            let totalPages = Math.ceil(allRecentlyPlayed.count.length / data.limit);
             let dataResp = {
                 recently_played: newAllRecentlyPlayed,
                 total_count: allRecentlyPlayed.count.length,
@@ -298,7 +298,6 @@ module.exports.allRecommend = (req, res) => {
             ];
             where.is_active = 1;
             let recommendedSongsData = await songRepository.recommendedSongsPaginate(where, data);
-            let totalPages = Math.ceil(recommendedSongsData.count.length / 20);
 
             recommendedSongsData.rows.forEach(element => {
                 element.playListId = element.id // add a new key `playListId` in the response
@@ -311,8 +310,8 @@ module.exports.allRecommend = (req, res) => {
             });
 
             // Implementing Circular Queue
-            if (recommendedSongsData.count.length < 20 && playlistId > 0 && (numberOfItems > recommendedSongsData.count.length)) {
-                data.limit = 20 - parseInt(recommendedSongsData.count.length);
+            if (recommendedSongsData.count.length < data.limit && playlistId > 0 && (numberOfItems > recommendedSongsData.count.length)) {
+                data.limit = data.limit - parseInt(recommendedSongsData.count.length);
                 data.offset = data.limit ? data.limit * (page - 1) : null;
                 if (playlistId > 0) where.id = { $gt: playlistId };
 
@@ -330,6 +329,8 @@ module.exports.allRecommend = (req, res) => {
                 recommendedSongsData.count.length = recommendedSongsData.count.length + newRecomendedSongs.count.length;
                 recommendedSongsData.rows = recommendedSongsData.rows.concat(newRecomendedSongs.rows);
             }
+
+            let totalPages = Math.ceil(recommendedSongsData.count.length / data.limit);
 
             let dataResp = {
                 allrecommend: recommendedSongsData.rows,
@@ -497,7 +498,7 @@ module.exports.allFreeSongs = (req, res) => {
             let where = {};
             let data = {};
             let page = queryParam.page > 0 ? parseInt(queryParam.page) : 1;
-            data.limit = 2;
+            data.limit = 20;
             let userID = req.headers.userID;
             let numberOfItems = queryParam.number_of_items;
             if (numberOfItems > 0) data.limit = parseInt(numberOfItems);
@@ -540,7 +541,7 @@ module.exports.allFreeSongs = (req, res) => {
                 allfreesongs.rows = allfreesongs.rows.concat(newAllFreeSongs.rows);
             }
 
-            let totalPages = Math.ceil(allfreesongs.count.length / 20);
+            let totalPages = Math.ceil(allfreesongs.count.length / data.limit);
             let dataResp = {
                 allfreesongs: allfreesongs.rows,
                 total_count: allfreesongs.count.length,
