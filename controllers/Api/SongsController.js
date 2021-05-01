@@ -205,7 +205,7 @@ module.exports.allRecentlyPlayed = (req, res) => {
             });
 
             // Implementing Circular Queue
-            if (allRecentlyPlayed.count.length < 20 && playlistId > 0) {
+            if (allRecentlyPlayed.count.length < 20 && playlistId > 0 && (numberOfItems > allRecentlyPlayed.count.length)) {
                 data.limit = 20 - parseInt(allRecentlyPlayed.count.length);
                 data.offset = data.limit ? data.limit * (page - 1) : null;
                 if (playlistId > 0) where.id = { $gt: playlistId };
@@ -311,7 +311,7 @@ module.exports.allRecommend = (req, res) => {
             });
 
             // Implementing Circular Queue
-            if (recommendedSongsData.count.length < 20 && playlistId > 0) {
+            if (recommendedSongsData.count.length < 20 && playlistId > 0 && (numberOfItems > recommendedSongsData.count.length)) {
                 data.limit = 20 - parseInt(recommendedSongsData.count.length);
                 data.offset = data.limit ? data.limit * (page - 1) : null;
                 if (playlistId > 0) where.id = { $gt: playlistId };
@@ -507,6 +507,7 @@ module.exports.allFreeSongs = (req, res) => {
             where.is_active = 1;
             where.is_paid = 0;
             data.user_id = userID;
+
             let allfreesongs = await songRepository.freeSongsPaginate(where, data);
             allfreesongs.rows.forEach(element => {
                 element.playListId = element.id // add a new key `playListId` in the response
@@ -519,7 +520,7 @@ module.exports.allFreeSongs = (req, res) => {
             });
 
             // Implementing Circular Queue
-            if (allfreesongs.count.length < 20 && playlistId > 0) {
+            if (allfreesongs.count.length < 20 && playlistId > 0 && (numberOfItems > allfreesongs.count.length)) {
                 data.limit = 20 - parseInt(allfreesongs.count.length);
                 data.offset = data.limit ? data.limit * (page - 1) : null;
                 if (playlistId > 0) where.id = { $gt: playlistId };

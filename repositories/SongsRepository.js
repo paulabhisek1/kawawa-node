@@ -166,7 +166,7 @@ module.exports.freeSongsPaginate = (where, data) => {
             include: [{
                     model: ArtistModel,
                     as: 'artist_details',
-                    attributes: ['id', 'full_name', 'profile_image', 'type']
+                    attributes: ['id', 'full_name', 'profile_image', 'type'],
                 },
                 {
                     model: GenresModel,
