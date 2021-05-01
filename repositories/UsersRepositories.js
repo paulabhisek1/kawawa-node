@@ -2,6 +2,7 @@ const sequelize = require('../config/dbConfig').sequelize;
 var DataTypes = require('sequelize/lib/data-types');
 const UsersModel = require('../models/users')(sequelize,DataTypes);
 const CountryModel = require('../models/countries')(sequelize, DataTypes);
+const DonwloadModel = require('../models/downloads')(sequelize, DataTypes);
 
 // Associations
 UsersModel.belongsTo(CountryModel, { foreignKey: 'country_id' });
@@ -11,6 +12,18 @@ UsersModel.belongsTo(CountryModel, { foreignKey: 'country_id' });
 module.exports.count = (whereData) => {
     return new Promise((resolve, reject) => {
         UsersModel.count(whereData).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
+// Count
+module.exports.downloadCount = (whereData) => {
+    return new Promise((resolve, reject) => {
+        DonwloadModel.count(whereData).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
             resolve(result);
         }).catch((error) => {

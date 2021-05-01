@@ -474,6 +474,10 @@ module.exports.fetchUserDetails = (req, res) => {
             let userID = req.headers.userID;
 
             let userCount = await userRepositories.count({ id: userID, is_active: 1 });
+            let allDownloadCount = await userRepositories.downloadCount({ where: { user_id: userID } });
+            let monthStartDate = moment().startOf('month').format('YYYY-MM-DD');
+            let monthEndDate = moment().endOf('month').format('YYYY-MM-DD');
+            let monthlyDownloadCount = await userRepositories.downloadCount({ where: { user_id: userID, createdAt: { $lte: monthEndDate, $gte: monthStartDate } } });
 
             if (userCount > 0) {
                 let userDetails = await userRepositories.findOne({ id: userID });
@@ -483,6 +487,10 @@ module.exports.fetchUserDetails = (req, res) => {
                 delete userDetails.otp_expire_time;
                 delete userDetails.otp_status;
                 delete userDetails.is_active;
+                userDetails.downloadCount = {
+                    allTime: allDownloadCount,
+                    thisMonth: monthlyDownloadCount
+                }
 
                 return res.send({
                     status: 200,
