@@ -497,7 +497,7 @@ module.exports.allFreeSongs = (req, res) => {
             let where = {};
             let data = {};
             let page = queryParam.page > 0 ? parseInt(queryParam.page) : 1;
-            data.limit = 20;
+            data.limit = 2;
             let userID = req.headers.userID;
             let numberOfItems = queryParam.number_of_items;
             if (numberOfItems > 0) data.limit = parseInt(numberOfItems);
@@ -520,8 +520,8 @@ module.exports.allFreeSongs = (req, res) => {
             });
 
             // Implementing Circular Queue
-            if (allfreesongs.count.length < 20 && playlistId > 0 && ((numberOfItems > allfreesongs.count.length) || numberOfItems == 0)) {
-                data.limit = 20 - parseInt(allfreesongs.count.length);
+            if (allfreesongs.count.length < data.limit && playlistId > 0 && (numberOfItems > allfreesongs.count.length)) {
+                data.limit = data.limit - parseInt(allfreesongs.count.length);
                 data.offset = data.limit ? data.limit * (page - 1) : null;
                 if (playlistId > 0) where.id = { $gt: playlistId };
 
