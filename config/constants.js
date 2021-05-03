@@ -6,6 +6,8 @@ module.exports = {
     album_cover_url: '/uploads/album_covers',
     songs_cover_url: '/uploads/songs_cover',
     songs_url: '/uploads/songs',
+    podcasts_cover_url: '/uploads/podcasts_cover',
+    podcasts_url: '/uploads/podcasts',
     jwtAccessTokenOptions: {
         secret: 'KawawaMusicApp#@2021',
         options: {

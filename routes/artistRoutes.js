@@ -102,6 +102,30 @@ var storageSongCover = multer.diskStorage({
     }
 })
 
+// SET STORAGE FOR PODCAST
+var storagePodcast = multer.diskStorage({
+    destination: function(req, file, cb) {
+        const path = 'uploads/podcasts';
+        fs.mkdirSync(path, { recursive: true });
+        cb(null, path);
+    },
+    filename: function(req, file, cb) {
+        cb(null, 'podcast_' + Date.now() + path.extname(file.originalname))
+    }
+})
+
+// SET STORAGE FOR PODCAST COVER IMAGE
+var storagePodcastCover = multer.diskStorage({
+    destination: function(req, file, cb) {
+        const path = 'uploads/podcasts_cover';
+        fs.mkdirSync(path, { recursive: true });
+        cb(null, path);
+    },
+    filename: function(req, file, cb) {
+        cb(null, 'podcast_cover_' + Date.now() + path.extname(file.originalname))
+    }
+})
+
 var uploadProfilePicture = multer({ storage: storagePicture });
 var uploadGovtIDFront = multer({ storage: storagePictureGovtIDFront });
 var uploadGovtIDBack = multer({ storage: storagePictureGovtIDBack });
@@ -109,6 +133,8 @@ var uploadSampleSong = multer({ storage: storageSampleSong });
 var uploadAlbumCover = multer({ storage: storagePictureAlbumCover });
 var uploadSong = multer({ storage: storageSong });
 var uploadSongCover = multer({ storage: storageSongCover });
+var uploadPodcast = multer({ storage: storagePodcast });
+var uploadPodcastCover = multer({ storage: storagePodcastCover });
 
 router.post('/register', validateRequest.validate(artistValidationSchema.userRegisterSchema, 'body'), artistController.registerArtist); // User Registration Route
 router.post('/login', validateRequest.validate(artistValidationSchema.loginSchema, 'body'), artistController.artistLogin); // System Login Route
@@ -139,6 +165,11 @@ router.put('/update-song/:id', authenticationMiddleware.authenticateArtistReques
 router.get('/song-details/:id', authenticationMiddleware.authenticateArtistRequestAPI, artistController.songDetails) // Song Details
 router.delete('/song-delete/:id', authenticationMiddleware.authenticateArtistRequestAPI, artistController.songDelete) // Song Delete
 router.get('/song-list', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.songList, 'query'), artistController.songList) // Song List
+router.post('/upload-podcast', authenticationMiddleware.authenticateArtistRequestAPI, uploadPodcast.single('file'), artistController.uploadPodcast); // Upload Podcast
+router.post('/upload-podcast-cover-image', authenticationMiddleware.authenticateArtistRequestAPI, uploadPodcastCover.single('file'), artistController.uploadPodcastCover); // Upload Podcast Cover Image
+router.post('/create-podcast', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.createPodcast, 'body'), artistController.createNewPodcast) // Create New Podcast
+router.get('/podcast-details/:id', authenticationMiddleware.authenticateArtistRequestAPI, artistController.podcastDetails) // Podcast Details
+
 
 
 module.exports = router;

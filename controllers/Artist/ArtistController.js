@@ -15,6 +15,7 @@ const artistRepositories = require('../../repositories/ArtistsRepositories');
 const genresRepositories = require('../../repositories/GenresRepositories');
 const albumRepositories = require('../../repositories/AlbumRepositories');
 const songsRepositories = require('../../repositories/SongsRepository');
+const podcastRepositories = require('../../repositories/PodcastRepositories');
 
 // ################################ Sequelize ################################ //
 const sequelize = require('../../config/dbConfig').sequelize;
@@ -31,6 +32,7 @@ const jwt = require('jsonwebtoken');
 const moment = require('moment');
 const fs = require('fs');
 const path = require('path');
+const { getAudioDurationInSeconds } = require('get-audio-duration');
 
 // ################################ Globals ################################ //
 const jwtOptionsAccess = global.constants.jwtAccessTokenOptions;
@@ -1181,14 +1183,22 @@ module.exports.uploadSong = (req, res) => {
         try {
             console.log("FILE : ", req.file);
             let filePath = `${global.constants.songs_url}/${req.file.filename}`;
-            return res.status(200).send({
-                status: 200,
-                msg: responseMessages.songUpload,
-                data: {
-                    filePath: filePath
-                },
-                purpose: purpose
-            })
+            let streamPath = path.join(global.appPath, filePath);
+            let fileDuration = 0;
+
+            getAudioDurationInSeconds(streamPath).then((duration) => {
+                fileDuration = duration;
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.songUpload,
+                    data: {
+                        filePath: filePath,
+                        fileDuration: fileDuration.toFixed(2)
+                    },
+                    purpose: purpose
+                })
+            });
         } catch (err) {
             console.log("Upload Song : ", err);
             return res.status(500).send({
@@ -1387,7 +1397,7 @@ module.exports.updateSong = (req, res) => {
 | API name          :  songDetails
 | Response          :  Respective response message in JSON format
 | Logic             :  Create New Song
-| Request URL       :  BASE_URL/artist/artist-details/<< Song ID >>
+| Request URL       :  BASE_URL/artist/song-details/<< Song ID >>
 | Request method    :  GET
 | Author            :  Suman Rana
 |------------------------------------------------
@@ -1406,7 +1416,7 @@ module.exports.songDetails = (req, res) => {
 
                 return res.status(200).send({
                     status: 200,
-                    msg: responseMessages.songUpdate,
+                    msg: responseMessages.songDetails,
                     data: songDetails,
                     purpose: purpose
                 })
@@ -1421,7 +1431,7 @@ module.exports.songDetails = (req, res) => {
             }
         }
         catch(err) {
-            console.log("Update Error : ", err);
+            console.log("Song Details Error : ", err);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,
@@ -1556,6 +1566,192 @@ module.exports.songDelete = (req, res) => {
         }
         catch(err) {
             console.log("Song Listing Error : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  uploadPodcast
+| Response          :  Respective response message in JSON format
+| Logic             :  Upload Podcast
+| Request URL       :  BASE_URL/artist/upload-podcast
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.uploadPodcast = (req, res) => {
+    (async() => {
+        let purpose = "Upload Podcast";
+        try {
+            let filePath = `${global.constants.podcasts_url}/${req.file.filename}`;
+            let streamPath = path.join(global.appPath, filePath);
+            let fileDuration = 0;
+
+            getAudioDurationInSeconds(streamPath).then((duration) => {
+                fileDuration = duration;
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.podcastUpload,
+                    data: {
+                        filePath: filePath,
+                        fileDuration: fileDuration.toFixed(2)
+                    },
+                    purpose: purpose
+                })
+            });
+        } catch (err) {
+            console.log("Upload Podcast : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  uploadPodcastCover
+| Response          :  Respective response message in JSON format
+| Logic             :  Upload Podcast Cover Image
+| Request URL       :  BASE_URL/artist/upload-podcast-cover-image
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.uploadPodcastCover = (req, res) => {
+    (async() => {
+        let purpose = "Upload Podcast Cover Image";
+        try {
+            let filePath = `${global.constants.podcasts_cover_url}/${req.file.filename}`;
+            return res.status(200).send({
+                status: 200,
+                msg: responseMessages.podcastCoverUpload,
+                data: {
+                    filePath: filePath
+                },
+                purpose: purpose
+            })
+        } catch (err) {
+            console.log("Upload Podcast Cover Image : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  createNewPodcast
+| Response          :  Respective response message in JSON format
+| Logic             :  Create New Podcast
+| Request URL       :  BASE_URL/artist/create-podcast
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.createNewPodcast = (req, res) => {
+    (async()=>{
+        let purpose = "Create New Podcast";
+        try {
+            let artistID = req.headers.userID;
+            let body = req.body;
+            let podcastDetails = null;
+
+            await sequelize.transaction(async(t) => {
+                let artistDetails = await artistRepositories.findOne({ id: artistID });
+
+                let insertData = {
+                    name: body.name,
+                    cover_picture: body.cover_picture,
+                    length: body.length,
+                    file_name: body.file_name,
+                    details: body.details,
+                    artist_id: artistID,
+                    country_id: artistDetails.country_id,
+                    category_id: body.category_id ? body.category_id : 0,
+                    is_paid: body.is_paid ? body.is_paid : 0,
+                    price: body.price ? body.price : null,
+                    is_active: 1,
+                    type: 'podcast'
+                }
+
+                podcastDetails = await podcastRepositories.create(insertData, t);
+            })
+
+            return res.status(200).send({
+                status: 200,
+                msg: responseMessages.podcastCreate,
+                data: podcastDetails,
+                purpose: purpose
+            })
+        }   
+        catch(err) {
+            console.log("Create New Podcast Error : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  podcastDetails
+| Response          :  Respective response message in JSON format
+| Logic             :  Create New Podcast
+| Request URL       :  BASE_URL/artist/podcast-details/<< Podcast ID >>
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.podcastDetails = (req, res) => {
+    (async() => {
+        let purpose = "Podcast Details"
+        try {
+            let artistID = req.headers.userID;
+            let podcastID = req.params.id;
+            
+            let podcastCount = await podcastRepositories.count({ id: podcastID, artist_id: artistID });
+
+            if(podcastCount > 0) {
+                let podcastDetails = await podcastRepositories.podcastDetails({ id: podcastID });
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.podcastDetails,
+                    data: podcastDetails,
+                    purpose: purpose
+                })
+            }
+            else {
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.podcastNotFoundNew,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Podcast Details Error : ", err);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,

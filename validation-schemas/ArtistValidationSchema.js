@@ -121,3 +121,14 @@ module.exports.songList = Joi.object().keys({
     page: Joi.number().min(1).required(),
     search: Joi.string().required().allow('', null),
 });
+
+module.exports.createPodcast = Joi.object().keys({
+    name: Joi.string().required(),
+    cover_picture: Joi.string().required(),
+    length: Joi.string().required(),
+    file_name: Joi.string().required(),
+    details: Joi.string().required(),
+    is_paid: Joi.number().valid(0,1).required(),
+    category_id: Joi.number().required(),
+    price: Joi.number().optional(),
+});
