@@ -16,6 +16,7 @@ const artistRepositories = require('../../repositories/ArtistsRepositories');
 const userPlayedHistoryRepo = require('../../repositories/UserPlayedHistoriesRepositories');
 const albumRepository = require('../../repositories/AlbumRepositories');
 const playlistRepository = require('../../repositories/PlaylistRepositories');
+const userRepositories = require('../../repositories/UsersRepositories');
 
 // ################################ Sequelize ################################ //
 const sequelize = require('../../config/dbConfig').sequelize;
@@ -110,6 +111,24 @@ module.exports.fetchHomePageData = (req, res) => {
             ];
             where.is_active = 1;
             let recommendedSongsData = await songRepository.recommendedSongs(where, data);
+
+            if(recommendedSongsData.length < 6) {
+                let userDetails = await userRepositories.findOne({ id: userID });
+                let newWhere = {
+                    is_active: 1,
+                    country_id: userDetails.country_id
+                } 
+                let newData = {
+                    user_id: userID,
+                    limit: (data.limit - recommendedSongsData.length)
+                }
+                let recommendedSongsDataNew = await songRepository.findAndCountAll(newWhere, newData);
+
+                recommendedSongsDataNew.rows.forEach((item, index) => {
+                    let ind = recommendedSongsData.findIndex(x => x.id === item.id);
+                    if(ind < 0) recommendedSongsData.push(item);
+                })
+            }
 
             recommendedSongsData.forEach(element => {
                 element.playListId = element.id // add a new key `playListId` in the response
@@ -308,6 +327,28 @@ module.exports.allRecommend = (req, res) => {
                     element.album_details = {};
                 }
             });
+
+
+            if(recommendedSongsData.count.length < data.limit) {
+                let userDetails = await userRepositories.findOne({ id: userID });
+                let newWhere = {
+                    is_active: 1,
+                    country_id: userDetails.country_id
+                } 
+                let newData = {
+                    user_id: userID,
+                    limit: (data.limit - recommendedSongsData.count.length)
+                }
+                let recommendedSongsDataNew = await songRepository.findAndCountAll(newWhere, newData);
+
+                recommendedSongsDataNew.rows.forEach((item, index) => {
+                    let ind = recommendedSongsData.rows.findIndex(x => x.id === item.id);
+                    if(ind < 0) {
+                        recommendedSongsData.rows.push(item);
+                        recommendedSongsData.count.length += 1;
+                    } 
+                })
+            }
 
             // Implementing Circular Queue
             if (recommendedSongsData.count.length < data.limit && playlistId > 0 && (numberOfItems > recommendedSongsData.count.length)) {
