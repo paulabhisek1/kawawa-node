@@ -1247,7 +1247,7 @@ module.exports.uploadSong = (req, res) => {
                     msg: responseMessages.songUpload,
                     data: {
                         filePath: filePath,
-                        fileDuration: fileDuration.toFixed(2)
+                        fileDuration: parseInt(fileDuration)
                     },
                     purpose: purpose
                 })
@@ -1655,7 +1655,7 @@ module.exports.uploadPodcast = (req, res) => {
                     msg: responseMessages.podcastUpload,
                     data: {
                         filePath: filePath,
-                        fileDuration: fileDuration.toFixed(2)
+                        fileDuration: parseInt(fileDuration)
                     },
                     purpose: purpose
                 })
@@ -1929,6 +1929,39 @@ module.exports.updatePodcast = (req, res) => {
         }
         catch(err) {
             console.log("Podcast Update Error : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+module.exports.deletePodcast = (req, res) => {
+    (async()=>{
+        let purpose = "Delete Podcast";
+        try {
+            let artistID = req.headers.userID;
+            let podcastID = req.params.id;
+
+            let podcastCount = await podcastRepositories.count({ id: podcastID, artist_id: artistID });
+            
+            if(podcastCount > 0) {
+                
+            }
+            else {
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.podcastNotFoundNew,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Delete Podcast Error : ", err);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,
