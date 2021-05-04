@@ -13,6 +13,7 @@ const jwtOptionsAccess = global.constants.jwtAccessTokenOptions;
 module.exports.authenticateRequestAPI = async (req, res, next) => {
     try {
         if (req.headers.authorization) {
+            console.log("MAIN TOKEN : ", req.headers.authorization);
             let accessToken = req.headers.authorization.split(' ')[1];
             jwt.verify(accessToken, jwtOptionsAccess.secret, async (err, decodedToken) => {
                 if (err) {
