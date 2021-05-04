@@ -172,6 +172,7 @@ router.post('/create-podcast', authenticationMiddleware.authenticateArtistReques
 router.get('/podcast-details/:id', authenticationMiddleware.authenticateArtistRequestAPI, artistController.podcastDetails) // Podcast Details
 router.get('/podcasts-list', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.podcastsList, 'query'), artistController.podcastList) // Podcast List
 router.put('/update-podcast/:id', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.createPodcast, 'body'), artistController.updatePodcast) // Update Podcast
+router.delete('/delete-podcast/:id', authenticationMiddleware.authenticateArtistRequestAPI, artistController.deletePodcast) // Delete Podcast
 
 
 

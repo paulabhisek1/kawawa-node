@@ -119,6 +119,22 @@ module.exports.update = (where, data, t = null) => {
     })
 }
 
+// Destroy
+module.exports.delete = (where, t = null) => {
+    return new Promise((resolve, reject) => {
+        let options = {
+            where: where
+        }
+            //if trunsaction exist
+        if (t != null) options.transaction = t;
+        PodcastsModel.destroy(options).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
+
 // Find One
 module.exports.findOne = (where) => {
     return new Promise((resolve, reject) => {

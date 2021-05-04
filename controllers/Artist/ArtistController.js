@@ -1939,6 +1939,16 @@ module.exports.updatePodcast = (req, res) => {
     })()
 }
 
+/*
+|------------------------------------------------ 
+| API name          :  deletePodcast
+| Response          :  Respective response message in JSON format
+| Logic             :  Podcast Delete
+| Request URL       :  BASE_URL/artist/delete-podcast/<< Podcast ID >>
+| Request method    :  DELETE
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
 module.exports.deletePodcast = (req, res) => {
     (async()=>{
         let purpose = "Delete Podcast";
@@ -1946,10 +1956,30 @@ module.exports.deletePodcast = (req, res) => {
             let artistID = req.headers.userID;
             let podcastID = req.params.id;
 
-            let podcastCount = await podcastRepositories.count({ id: podcastID, artist_id: artistID });
+            let podcastDetails = await podcastRepositories.findOne({ id: podcastID, artist_id: artistID });
             
-            if(podcastCount > 0) {
+            if(podcastDetails) {
+                let podcastFilePath = path.join(global.appPath, podcastDetails.file_name);
+                let coverFilePath = path.join(global.appPath,podcastDetails.cover_picture);
                 
+                fs.unlink(podcastFilePath, (err)=>{
+                    if(err) console.log("Podcast Delete Error...", err);
+                    else console.log("Podcast Deleted");
+                })
+
+                fs.unlink(coverFilePath, (err)=>{
+                    if(err) console.log("Podcast Cover Image Delete Error...", err);
+                    else console.log("Podcast Cover Image Deleted");
+                })
+
+                await podcastRepositories.delete({ id: podcastID });
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.podcastDelete,
+                    data: {},
+                    purpose: purpose
+                })
             }
             else {
                 return res.status(404).send({

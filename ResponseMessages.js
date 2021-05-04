@@ -21,6 +21,7 @@ module.exports = {
     authRequired: 'Authentication required',
     songNotFound: 'Song not found',
     podcastNotFoundNew: 'Podcast not found',
+    podcastDelete: 'Podcast deleted successfully',
     favMessage: 'Added to Liked Songs',
     unfavMessage: 'Removed from Liked Songs',
     artistSongs: 'Artist wise songs fetched successfully',
