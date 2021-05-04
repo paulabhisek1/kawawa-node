@@ -132,3 +132,9 @@ module.exports.createPodcast = Joi.object().keys({
     category_id: Joi.number().required(),
     price: Joi.number().optional(),
 });
+
+// List Albums Schema
+module.exports.podcastsList = Joi.object().keys({
+    page: Joi.number().min(1).required(),
+    search: Joi.string().required().allow('', null),
+});

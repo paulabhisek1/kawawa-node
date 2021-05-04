@@ -157,6 +157,7 @@ router.get('/common-details', authenticationMiddleware.authenticateArtistRequest
 router.post('/create-album', authenticationMiddleware.authenticateArtistRequestAPI, uploadAlbumCover.single('file'), validateRequest.validate(artistValidationSchema.createAlbum, 'body'), artistController.createAlbum); // Create Album
 router.put('/update-album/:id', authenticationMiddleware.authenticateArtistRequestAPI, uploadAlbumCover.single('file'), validateRequest.validate(artistValidationSchema.createAlbum, 'body'), artistController.updateAlbum); // Update Album
 router.get('/album-details/:id', authenticationMiddleware.authenticateArtistRequestAPI, artistController.albumDetails); // Album Details
+router.delete('/album-delete/:id', authenticationMiddleware.authenticateArtistRequestAPI, artistController.albumDelete); // Album Details
 router.get('/album-list', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.listAlbums, 'query'), artistController.alubumsList); // Album List
 router.post('/upload-song', authenticationMiddleware.authenticateArtistRequestAPI, uploadSong.single('file'), artistController.uploadSong); // Upload Song
 router.post('/upload-song-cover-image', authenticationMiddleware.authenticateArtistRequestAPI, uploadSongCover.single('file'), artistController.uploadSongCover); // Upload Song Cover Image
@@ -169,6 +170,8 @@ router.post('/upload-podcast', authenticationMiddleware.authenticateArtistReques
 router.post('/upload-podcast-cover-image', authenticationMiddleware.authenticateArtistRequestAPI, uploadPodcastCover.single('file'), artistController.uploadPodcastCover); // Upload Podcast Cover Image
 router.post('/create-podcast', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.createPodcast, 'body'), artistController.createNewPodcast) // Create New Podcast
 router.get('/podcast-details/:id', authenticationMiddleware.authenticateArtistRequestAPI, artistController.podcastDetails) // Podcast Details
+router.get('/podcasts-list', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.podcastsList, 'query'), artistController.podcastList) // Podcast List
+router.put('/update-podcast/:id', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.createPodcast, 'body'), artistController.updatePodcast) // Update Podcast
 
 
 

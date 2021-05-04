@@ -1169,6 +1169,59 @@ module.exports.alubumsList = (req, res) => {
 
 /*
 |------------------------------------------------ 
+| API name          :  albumDelete
+| Response          :  Respective response message in JSON format
+| Logic             :  Delete Album
+| Request URL       :  BASE_URL/artist/album-delete/<< Album ID >>
+| Request method    :  DELETE
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.albumDelete = (req, res) => {
+    (async() => {
+        let purpose = "Album Delete";
+        try {
+            let artistID = req.headers.userID;
+            let albumID = req.params.id;
+
+            let albumCount = await albumRepositories.count({ id: albumID, artist_id: artistID });
+
+            if(albumCount > 0) {
+                await sequelize.transaction(async(t)=>{
+                    await albumRepositories.delete({ id: albumID }, t);
+                    await songsRepositories.delete({ album_id: albumID }, t);
+                })
+
+                return res.status(200).json({
+                    status: 200,
+                    msg: responseMessages.albumDelete,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+            else {
+                return res.status(404).json({
+                    status: 404,
+                    msg: responseMessages.albumNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Album Delete ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
 | API name          :  uploadSong
 | Response          :  Respective response message in JSON format
 | Logic             :  Upload Song
@@ -1752,6 +1805,130 @@ module.exports.podcastDetails = (req, res) => {
         }
         catch(err) {
             console.log("Podcast Details Error : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  podcastList
+| Response          :  Respective response message in JSON format
+| Logic             :  Podcast List
+| Request URL       :  BASE_URL/artist/podcast-list
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.podcastList = (req, res) => {
+    (async()=>{
+        let purpose = "Podcast List";
+        try {
+            let artistID = req.headers.userID;
+
+            let queryParam = req.query;
+            let where = {};
+            let data = {};
+            let page = queryParam.page ? parseInt(queryParam.page) : 1;
+            data.limit = 20;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+            data.order = [
+                ['id', 'DESC']
+            ];
+            where.artist_id = artistID;
+
+            if (queryParam.search) {
+                where.name = { $like: `%${queryParam.search}%` };
+            }
+
+            let podcastsList = await podcastRepositories.podcastsList(where, data);
+
+            let dataResp = {
+                podcastsList: podcastsList.rows,
+                totalCount: podcastsList.count.length
+            }
+
+            return res.status(200).json({
+                status: 200,
+                msg: responseMessages.podcastsList,
+                data: dataResp,
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("Podcast List Error : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  updatePodcast
+| Response          :  Respective response message in JSON format
+| Logic             :  Podcast Update
+| Request URL       :  BASE_URL/artist/podcast-update/<< Podcast ID >>
+| Request method    :  PUT
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.updatePodcast = (req, res) => {
+    (async()=>{
+        let purpose = "Podcast Update"
+        try {
+            let artistID = req.headers.userID;
+            let podcastID = req.params.id;
+            let body = req.body;
+
+            let podcastDetails = await podcastRepositories.findOne({ id: podcastID, artist_id: artistID });
+
+            if(podcastDetails) {
+                await sequelize.transaction(async(t)=>{
+                    let updateData = {
+                        name: body.name,
+                        cover_picture: body.cover_picture,
+                        length: body.length,
+                        file_name: body.file_name,
+                        details: body.details,
+                        artist_id: artistID,
+                        category_id: body.category_id ? body.category_id : 0,
+                        is_paid: body.is_paid ? body.is_paid : 0,
+                        price: body.price ? body.price : null,
+                        is_active: 1,
+                        type: 'podcast'
+                    }
+
+                    await podcastRepositories.update({ id: podcastID }, updateData, t);
+                })
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.podcastUpdate,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+            else {
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.podcastNotFoundNew,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Podcast Update Error : ", err);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,

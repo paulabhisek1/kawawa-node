@@ -23,7 +23,7 @@ module.exports.findAll = (where, data) => {
     })
 }
 
-// Find And Count All
+// List Albums
 module.exports.listAlbums = (where, data) => {
     return new Promise((resolve, reject) => {
         AlbumModel.findAndCountAll({
@@ -47,7 +47,7 @@ module.exports.listAlbums = (where, data) => {
     })
 }
 
-// Find All
+// Count
 module.exports.count = (where) => {
     return new Promise((resolve, reject) => {
         AlbumModel.count({
@@ -61,6 +61,7 @@ module.exports.count = (where) => {
     })
 }
 
+// Find One
 module.exports.findOne = (where) => {
     return new Promise((resolve, reject) => {
         AlbumModel.findOne({
@@ -74,7 +75,6 @@ module.exports.findOne = (where) => {
     })
 }
 
-// Find All
 module.exports.artistDetails = (where) => {
     return new Promise((resolve, reject) => {
         AlbumModel.findOne({
@@ -94,7 +94,7 @@ module.exports.artistDetails = (where) => {
     })
 }
 
-// Find All
+// Find And Count All
 module.exports.findAndCountAll = (where, data) => {
     return new Promise((resolve, reject) => {
         AlbumModel.findAndCountAll({
@@ -139,6 +139,22 @@ module.exports.update = (where, data, t = null) => {
             //if trunsaction exist
         if (t != null) options.transaction = t;
         AlbumModel.update(data, options).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
+
+// Update
+module.exports.delete = (where, t = null) => {
+    return new Promise((resolve, reject) => {
+        let options = {
+                where: where
+            }
+            //if trunsaction exist
+        if (t != null) options.transaction = t;
+        AlbumModel.destroy(options).then((result) => {
             resolve(result)
         }).catch((err) => {
             reject(err);

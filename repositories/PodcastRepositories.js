@@ -25,6 +25,7 @@ module.exports.create = (data, t = null) => {
     })
 }
 
+// Count
 module.exports.count = (where) => {
     return new Promise((resolve, reject) => {
         PodcastsModel.count({
@@ -38,6 +39,7 @@ module.exports.count = (where) => {
     })
 }
 
+// Podcast Details
 module.exports.podcastDetails = (where) => {
     return new Promise((resolve, reject) => {
         PodcastsModel.findOne({
@@ -65,4 +67,71 @@ module.exports.podcastDetails = (where) => {
         })
     })
 }
+
+// Podcast List
+module.exports.podcastsList = (where, data) => {
+    return new Promise((resolve, reject) => {
+        PodcastsModel.findAndCountAll({
+            where: where,
+            order: [
+                ['createdAt', 'desc']
+            ],
+            include: [{
+                    model: ArtistModel,
+                    as: 'artist_details',
+                    attributes: ['id', 'full_name', 'profile_image', 'type']
+                },
+                {
+                    model: PodcastCategoryModel,
+                    as: 'category_details',
+                    attributes: ['id', 'name']
+                },
+                {
+                    model: CountryModel,
+                    as: 'country_details',
+                }
+            ],
+            offset: data.offset,
+            limit: data.limit,
+            group: ['id']
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
+// Update
+module.exports.update = (where, data, t = null) => {
+    return new Promise((resolve, reject) => {
+        let options = {
+            where: where
+        }
+            //if trunsaction exist
+        if (t != null) options.transaction = t;
+        PodcastsModel.update(data, options).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
+
+// Find One
+module.exports.findOne = (where) => {
+    return new Promise((resolve, reject) => {
+        PodcastsModel.findOne({
+            where: where,
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
+
 
