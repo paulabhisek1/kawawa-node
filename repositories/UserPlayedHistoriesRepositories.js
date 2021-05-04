@@ -185,6 +185,22 @@ module.exports.destroy = (where, t = null) => {
     })
 }
 
+// Update
+module.exports.update = (where, data, t = null) => {
+    return new Promise((resolve, reject) => {
+        let options = {
+                where: where
+            }
+            //if trunsaction exist
+        if (t != null) options.transaction = t;
+        PlayedHistoryModel.update(data, options).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
+
 // Create
 module.exports.create = (data, t = null) => {
     return new Promise((resolve, reject) => {

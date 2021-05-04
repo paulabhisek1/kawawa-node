@@ -34,14 +34,7 @@ module.exports.socketResponse = (socket) => {
                         let songCount = await songRepositories.count({ id: songID, is_active: 1 });
     
                         if(songCount > 0) {
-                            let historyDet = await userPlayedHistoryRepositories.findOne({ user_id: userID, file_id: songID });
-    
-                            if(historyDet) {
-                                await userPlayedHistoryRepositories.destroy({ id: historyDet.id })
-                            }
-    
-                            // await userPlayedHistoryRepositories.create({ user_id: userID, file_id: songID, last_played_length: data.lastPlayedLength, type: 'song' });
-                            await userPlayedHistoryRepositories.create({ user_id: userID, file_id: songID, type: 'song' });
+                            await userPlayedHistoryRepositories.update({ user_id: userID, file_id: songID }, { updatedAt: Date.now() });
     
                             callback({
                                 status: 1,
