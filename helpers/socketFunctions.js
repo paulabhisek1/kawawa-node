@@ -16,7 +16,7 @@ module.exports.socketResponse = (socket) => {
     socket.on('user-played', async(data, callback) => {
         let songID = data.songID;
         let accessToken = data.accessToken.split(' ')[1];
-        // console.log("TOKEN : ", accessToken);
+        console.log("TOKEN : ", accessToken);
         try {
             jwt.verify(accessToken, jwtOptionsAccess.secret, async(err, decodedToken) => {
                 console.log("ERROR : ", err);
@@ -40,18 +40,10 @@ module.exports.socketResponse = (socket) => {
                                 msg: `User Played History Updated`,
                             })
                         } else {
-
-                            await userPlayedHistoryRepositories.create({ user_id: userID, file_id: songID, type: 'song' });
-
                             callback({
-                                    status: 1,
-                                    msg: `User Played History Added`,
-                                })
-                                // callback({
-                                //     status: 0,
-                                //     msg: `Invalid Song ID Provided`,
-                                // })
-
+                                status: 0,
+                                msg: `Invalid Song ID Provided`,
+                            })
                         }
                     } else {
                         callback({
