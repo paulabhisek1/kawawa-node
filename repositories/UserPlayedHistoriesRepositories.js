@@ -187,6 +187,8 @@ module.exports.destroy = (where, t = null) => {
 
 // Update
 module.exports.update = (where, data, t = null) => {
+    console.log('--------------------------- where ', where)
+    console.log('--------------------------- data ', data)
     return new Promise((resolve, reject) => {
         let options = {
                 where: where
