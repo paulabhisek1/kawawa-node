@@ -187,8 +187,6 @@ module.exports.destroy = (where, t = null) => {
 
 // Update
 module.exports.update = (where, data, t = null) => {
-    console.log('--------------------------- where ', where)
-    console.log('--------------------------- data ', data)
     return new Promise((resolve, reject) => {
         let options = {
                 where: where
@@ -196,8 +194,23 @@ module.exports.update = (where, data, t = null) => {
             //if trunsaction exist
         if (t != null) options.transaction = t;
         PlayedHistoryModel.update(data, options).then((result) => {
+            console.log("RES : ", result);
             resolve(result)
         }).catch((err) => {
+            console.log("ERR : ", err);
+            reject(err);
+        })
+    })
+}
+
+module.exports.updateNew = (where, data) => {
+    return new Promise((resolve, reject)=>{
+        // PlayedHistoryModel.changed('updatedAt', true);
+        PlayedHistoryModel.update(data, { where: where, silent: true }).then((result) => {
+            console.log("RES 1 : ", result);
+            resolve(result)
+        }).catch((err) => {
+            console.log("ERR 1 : ", err);
             reject(err);
         })
     })

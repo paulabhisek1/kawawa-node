@@ -20,10 +20,11 @@ module.exports = (sequelize, DataTypes) => {
     type: {
       type: DataTypes.ENUM,
       values: ['song', 'podcast']
-    }
+    },
   }, {
     sequelize,
     modelName: 'user_played_histories',
+    timestamps: true
   });
   return user_played_histories;
 };

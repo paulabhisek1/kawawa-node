@@ -16,10 +16,8 @@ module.exports.socketResponse = (socket) => {
     socket.on('user-played', async(data, callback) => {
         let songID = data.songID;
         let accessToken = data.accessToken.split(' ')[1];
-        console.log("TOKEN : ", accessToken);
         try {
             jwt.verify(accessToken, jwtOptionsAccess.secret, async(err, decodedToken) => {
-                console.log("ERROR : ", err);
                 if (err) {
                     callback({
                         status: 0,
@@ -38,9 +36,7 @@ module.exports.socketResponse = (socket) => {
 
                             if (recentlyPlayedCount > 0) {
 
-                                console.log('recentlyPlayedCount *************************', recentlyPlayedCount)
-
-                                await userPlayedHistoryRepositories.update({ user_id: userID, file_id: songID }, { updatedAt: Date.now() });
+                                await userPlayedHistoryRepositories.updateNew({ user_id: userID, file_id: songID }, { type: 'song', updatedAt: Date.now() });
 
                                 callback({
                                     status: 1,
