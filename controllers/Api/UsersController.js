@@ -565,7 +565,7 @@ module.exports.updateUserName = (req, res) => {
                 })
             }
         } catch (err) {
-            console.log("Reset Password ERROR : ", e);
+            console.log("Name Update ERROR : ", e);
             return res.send({
                 status: 500,
                 msg: responseMessages.serverError,
@@ -621,7 +621,63 @@ module.exports.updateProfilePicture = (req, res) => {
                 })
             }
         } catch (err) {
-            console.log("Reset Password ERROR : ", err);
+            console.log("Picture Update ERROR : ", err);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  updateUserCountry
+| Response          :  Respective response message in JSON format
+| Logic             :  Update User Country
+| Request URL       :  BASE_URL/api/update-user-country
+| Request method    :  PUT
+| Author            :  Abhisek Paul
+|------------------------------------------------
+*/
+module.exports.updateUserCountry = (req, res) => {
+    (async() => {
+        let purpose = "Update User Country";
+        try {
+            let userID = req.headers.userID;
+
+            let userCount = await userRepositories.count({ id: userID, is_active: 1 });
+
+            if (userCount > 0) {
+                await userRepositories.update({ id: userID }, { country_id: req.body.country_id });
+                // let userDetails = await userRepositories.findOne({ id: userID });
+                // delete userDetails.password;
+                // delete userDetails.login_type;
+                // delete userDetails.otp;
+                // delete userDetails.otp_expire_time;
+                // delete userDetails.otp_status;
+                // delete userDetails.is_active;
+
+                return res.send({
+                    status: 200,
+                    msg: responseMessages.userCountryUpdate,
+                    data: {
+                        // user_details: userDetails
+                    },
+                    purpose: purpose
+                })
+            } else {
+                return res.send({
+                    status: 500,
+                    msg: responseMessages.userNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        } catch (err) {
+            console.log("Country Update ERROR : ", e);
             return res.send({
                 status: 500,
                 msg: responseMessages.serverError,

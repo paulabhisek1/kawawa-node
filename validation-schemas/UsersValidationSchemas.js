@@ -52,7 +52,12 @@ module.exports.resetPassSchema = Joi.object().keys({
     otp: Joi.string().required()
 });
 
-// Reset Password Schema
+// Update user name Schema
 module.exports.updateUserDetails = Joi.object().keys({
     full_name: Joi.string().required(),
+});
+
+// Update user country Schema
+module.exports.updateUserCountry = Joi.object().keys({
+    country_id: Joi.number().required()
 });

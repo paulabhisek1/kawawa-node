@@ -38,6 +38,7 @@ module.exports = {
     playlistSongs: `Playlist songs fetched successfully`,
     userNotFound: `User not found`,
     userDetailsUpdate: `User details updated successfully`,
+    userCountryUpdate: `User country updated successfully`,
     userPictureUpdate: `User profile picture updated successfully`,
     userDetailsFetch: `User details fecthed successfully`,
     artistDetailsStepOne: `Artist details updated successfully`,

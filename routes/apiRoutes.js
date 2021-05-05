@@ -45,6 +45,7 @@ router.post('/reset-password', validateRequest.validate(usersValidationSchema.re
 router.get('/fetch-user-details', authenticationMiddleware.authenticateRequestAPI, usersController.fetchUserDetails); // Fetch User Details
 router.put('/update-user-details', validateRequest.validate(usersValidationSchema.updateUserDetails, 'body'), authenticationMiddleware.authenticateRequestAPI, usersController.updateUserName); // Fetch User Details
 router.put('/update-user-picture', authenticationMiddleware.authenticateRequestAPI, uploadProfilePicture.single('file'), usersController.updateProfilePicture); // Fetch User Details
+router.put('/update-user-country', validateRequest.validate(usersValidationSchema.updateUserCountry, 'body'), authenticationMiddleware.authenticateRequestAPI, usersController.updateUserCountry); // Fetch User Details
 
 // ################################### COMMON ########################################### //
 router.get('/countries', commonController.fetchCountries); // Fetch Countries
@@ -53,14 +54,14 @@ router.get('/countries', commonController.fetchCountries); // Fetch Countries
 router.get('/homepage', authenticationMiddleware.authenticateRequestAPI, songsController.fetchHomePageData); // Fetch Home page data
 router.get('/all-recently-played', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.allRecentlyPlayed); // See All Recently played songs
 router.get('/all-recommend', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.allRecommend); // See All Recommend songs
-router.get('/all-weekly-top', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.allWeeklyTop); // See All weekly top songs
-router.get('/all-artist', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.allArtist); // See All artist
-router.get('/all-free-songs', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.allFreeSongs); // See All Free songs
+router.get('/all-weekly-top', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.allWeeklyTop); // See All weekly top songs
+router.get('/all-artist', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.allArtist); // See All artist
+router.get('/all-free-songs', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.allFreeSongs); // See All Free songs
 
 // ################################### SONGS ########################################### //
-router.get('/artist-songs', validateRequest.validate(songsValidationsSchema.artistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.artistWiseTrack); // Artist wise songs
-router.get('/album-songs', validateRequest.validate(songsValidationsSchema.albumSongs, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.albumWiseTrack); // Album wise songs
-router.get('/artist-albums', validateRequest.validate(songsValidationsSchema.artistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI,  songsController.allAlbumsList); // Artist wise album list
+router.get('/artist-songs', validateRequest.validate(songsValidationsSchema.artistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.artistWiseTrack); // Artist wise songs
+router.get('/album-songs', validateRequest.validate(songsValidationsSchema.albumSongs, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.albumWiseTrack); // Album wise songs
+router.get('/artist-albums', validateRequest.validate(songsValidationsSchema.artistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.allAlbumsList); // Artist wise album list
 router.post('/mark-unmark-liked/:id', authenticationMiddleware.authenticateRequestAPI, songsController.favouriteAndUnfavourite); // Mark & Unmark Favourite
 
 // ################################### SONGS ########################################### //
