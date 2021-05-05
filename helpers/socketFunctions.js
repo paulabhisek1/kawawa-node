@@ -38,6 +38,8 @@ module.exports.socketResponse = (socket) => {
 
                             if (recentlyPlayedCount > 0) {
 
+                                console.log('recentlyPlayedCount *************************', recentlyPlayedCount)
+
                                 await userPlayedHistoryRepositories.update({ user_id: userID, file_id: songID }, { updatedAt: Date.now() });
 
                                 callback({
