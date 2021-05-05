@@ -150,4 +150,16 @@ module.exports.findOne = (where) => {
 }
 
 
+// Find All
+module.exports.findAllPodcastCategory = (whereData) => {
+    return new Promise((resolve, reject) => {
+        PodcastCategoryModel.findAll(whereData).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
 

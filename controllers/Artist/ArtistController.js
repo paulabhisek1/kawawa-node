@@ -930,13 +930,15 @@ module.exports.fetchCommonDetails = (req, res) => {
             let artistID = req.headers.userID;
             let genres = await genresRepositories.findAll({});
             let albums = await albumRepositories.findAll({ artist_id: artistID }, { limit: null })
+            let podcastCategories = await podcastRepositories.findAllPodcastCategory({});
 
             return res.status(200).send({
                 status: 200,
                 msg: responseMessages.commonDetails,
                 data: {
                     genres: genres,
-                    albums: albums
+                    albums: albums,
+                    podcastCategories: podcastCategories
                 },
                 purpose: purpose
             })
