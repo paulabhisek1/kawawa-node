@@ -652,19 +652,19 @@ module.exports.updateUserCountry = (req, res) => {
 
             if (userCount > 0) {
                 await userRepositories.update({ id: userID }, { country_id: req.body.country_id });
-                // let userDetails = await userRepositories.findOne({ id: userID });
-                // delete userDetails.password;
-                // delete userDetails.login_type;
-                // delete userDetails.otp;
-                // delete userDetails.otp_expire_time;
-                // delete userDetails.otp_status;
-                // delete userDetails.is_active;
+                let userDetails = await userRepositories.findOne({ id: userID });
+                delete userDetails.password;
+                delete userDetails.login_type;
+                delete userDetails.otp;
+                delete userDetails.otp_expire_time;
+                delete userDetails.otp_status;
+                delete userDetails.is_active;
 
                 return res.send({
                     status: 200,
                     msg: responseMessages.userCountryUpdate,
                     data: {
-                        // user_details: userDetails
+                        user_details: userDetails
                     },
                     purpose: purpose
                 })
