@@ -44,14 +44,14 @@ module.exports.socketResponse = (socket) => {
                             await userPlayedHistoryRepositories.create({ user_id: userID, file_id: songID, type: 'song' });
 
                             callback({
-                                status: 1,
-                                msg: `User Played History Added`,
-                            })
+                                    status: 1,
+                                    msg: `User Played History Added`,
+                                })
+                                // callback({
+                                //     status: 0,
+                                //     msg: `Invalid Song ID Provided`,
+                                // })
 
-                            // callback({
-                            //     status: 0,
-                            //     msg: `Invalid Song ID Provided`,
-                            // })
                         }
                     } else {
                         callback({
