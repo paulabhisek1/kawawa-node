@@ -693,6 +693,10 @@ module.exports.artistWiseTrack = (req, res) => {
             data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let artistID = queryParam.artist_id;
+            let numberOfItems = queryParam.number_of_items;
+            if (numberOfItems > 0) data.limit = parseInt(numberOfItems);
+            let playlistId = queryParam.playlist_id;
+            if (playlistId > 0) where.id = { $lte: playlistId };
             where.is_active = 1;
             where.album_id = 0;
             where.artist_id = artistID;
@@ -705,7 +709,26 @@ module.exports.artistWiseTrack = (req, res) => {
                 if (artistDetails.is_followed == "") artistDetails.is_followed = {};
                 let artistSongs = await songRepository.findAndCountAll(where, data);
                 let albumsList = await albumRepository.findAll({ artist_id: artistID, is_active: 1, total_songs: { $gt: 0 } }, 6)
+
+
+                // Implementing Circular Queue
+                if (artistSongs.count.length < data.limit && playlistId > 0 && (numberOfItems > artistSongs.count.length)) {
+                    data.limit = data.limit - parseInt(artistSongs.count.length);
+                    data.offset = data.limit ? data.limit * (page - 1) : null;
+                    if (playlistId > 0) where.id = { $gt: playlistId };
+
+                    let newArtistSongs = await songRepository.findAndCountAll(where, data);
+
+                    artistSongs.count.length = artistSongs.count.length + newArtistSongs.count.length
+                    artistSongs.rows = artistSongs.rows.concat(newArtistSongs.rows);
+                }
+
                 let totalPages = Math.ceil(artistSongs.count.length / 20);
+
+                artistSongs.rows.forEach((item, index) => {
+                    item.playListId = item.id;
+                })
+
                 let dataResp = {
                     artist_details: artistDetails,
                     artist_songs: {
@@ -766,11 +789,32 @@ module.exports.albumWiseTrack = (req, res) => {
             data.limit = 20;
             data.offset = data.limit ? data.limit * (page - 1) : null;
             let albumID = queryParam.album_id;
+            let numberOfItems = queryParam.number_of_items;
+            if (numberOfItems > 0) data.limit = parseInt(numberOfItems);
+            let playlistId = queryParam.playlist_id;
+            if (playlistId > 0) where.id = { $lte: playlistId };
             where.is_active = 1;
             where.album_id = albumID;
             data.user_id = userID;
 
             let albumSongs = await songRepository.findAndCountAll(where, data);
+
+            // Implementing Circular Queue
+            if (albumSongs.count.length < data.limit && playlistId > 0 && (numberOfItems > albumSongs.count.length)) {
+                data.limit = data.limit - parseInt(albumSongs.count.length);
+                data.offset = data.limit ? data.limit * (page - 1) : null;
+                if (playlistId > 0) where.id = { $gt: playlistId };
+
+                let newAlbumSongs = await songRepository.findAndCountAll(where, data);
+
+                albumSongs.count.length = albumSongs.count.length + newAlbumSongs.count.length
+                albumSongs.rows = albumSongs.rows.concat(newAlbumSongs.rows);
+            }
+
+            albumSongs.rows.forEach((item, index) => {
+                item.playListId = item.id
+            });
+
             let totalPages = Math.ceil(albumSongs.count.length / 20);
             let dataResp = {
                 album_songs: albumSongs.rows,

@@ -13,12 +13,16 @@ module.exports.allRecentlyPlayed = Joi.object().keys({
 module.exports.artistSongs = Joi.object().keys({
     page: Joi.number().min(1).required(),
     artist_id: Joi.number().required(),
+    playlist_id: Joi.number().min(0),
+    number_of_items: Joi.number().min(0),
 });
 
 // Album Wise Songs Schema
 module.exports.albumSongs = Joi.object().keys({
     page: Joi.number().min(1).required(),
     album_id: Joi.number().required(),
+    playlist_id: Joi.number().min(0),
+    number_of_items: Joi.number().min(0),
 });
 
 // Create Playlist
