@@ -149,7 +149,6 @@ module.exports.findOne = (where) => {
     })
 }
 
-
 // Find All
 module.exports.findAllPodcastCategory = (whereData) => {
     return new Promise((resolve, reject) => {

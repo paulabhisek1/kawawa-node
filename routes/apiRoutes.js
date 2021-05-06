@@ -17,6 +17,7 @@ const usersController = require('../controllers/Api/UsersController');
 const commonController = require('../controllers/Common/CommonController');
 const songsController = require('../controllers/Api/SongsController');
 const artistAPIController = require('../controllers/Api/ArtistController');
+const podcastController = require('../controllers/Api/PodcastsController');
 
 /* ############################################ Routes  ############################################ */
 
@@ -72,5 +73,8 @@ router.post('/create-playlist', validateRequest.validate(songsValidationsSchema.
 router.post('/add-song-to-playlist', validateRequest.validate(songsValidationsSchema.addSongToPlaylist, 'body'), authenticationMiddleware.authenticateRequestAPI, songsController.addSongToPlaylist); // Add Song To Playlist
 router.get('/playlist-list', validateRequest.validate(songsValidationsSchema.playlistList, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.playlistList); // Playlist List
 router.get('/playlist-songs', validateRequest.validate(songsValidationsSchema.playlistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.playlistSongs); // Playlist Songs
+
+// ################################### Podcast ########################################### //
+router.get('/podcast/homepage', authenticationMiddleware.authenticateRequestAPI, podcastController.podcastHomepage);
 
 module.exports = router;
