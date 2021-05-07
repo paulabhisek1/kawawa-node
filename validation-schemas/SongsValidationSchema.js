@@ -7,6 +7,8 @@ module.exports.allRecentlyPlayed = Joi.object().keys({
     page: Joi.number().min(0).required(),
     playlist_id: Joi.number().min(0),
     number_of_items: Joi.number().min(0),
+    album_id: Joi.number().allow(),
+    artist_id: Joi.number().allow()
 });
 
 // Artist Wise Songs Schema
@@ -15,6 +17,7 @@ module.exports.artistSongs = Joi.object().keys({
     artist_id: Joi.number().required(),
     playlist_id: Joi.number().min(0),
     number_of_items: Joi.number().min(0),
+    album_id: Joi.number().allow(),
 });
 
 // Album Wise Songs Schema
@@ -23,6 +26,7 @@ module.exports.albumSongs = Joi.object().keys({
     album_id: Joi.number().required(),
     playlist_id: Joi.number().min(0),
     number_of_items: Joi.number().min(0),
+    artist_id: Joi.number().allow()
 });
 
 // Create Playlist
