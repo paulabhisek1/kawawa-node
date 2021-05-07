@@ -31,6 +31,12 @@ module.exports.socketResponse = (socket) => {
                         let songCount = await songRepositories.count({ id: songID, is_active: 1 });
 
                         if (songCount > 0) {
+                            let songDet = await songRepositories.findOne({ id: songID, is_active: 1 });
+                            let updateData = {};
+                            if (songDet.playedCount) updateData.playedCount = songDet.playedCount + 1;
+                            else updateData.playedCount = 1;
+
+                            await songRepositories.update({ id: songID }, updateData)
 
                             let recentlyPlayedCount = await userPlayedHistoryRepositories.count({ user_id: userID, file_id: songID });
 
