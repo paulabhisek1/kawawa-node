@@ -94,9 +94,15 @@ module.exports.fetchHomePageData = (req, res) => {
 
             // Recommended
             let allRecenData = await userPlayedHistoryRepo.recentlyPlayedAllData({ user_id: userID });
+            let followedArtists = await artistRepositories.followedArtistsList({ user_id: userID });
             where = {};
             let recommendArtistList = [];
             let recommentGenreList = [];
+            let followedArtistsList = [];
+            followedArtists.forEach((item, index) => {
+                followedArtistsList.push(item.artist_id);
+            })
+
             allRecenData.forEach((item, index) => {
                 if (recommendArtistList.findIndex(x => x === item.song_details.artist_details.id) < 0) {
                     recommendArtistList.push(item.song_details.artist_details.id)
@@ -105,9 +111,13 @@ module.exports.fetchHomePageData = (req, res) => {
                     recommentGenreList.push(item.song_details.genre_details.id)
                 }
             })
+
+            let artistsList = [...new Set([...recommendArtistList, ...followedArtistsList])]
+
             where.$or = [
-                { artist_id: { $in: recommendArtistList } },
+                { artist_id: { $in: artistsList } },
                 { genre_id: { $in: recommentGenreList } },
+
             ];
             where.is_active = 1;
             let recommendedSongsData = await songRepository.recommendedSongs(where, data);
@@ -300,9 +310,15 @@ module.exports.allRecommend = (req, res) => {
             // where.user_id = userID;
             data.user_id = userID;
 
+            let followedArtists = await artistRepositories.followedArtistsList({ user_id: userID });
             let allRecenData = await userPlayedHistoryRepo.recentlyPlayedAllData({ user_id: userID });
             let recommendArtistList = [];
             let recommentGenreList = [];
+            let followedArtistsList = [];
+            followedArtists.forEach((item, index) => {
+                followedArtistsList.push(item.artist_id);
+            })
+
             allRecenData.forEach((item, index) => {
                 if (recommendArtistList.findIndex(x => x === item.song_details.artist_details.id) < 0) {
                     recommendArtistList.push(item.song_details.artist_details.id)
@@ -311,8 +327,9 @@ module.exports.allRecommend = (req, res) => {
                     recommentGenreList.push(item.song_details.genre_details.id)
                 }
             })
+            let artistsList = [...new Set([...recommendArtistList, ...followedArtistsList])]
             where.$or = [
-                { artist_id: { $in: recommendArtistList } },
+                { artist_id: { $in: artistsList } },
                 { genre_id: { $in: recommentGenreList } },
             ];
             where.is_active = 1;

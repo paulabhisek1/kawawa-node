@@ -352,5 +352,20 @@ module.exports.followDetails = (where) => {
     })
 }
 
+module.exports.followedArtistsList = (where) => {
+    return new Promise((resolve, reject) => {
+        FollowedArtistsModel.findAll({
+                where: where
+            })
+            .then((result) => {
+                result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+                resolve(result);
+            })
+            .catch((err) => {
+                reject(err);
+            });
+    })
+}
+
 
 

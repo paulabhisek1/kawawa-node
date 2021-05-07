@@ -390,7 +390,9 @@ module.exports.weeklyTopTenPaginate = (where, data) => {
                 'is_paid',
                 'createdAt',
                 'updatedAt',
-                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id)`), 'totalFavourites']
+                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id)`), 'totalFavourites'],
+                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.file_id = songs.id)`), 'totalDownloads'],
+                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.file_id = songs.id) + (SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id)`), 'totalSum'],
             ],
             include: [{
                     model: ArtistModel,
@@ -415,9 +417,9 @@ module.exports.weeklyTopTenPaginate = (where, data) => {
                     required:false
                 }
             ],
-            having: sequelize.literal('`totalFavourites` > 0'),
+            having: sequelize.literal('`totalSum` > 0'),
             order: [
-                [sequelize.literal(`totalFavourites`), 'desc']
+                [sequelize.literal(`totalSum`), 'desc']
             ],
             limit: data.limit,
             group: ['id']
