@@ -335,16 +335,6 @@ module.exports.allRecommend = (req, res) => {
             where.is_active = 1;
             let recommendedSongsData = await songRepository.recommendedSongsPaginate(where, data);
 
-            recommendedSongsData.rows.forEach(element => {
-                element.playListId = element.id // add a new key `playListId` in the response
-                if (element.genre_details == '') {
-                    element.genre_details = {};
-                }
-                if (element.album_details == '') {
-                    element.album_details = {};
-                }
-            });
-
 
             if(recommendedSongsData.count.length < data.limit) {
                 let userDetails = await userRepositories.findOne({ id: userID });
@@ -374,19 +364,20 @@ module.exports.allRecommend = (req, res) => {
                 if (playlistId > 0) where.id = { $gt: playlistId };
 
                 let newRecomendedSongs = await songRepository.recommendedSongsPaginate(where, data);
-                newRecomendedSongs.rows.forEach(element => {
-                    element.playListId = element.id // add a new key `playListId` in the response
-                    if (element.genre_details == '') {
-                        element.genre_details = {};
-                    }
-                    if (element.album_details == '') {
-                        element.album_details = {};
-                    }
-                });
 
                 recommendedSongsData.count.length = recommendedSongsData.count.length + newRecomendedSongs.count.length;
                 recommendedSongsData.rows = recommendedSongsData.rows.concat(newRecomendedSongs.rows);
             }
+
+            recommendedSongsData.rows.forEach(element => {
+                element.playListId = element.id // add a new key `playListId` in the response
+                if (element.genre_details == '') {
+                    element.genre_details = {};
+                }
+                if (element.album_details == '') {
+                    element.album_details = {};
+                }
+            });
 
             let totalPages = Math.ceil(recommendedSongsData.count.length / data.limit);
 
