@@ -744,6 +744,12 @@ module.exports.artistWiseTrack = (req, res) => {
 
                 artistSongs.rows.forEach((item, index) => {
                     item.playListId = item.id;
+                    if (item.genre_details == '') {
+                        item.genre_details = {};
+                    }
+                    if (item.album_details == '') {
+                        item.album_details = {};
+                    }
                 })
 
                 let dataResp = {
@@ -830,6 +836,12 @@ module.exports.albumWiseTrack = (req, res) => {
 
             albumSongs.rows.forEach((item, index) => {
                 item.playListId = item.id
+                if (item.genre_details == '') {
+                    item.genre_details = {};
+                }
+                if (item.album_details == '') {
+                    item.album_details = {};
+                }
             });
 
             let totalPages = Math.ceil(albumSongs.count.length / 20);
