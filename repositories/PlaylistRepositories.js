@@ -97,17 +97,26 @@ module.exports.playlistSongs = (where, data) => {
                 {
                     model: SongsModel,
                     where: { is_active: 1 },
-                    include: [
-                        {
-                            model: FavouritesModel,
-                            where: { user_id: data.user_id },
-                            as: 'is_favourite',
-                            attributes: ['id'],
-                            required:false
-                        }
-                    ],
                     as:'song_details',
-                    attributes: ['id','name','cover_picture','length','file_name','details']
+                    attributes: [
+                        'id', 
+                        'name', 
+                        'cover_picture', 
+                        'file_name', 
+                        'length', 
+                        'is_paid', 
+                        'type', 
+                        'artist_id', 
+                        'genre_id', 
+                        'album_id', 
+                        'country_id', 
+                        'is_paid', 
+                        'createdAt', 
+                        'updatedAt',
+                        [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = song_details.artist_id)`), 'isFollowedArtist'],
+                        [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = song_details.id)`), 'isFavourite'],
+                        [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = song_details.id)`), 'isDownloaded'],
+                    ],
                 }
             ],
             offset: data.offset,

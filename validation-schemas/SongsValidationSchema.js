@@ -11,6 +11,11 @@ module.exports.allRecentlyPlayed = Joi.object().keys({
     artist_id: Joi.number().allow()
 });
 
+// All Recently Played Schema
+module.exports.followedArtistsLists = Joi.object().keys({
+    page: Joi.number().min(0).required(),
+});
+
 // Artist Wise Songs Schema
 module.exports.artistSongs = Joi.object().keys({
     page: Joi.number().min(1).required(),

@@ -81,4 +81,7 @@ module.exports = {
     songDelete: `Song deleted successfully`,
     podcastUpload: `Podcast uploaded successfully`,
     podcastCoverUpload: `Podcast cover image uploaded successfully`,
+    allfavsongs: `Favourite songs fetched successfully`,
+    alldownloadedsongs: `Downloaded songs fetched successfully`,
+    followedArtists: `Followed Artists list fetched successfully`,
 }

@@ -58,14 +58,15 @@ module.exports.artistDetails = (whereData, data) => {
     return new Promise((resolve, reject) => {
         ArtistModel.findOne({
             where: whereData,
-            attributes: ['id','full_name','profile_image','country_id', 'is_active'],
+            attributes: [
+                'id',
+                'full_name',
+                'profile_image',
+                'country_id', 
+                'is_active',
+                [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = ${whereData.id})`), 'isFollowedArtist'],
+            ],
             include: [
-                {
-                    model: FollowedArtistsModel,
-                    as: 'is_followed',
-                    where: { user_id: data.user_id },
-                    required: false
-                },
                 {
                     model: ArtistDetailsModel,
                     as: 'artist_account_details',
@@ -264,6 +265,31 @@ module.exports.artistList = (whereData) => {
         ArtistModel.findAll({
             where: whereData,
             attributes: ['id','full_name','profile_image']
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
+// Find All
+module.exports.followedArtistList = (whereData, data) => {
+    return new Promise((resolve, reject) => {
+        ArtistModel.findAndCountAll({
+            where: whereData,
+            include: [
+                {
+                    model: FollowedArtistsModel,
+                    where: { user_id: data.user_id },
+                    as: 'is_followed',
+                    required: true
+                }
+            ],
+            offset: data.offset,
+            limit: data.limit,
+            group: ['id']
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
             resolve(result);

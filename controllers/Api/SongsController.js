@@ -1141,3 +1141,173 @@ module.exports.playlistSongs = (req, res) => {
         }
     })()
 }
+
+/*
+|------------------------------------------------ 
+| API name          :  allFavouriteSongs
+| Response          :  Respective response message in JSON format
+| Logic             :  See All Favourite songs
+| Request URL       :  BASE_URL/api/favourite-songs
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.allFavouriteSongs = (req, res) => {
+    (async() => {
+        let purpose = "All Favourite Songs";
+        try {
+            let queryParam = req.query;
+            let where = {};
+            let data = {};
+            let page = queryParam.page > 0 ? parseInt(queryParam.page) : 1;
+            data.limit = 20;
+            let userID = req.headers.userID;
+            let numberOfItems = queryParam.number_of_items;
+            if (numberOfItems > 0) data.limit = parseInt(numberOfItems);
+            let playlistId = queryParam.playlist_id;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+            if (playlistId > 0) where.id = { $lte: playlistId };
+            where.is_active = 1;
+            data.user_id = userID;
+
+            let allfavsongs = await songRepository.favouriteSongs(where, data);
+            allfavsongs.rows.forEach(element => {
+                element.playListId = element.id // add a new key `playListId` in the response
+                if (element.genre_details == '') {
+                    element.genre_details = {};
+                }
+                if (element.album_details == '') {
+                    element.album_details = {};
+                }
+            });
+
+            // Implementing Circular Queue
+            if (allfavsongs.count.length < data.limit && playlistId > 0 && (numberOfItems > allfavsongs.count.length)) {
+                data.limit = data.limit - parseInt(allfavsongs.count.length);
+                data.offset = data.limit ? data.limit * (page - 1) : null;
+                if (playlistId > 0) where.id = { $gt: playlistId };
+
+                let newAllFavSongs = await songRepository.favouriteSongs(where, data);
+                newAllFavSongs.rows.forEach((item, index) => {
+                    item.playListId = item.id
+                    if (item.genre_details == '') {
+                        item.genre_details = {};
+                    }
+                    if (item.album_details == '') {
+                        item.album_details = {};
+                    }
+                });
+
+                allfavsongs.count.length = allfavsongs.count.length + newAllFavSongs.count.length
+                allfavsongs.rows = allfavsongs.rows.concat(newAllFavSongs.rows);
+            }
+
+            let totalPages = Math.ceil(allfavsongs.count.length / data.limit);
+            let dataResp = {
+                allfavsongs: allfavsongs.rows,
+                total_count: allfavsongs.count.length,
+                total_page: totalPages
+            }
+
+            return res.send({
+                status: 200,
+                msg: responseMessages.allfavsongs,
+                data: dataResp,
+                purpose: purpose
+            })
+        } catch (e) {
+            console.log("All Favourite Songs Error : ", e);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  allDownloadSongs
+| Response          :  Respective response message in JSON format
+| Logic             :  See All Downloaded songs
+| Request URL       :  BASE_URL/api/downloaded-songs
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.allDownloadSongs = (req, res) => {
+    (async() => {
+        let purpose = "All Download Songs";
+        try {
+            let queryParam = req.query;
+            let where = {};
+            let data = {};
+            let page = queryParam.page > 0 ? parseInt(queryParam.page) : 1;
+            data.limit = 20;
+            let userID = req.headers.userID;
+            let numberOfItems = queryParam.number_of_items;
+            if (numberOfItems > 0) data.limit = parseInt(numberOfItems);
+            let playlistId = queryParam.playlist_id;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+            if (playlistId > 0) where.id = { $lte: playlistId };
+            where.is_active = 1;
+            data.user_id = userID;
+
+            let alldownloadedsongs = await songRepository.downloadSongs(where, data);
+            alldownloadedsongs.rows.forEach(element => {
+                element.playListId = element.id // add a new key `playListId` in the response
+                if (element.genre_details == '') {
+                    element.genre_details = {};
+                }
+                if (element.album_details == '') {
+                    element.album_details = {};
+                }
+            });
+
+            // Implementing Circular Queue
+            if (alldownloadedsongs.count.length < data.limit && playlistId > 0 && (numberOfItems > alldownloadedsongs.count.length)) {
+                data.limit = data.limit - parseInt(alldownloadedsongs.count.length);
+                data.offset = data.limit ? data.limit * (page - 1) : null;
+                if (playlistId > 0) where.id = { $gt: playlistId };
+
+                let newAllDownloadedSongs = await songRepository.downloadSongs(where, data);
+                newAllDownloadedSongs.rows.forEach((item, index) => {
+                    item.playListId = item.id
+                    if (item.genre_details == '') {
+                        item.genre_details = {};
+                    }
+                    if (item.album_details == '') {
+                        item.album_details = {};
+                    }
+                });
+
+                alldownloadedsongs.count.length = alldownloadedsongs.count.length + newAllDownloadedSongs.count.length
+                alldownloadedsongs.rows = alldownloadedsongs.rows.concat(newAllDownloadedSongs.rows);
+            }
+
+            let totalPages = Math.ceil(alldownloadedsongs.count.length / data.limit);
+            let dataResp = {
+                alldownloadedsongs: alldownloadedsongs.rows,
+                total_count: alldownloadedsongs.count.length,
+                total_page: totalPages
+            }
+
+            return res.send({
+                status: 200,
+                msg: responseMessages.alldownloadedsongs,
+                data: dataResp,
+                purpose: purpose
+            })
+        } catch (e) {
+            console.log("All Download Songs Error : ", e);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}

@@ -94,3 +94,56 @@ module.exports.followArtist = (req, res) => {
         }
     })()
 }
+
+/*
+|------------------------------------------------ 
+| API name          :  followArtist
+| Response          :  Respective response message in JSON format
+| Logic             :  Follow & Unfollow Artist
+| Request URL       :  BASE_URL/api/artist-follow/<< Artist ID >>
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.allFollowedArtists = (req, res) => {
+    (async()=>{
+        let purpose = "Follow Artist"
+        try{
+            let userID = req.headers.userID;
+
+            let queryParam = req.query;
+            let where = {};
+            let data = {};
+            let page = queryParam.page > 0 ? parseInt(queryParam.page) : 1;
+            data.limit = 20;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+            where.is_active = 1;
+            data.user_id = userID;
+
+            let artistList = await artistRepositories.followedArtistList(where, { user_id: userID });
+
+            let totalPages = Math.ceil(artistList.count.length / data.limit);
+            let dataResp = {
+                followedArtists: artistList.rows,
+                total_count: artistList.count.length,
+                total_page: totalPages
+            }
+
+            return res.send({
+                status: 200,
+                msg: responseMessages.followedArtists,
+                data: dataResp,
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("Follow Artist List Error : ", err);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
