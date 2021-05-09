@@ -217,6 +217,13 @@ module.exports.socialLogin = (req, res) => {
                     })
                 }
             } else {
+
+                let fetchCountryId = await userRepositories.fetchCountryId({ country_code: body.country_code }); // in social login fetch country id from country code
+                if (!fetchCountryId) {
+                    body.country_id = 1;
+                } else {
+                    body.country_id = fetchCountryId.id;
+                }
                 let createUserData = {
                     full_name: body.full_name,
                     email: body.email,
@@ -225,6 +232,7 @@ module.exports.socialLogin = (req, res) => {
                     dob: body.dob ? body.dob : null,
                     profile_image: body.profile_image ? body.profile_image : `/uploads/profile_images/default_image.png`,
                     login_type: body.login_type,
+                    country_id: body.country_id,
                 }
 
                 let userData = await userRepositories.create(createUserData);

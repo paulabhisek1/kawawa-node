@@ -1,6 +1,6 @@
 const sequelize = require('../config/dbConfig').sequelize;
 var DataTypes = require('sequelize/lib/data-types');
-const UsersModel = require('../models/users')(sequelize,DataTypes);
+const UsersModel = require('../models/users')(sequelize, DataTypes);
 const CountryModel = require('../models/countries')(sequelize, DataTypes);
 const DonwloadModel = require('../models/downloads')(sequelize, DataTypes);
 
@@ -37,11 +37,9 @@ module.exports.findOne = (whereData) => {
     return new Promise((resolve, reject) => {
         UsersModel.findOne({
             where: whereData,
-            include: [
-                {
-                    model: CountryModel,
-                }
-            ]
+            include: [{
+                model: CountryModel,
+            }]
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
             resolve(result);
@@ -52,19 +50,19 @@ module.exports.findOne = (whereData) => {
 }
 
 // Create 
-module.exports.create = (data, t=null) => {
-    return new Promise((resolve, reject)=>{
+module.exports.create = (data, t = null) => {
+    return new Promise((resolve, reject) => {
         let options = {}
-        //if trunsaction exist
+            //if trunsaction exist
         if (t != null) options.transaction = t;
         UsersModel.create(data, options)
-        .then((result) => {
-            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
-            resolve(result);
-        })
-        .catch((err) => {
-            reject(err);
-        });
+            .then((result) => {
+                result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+                resolve(result);
+            })
+            .catch((err) => {
+                reject(err);
+            });
     })
 }
 
@@ -72,14 +70,28 @@ module.exports.create = (data, t=null) => {
 module.exports.update = (where, data, t = null) => {
     return new Promise((resolve, reject) => {
         let options = {
-            where: where
-        }
-        //if trunsaction exist
+                where: where
+            }
+            //if trunsaction exist
         if (t != null) options.transaction = t;
         UsersModel.update(data, options).then((result) => {
             resolve(result)
         }).catch((err) => {
             reject(err);
+        })
+    })
+}
+
+// Find Country Id
+module.exports.fetchCountryId = (whereData) => {
+    return new Promise((resolve, reject) => {
+        CountryModel.findOne({
+            where: whereData,
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
         })
     })
 }
