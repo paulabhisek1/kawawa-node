@@ -29,7 +29,8 @@ module.exports.socialLoginSchema = Joi.object().keys({
     password: Joi.string().required(),
     dob: Joi.date().format("YYYY-MM-DD").allow(null, ''),
     profile_image: Joi.string().allow(null, ''),
-    login_type: Joi.string().valid('facebook', 'google').required()
+    login_type: Joi.string().valid('facebook', 'google').required(),
+    country_code: Joi.string().required()
 });
 
 // Forgot Password Schema
