@@ -11,6 +11,7 @@ const authenticationMiddleware = require('../middlewares/AuthenticationMiddlewar
 /* ############################################ Joi Validation Schema ############################################ */
 const usersValidationSchema = require('../validation-schemas/UsersValidationSchemas');
 const songsValidationsSchema = require('../validation-schemas/SongsValidationSchema');
+const podcastsValidationsSchema = require('../validation-schemas/PodcastValidationSchema');
 
 /* ############################################ Controllers ############################################ */
 const usersController = require('../controllers/Api/UsersController');
@@ -36,7 +37,7 @@ var storageProfilePicture = multer.diskStorage({
 
 var uploadProfilePicture = multer({ storage: storageProfilePicture })
 
-// ################################### HOMEPAGE ########################################### //
+// ################################### AUTH ########################################### //
 router.post('/register', validateRequest.validate(usersValidationSchema.userRegisterSchema, 'body'), usersController.registerUser); // User Registration Route
 router.post('/login', validateRequest.validate(usersValidationSchema.loginSchema, 'body'), usersController.userLogin); // System Login Route
 router.post('/social-login', validateRequest.validate(usersValidationSchema.socialLoginSchema, 'body'), usersController.socialLogin); // System Login Route
@@ -64,20 +65,19 @@ router.get('/artist-songs', validateRequest.validate(songsValidationsSchema.arti
 router.get('/album-songs', validateRequest.validate(songsValidationsSchema.albumSongs, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.albumWiseTrack); // Album wise songs
 router.get('/artist-albums', validateRequest.validate(songsValidationsSchema.artistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.allAlbumsList); // Artist wise album list
 router.post('/mark-unmark-liked/:id', authenticationMiddleware.authenticateRequestAPI, songsController.favouriteAndUnfavourite); // Mark & Unmark Favourite
-
-// ################################### SONGS ########################################### //
 router.post('/artist-follow/:id', authenticationMiddleware.authenticateRequestAPI, artistAPIController.followArtist); // Artist Follow
 router.get('/followed-artists', validateRequest.validate(songsValidationsSchema.followedArtistsLists, 'query'), authenticationMiddleware.authenticateRequestAPI, artistAPIController.allFollowedArtists); // Artist Follow
 router.get('/favourite-songs', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.allFavouriteSongs); // See All Favourite songs
 router.get('/downloaded-songs', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.allDownloadSongs); // See All Downloaded songs
 
-// ################################### Playlist ########################################### //
+// ################################### PLAYLISTS ########################################### //
 router.post('/create-playlist', validateRequest.validate(songsValidationsSchema.createPlaylist, 'body'), authenticationMiddleware.authenticateRequestAPI, songsController.createPlaylist); // Create Playlist
 router.post('/add-song-to-playlist', validateRequest.validate(songsValidationsSchema.addSongToPlaylist, 'body'), authenticationMiddleware.authenticateRequestAPI, songsController.addSongToPlaylist); // Add Song To Playlist
 router.get('/playlist-list', validateRequest.validate(songsValidationsSchema.playlistList, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.playlistList); // Playlist List
 router.get('/playlist-songs', validateRequest.validate(songsValidationsSchema.playlistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.playlistSongs); // Playlist Songs
 
-// ################################### Podcast ########################################### //
-router.get('/podcast/homepage', authenticationMiddleware.authenticateRequestAPI, podcastController.podcastHomepage);
+// ################################### PODCASTS ########################################### //
+router.get('/podcast/homepage', authenticationMiddleware.authenticateRequestAPI, validateRequest.validate(podcastsValidationsSchema.homepageData, 'query'), podcastController.podcastHomepage); // Podcast Homepage
+router.get('/podcast/all-recently-played', authenticationMiddleware.authenticateRequestAPI, validateRequest.validate(podcastsValidationsSchema.allRecentlyPlayed, 'query'), podcastController.allRecentlyPlayed); // All Recently Played Podcasts
 
 module.exports = router;

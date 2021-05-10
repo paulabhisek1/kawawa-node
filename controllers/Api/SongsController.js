@@ -58,6 +58,7 @@ module.exports.fetchHomePageData = (req, res) => {
 
             // Recently Played
             where.user_id = userID;
+            where.type = 'song';
             let allRecentlyPlayed = await userPlayedHistoryRepo.recentlyPlayed(where, data);
             let newAllRecentlyPlayed = [];
             allRecentlyPlayed.forEach((item, index) => {
@@ -216,6 +217,7 @@ module.exports.allRecentlyPlayed = (req, res) => {
             data.offset = data.limit ? data.limit * (page - 1) : null;
             if (playlistId > 0) where.id = { $lte: playlistId };
             where.user_id = userID;
+            where.type = 'song';
             data.user_id = userID;
 
 

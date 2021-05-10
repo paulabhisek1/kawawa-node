@@ -12,6 +12,7 @@ module.exports = {
     countryFetch: "Countries fetched successfully",
     homeFetch: "Home page data fetched successfully",
     allrecentlyplayed: "All Recently played songs fetched successfully",
+    allrecentlyplayedpodcasts: "All Recently played podcasts fetched successfully",
     recentlyplayed: "Recently played songs fetched successfully",
     allrecommend: "All Recommend songs fetched successfully",
     allweeklytop: "All weekly top songs fetched successfully",

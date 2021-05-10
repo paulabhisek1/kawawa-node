@@ -29,11 +29,22 @@ const responseMessages = require('../../ResponseMessages');
 const md5 = require('md5');
 const jwt = require('jsonwebtoken');
 const moment = require('moment');
+const { allrecentlyplayed } = require('../../ResponseMessages');
 
 // ################################ Globals ################################ //
 const jwtOptionsAccess = global.constants.jwtAccessTokenOptions;
 const jwtOptionsRefresh = global.constants.jwtRefreshTokenOptions;
 
+/*
+|------------------------------------------------ 
+| API name          :  podcastHomepage
+| Response          :  Respective response message in JSON format
+| Logic             :  Fetch Home Page Data For Podcasts
+| Request URL       :  BASE_URL/api/podcast/homepage
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
 module.exports.podcastHomepage = (req, res) => {
     (async()=>{
         let purpose = "Podcast Homepage";
@@ -51,8 +62,47 @@ module.exports.podcastHomepage = (req, res) => {
                 }
             )
 
+            let where = {};
+            let data = {};
+            data.limit = 6;
+            let userID = req.headers.userID;
+            data.user_id = userID;
+
+            // Recently Played
+            where.user_id = userID;
+            where.type = 'podcast';
+            let allRecentlyPlayed = await userPlayedHistoryRepo.recentlyPlayedPodcasts(where, data);
+            let newAllRecentlyPlayed = [];
+            allRecentlyPlayed.forEach((item, index) => {
+                item.podcast_details.playListId = item.id; // Push the playlist item id it the array
+                if (item.podcast_details.podcast_category_details == '') {
+                    item.podcast_details.podcast_category_details = {};
+                }
+                newAllRecentlyPlayed.push(item.podcast_details);
+            });
+            allRecentlyPlayed = newAllRecentlyPlayed;
+
+            let queryParam = req.query;
+            where = {};
+            data = {};
+            let page = queryParam.page > 0 ? parseInt(queryParam.page) : 1;
+            data.limit = 20;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+            if(queryParam.category_id && queryParam.category_id > 0) where.category_id = queryParam.category_id;
+            where.is_active = 1;
+            data.user_id = userID;
+            let allPodcastsList = await podcastRepository.userPodcastList(where, data);
+
+            let totalPages = Math.ceil(allPodcastsList.count.length / data.limit);
+
             let dataResp = {
-                categories: podcastCategories
+                categories: podcastCategories,
+                recentlyPlayed: allRecentlyPlayed,
+                podcastsList: {
+                    podcasts: allPodcastsList.rows,
+                    total_count: allPodcastsList.count.length,
+                    total_page: totalPages
+                }
             }
 
             return res.send({
@@ -63,7 +113,61 @@ module.exports.podcastHomepage = (req, res) => {
             })
         }
         catch(err) {
-            console.log("Podcast Homepage Error : ", e);
+            console.log("Podcast Homepage Error : ", err);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  allRecentlyPlayed
+| Response          :  Respective response message in JSON format
+| Logic             :  Fetch All Recently Played Podcasts
+| Request URL       :  BASE_URL/api/podcast/all-recently-played
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.allRecentlyPlayed = (req, res) => {
+    (async()=>{
+        let purpose = "All Recently Played Podcasts";
+        try {
+            let queryParam = req.query;
+            let where = {};
+            let data = {};
+            let page = queryParam.page > 0 ? parseInt(queryParam.page) : 1;
+            data.limit = 20;
+            let userID = req.headers.userID;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+            where.user_id = userID;
+            where.type = 'podcast';
+            data.user_id = userID;
+
+            let allRecentlyPlayedPodcasts = await userPlayedHistoryRepo.allRecentlyPlayedPodcasts(where, data);
+
+            let totalPages = Math.ceil(allRecentlyPlayedPodcasts.count.length / data.limit);
+
+            let dataResp = {
+                podcasts: allRecentlyPlayedPodcasts.rows,
+                total_count: allRecentlyPlayedPodcasts.count.length,
+                total_page: totalPages
+            }
+
+            return res.send({
+                status: 200,
+                msg: responseMessages.allrecentlyplayedpodcasts,
+                data: dataResp,
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("All Recently Played Podcasts Error : ", err);
             return res.send({
                 status: 500,
                 msg: responseMessages.serverError,

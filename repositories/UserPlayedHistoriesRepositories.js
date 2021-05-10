@@ -7,12 +7,17 @@ const GenresModel = require('../models/genres')(sequelize, DataTypes);
 const AlbumsModel = require('../models/albums')(sequelize, DataTypes);
 const FavouritesModel = require('../models/favourites')(sequelize, DataTypes);
 const FollowedArtistModel = require('../models/followed_artists')(sequelize, DataTypes);
+const PodcastsModel = require('../models/podcasts')(sequelize, DataTypes);
+const PodcastCategoriesModel = require('../models/podcast_categories')(sequelize, DataTypes);
 
 SongsModel.hasMany(FavouritesModel, { foreignKey: 'file_id', as: 'is_favourite' });
 PlayedHistoryModel.belongsTo(SongsModel, { foreignKey: 'file_id', as: 'song_details' });
+PlayedHistoryModel.belongsTo(PodcastsModel, { foreignKey: 'file_id', as: 'podcast_details' });
 SongsModel.belongsTo(ArtistModel, { foreignKey: 'artist_id', as: 'artist_details' });
 SongsModel.belongsTo(GenresModel, { foreignKey: 'genre_id', as: 'genre_details' });
 SongsModel.belongsTo(AlbumsModel, { foreignKey: 'album_id', as: 'album_details' });
+PodcastsModel.belongsTo(ArtistModel, { foreignKey: 'artist_id', as: 'podcast_artist_details' });
+PodcastsModel.belongsTo(PodcastCategoriesModel, { foreignKey: 'category_id', as: 'podcast_category_details' })
 ArtistModel.hasMany(FollowedArtistModel, { foreignKey: 'followed_Artist' })
 
 module.exports.allRecentlyPlayed = (where, data) => {
@@ -41,8 +46,8 @@ module.exports.allRecentlyPlayed = (where, data) => {
                     'createdAt', 
                     'updatedAt',
                     [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = song_details.artist_id)`), 'isFollowedArtist'],
-                    [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = song_details.id)`), 'isFavourite'],
-                    [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = song_details.id)`), 'isDownloaded']
+                    [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = song_details.id AND favourites.type = 'song')`), 'isFavourite'],
+                    [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = song_details.id AND downloads.type = 'song')`), 'isDownloaded']
                 ],
                 include: [{
                         model: ArtistModel,
@@ -108,8 +113,8 @@ module.exports.recentlyPlayed = (where, data) => {
                     'createdAt', 
                     'updatedAt',
                     [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = song_details.artist_id)`), 'isFollowedArtist'],
-                    [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = song_details.id)`), 'isFavourite'],
-                    [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = song_details.id)`), 'isDownloaded'],
+                    [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = song_details.id AND favourites.type = 'song')`), 'isFavourite'],
+                    [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = song_details.id AND downloads.type = 'song')`), 'isDownloaded'],
                 ],
                 include: [{
                         model: ArtistModel,
@@ -131,6 +136,112 @@ module.exports.recentlyPlayed = (where, data) => {
                 required: true
             }],
             limit: data.limit,
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
+module.exports.recentlyPlayedPodcasts = (where, data) => {
+    return new Promise((resolve, reject) => {
+        PlayedHistoryModel.findAll({
+            where: where,
+            order: [
+                ['updatedAt', 'desc']
+            ],
+            include: [{
+                model: PodcastsModel,
+                where: { is_active: 1 },
+                attributes: [
+                    'id', 
+                    'name', 
+                    'cover_picture', 
+                    'file_name', 
+                    'length', 
+                    'is_paid', 
+                    'type', 
+                    'artist_id', 
+                    'category_id', 
+                    'country_id', 
+                    'is_paid', 
+                    'createdAt', 
+                    'updatedAt',
+                    [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = podcast_details.artist_id)`), 'isFollowedArtist'],
+                    [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = podcast_details.id AND favourites.type = 'podcast')`), 'isFavourite'],
+                    [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = podcast_details.id AND downloads.type = 'podcast')`), 'isDownloaded'],
+                ],
+                include: [{
+                        model: ArtistModel,
+                        as: 'podcast_artist_details',
+                        attributes: ['id', 'full_name', 'profile_image', 'type']
+                    },
+                    {
+                        model: PodcastCategoriesModel,
+                        as: 'podcast_category_details',
+                        attributes: ['id', 'name']
+                    },
+                ],
+                as: 'podcast_details',
+                required: true
+            }],
+            limit: data.limit,
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
+module.exports.allRecentlyPlayedPodcasts = (where, data) => {
+    return new Promise((resolve, reject) => {
+        PlayedHistoryModel.findAndCountAll({
+            where: where,
+            order: [
+                ['updatedAt', 'desc']
+            ],
+            include: [{
+                model: PodcastsModel,
+                where: { is_active: 1 },
+                attributes: [
+                    'id', 
+                    'name', 
+                    'cover_picture', 
+                    'file_name', 
+                    'length', 
+                    'is_paid', 
+                    'type', 
+                    'artist_id', 
+                    'category_id', 
+                    'country_id', 
+                    'is_paid', 
+                    'createdAt', 
+                    'updatedAt',
+                    [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = podcast_details.artist_id)`), 'isFollowedArtist'],
+                    [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = podcast_details.id AND favourites.type = 'podcast')`), 'isFavourite'],
+                    [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = podcast_details.id AND downloads.type = 'podcast')`), 'isDownloaded'],
+                ],
+                include: [{
+                        model: ArtistModel,
+                        as: 'podcast_artist_details',
+                        attributes: ['id', 'full_name', 'profile_image', 'type']
+                    },
+                    {
+                        model: PodcastCategoriesModel,
+                        as: 'podcast_category_details',
+                        attributes: ['id', 'name']
+                    },
+                ],
+                as: 'podcast_details',
+                required: true
+            }],
+            limit: data.limit,
+            offset: data.offset,
+            group: ['id']
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
             resolve(result);

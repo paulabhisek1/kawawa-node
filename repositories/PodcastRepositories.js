@@ -8,6 +8,7 @@ const PodcastCategoryModel = require('../models/podcast_categories')(sequelize, 
 
 PodcastsModel.belongsTo(ArtistModel, { foreignKey: 'artist_id', as: 'artist_details' });
 PodcastsModel.belongsTo(CountryModel, { foreignKey: 'country_id', as: 'country_details' });
+PodcastsModel.belongsTo(PodcastCategoryModel, { foreignKey: 'category_id', as: 'podcast_category_details' });
 PodcastsModel.belongsTo(PodcastCategoryModel, { foreignKey: 'category_id', as: 'category_details' });
 
 
@@ -153,6 +154,52 @@ module.exports.findOne = (where) => {
 module.exports.findAllPodcastCategory = (whereData) => {
     return new Promise((resolve, reject) => {
         PodcastCategoryModel.findAll(whereData).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
+module.exports.userPodcastList = (where, data) => {
+    return new Promise((resolve, reject) => {
+        PodcastsModel.findAndCountAll({
+            where: where,
+            attributes: [
+                'id', 
+                'name', 
+                'cover_picture', 
+                'file_name', 
+                'length', 
+                'is_paid', 
+                'type', 
+                'artist_id', 
+                'category_id', 
+                'country_id', 
+                'is_paid', 
+                'createdAt', 
+                'updatedAt',
+                [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = podcasts.artist_id)`), 'isFollowedArtist'],
+                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = podcasts.id AND favourites.type = 'podcast')`), 'isFavourite'],
+                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = podcasts.id AND downloads.type = 'podcast')`), 'isDownloaded'],
+            ],
+            include: [
+                {
+                    model: ArtistModel,
+                    as: 'artist_details',
+                    attributes: ['id', 'full_name', 'profile_image', 'type']
+                },
+                {
+                    model: PodcastCategoryModel,
+                    as: 'podcast_category_details',
+                    attributes: ['id', 'name']
+                },
+            ],
+            limit: data.limit,
+            offset: data.offset,
+            group: ['id']
+        }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
             resolve(result);
         }).catch((error) => {

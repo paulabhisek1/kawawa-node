@@ -94,8 +94,8 @@ module.exports.findAndCountAll = (where, data) => {
                 'createdAt', 
                 'updatedAt',
                 [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = songs.artist_id)`), 'isFollowedArtist'],
-                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = songs.id)`), 'isFavourite'],
-                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = songs.id)`), 'isDownloaded'],
+                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = songs.id AND favourites.type = 'song')`), 'isFavourite'],
+                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = songs.id AND downloads.type = 'song')`), 'isDownloaded'],
             ],
             order: [
                 ['createdAt', 'desc']
@@ -148,8 +148,8 @@ module.exports.favouriteSongs = (where, data) => {
                 'createdAt',
                 'updatedAt',
                 [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = songs.artist_id)`), 'isFollowedArtist'],
-                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = songs.id)`), 'isFavourite'],
-                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = songs.id)`), 'isDownloaded']
+                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = songs.id AND favourites.type = 'song')`), 'isFavourite'],
+                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = songs.id AND downloads.type = 'song')`), 'isDownloaded']
             ],
             include: [{
                     model: ArtistModel,
@@ -205,8 +205,8 @@ module.exports.downloadSongs = (where, data) => {
                 'createdAt',
                 'updatedAt',
                 [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = songs.artist_id)`), 'isFollowedArtist'],
-                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = songs.id)`), 'isFavourite'],
-                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = songs.id)`), 'isDownloaded']
+                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = songs.id AND favourites.type = 'song')`), 'isFavourite'],
+                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = songs.id AND downloads.type = 'song')`), 'isDownloaded']
             ],
             include: [{
                     model: ArtistModel,
@@ -263,8 +263,8 @@ module.exports.freeSongs = (where, data) => {
                 'createdAt', 
                 'updatedAt',
                 [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = songs.artist_id)`), 'isFollowedArtist'],
-                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = songs.id)`), 'isFavourite'],
-                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = songs.id)`), 'isDownloaded'],
+                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = songs.id AND favourites.type = 'song')`), 'isFavourite'],
+                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = songs.id AND downloads.type = 'song')`), 'isDownloaded'],
             ],
             order: [
                 ['createdAt', 'desc']
@@ -316,8 +316,8 @@ module.exports.freeSongsPaginate = (where, data) => {
                 'createdAt', 
                 'updatedAt',
                 [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = songs.artist_id)`), 'isFollowedArtist'],
-                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = songs.id)`), 'isFavourite'],
-                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = songs.id)`), 'isDownloaded'],
+                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = songs.id AND favourites.type = 'song')`), 'isFavourite'],
+                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = songs.id AND downloads.type = 'song')`), 'isDownloaded'],
             ],
             order: [
                 ['createdAt', 'desc']
@@ -373,8 +373,8 @@ module.exports.recommendedSongs = (where, data) => {
                 'createdAt',
                 'updatedAt',
                 [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = songs.artist_id)`), 'isFollowedArtist'],
-                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = songs.id)`), 'isFavourite'],
-                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = songs.id)`), 'isDownloaded'],
+                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = songs.id AND favourites.type = 'song')`), 'isFavourite'],
+                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = songs.id AND downloads.type = 'song')`), 'isDownloaded'],
             ],
             include: [{
                     model: ArtistModel,
@@ -425,8 +425,8 @@ module.exports.recommendedSongsPaginate = (where, data) => {
                 'createdAt',
                 'updatedAt',
                 [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = songs.artist_id)`), 'isFollowedArtist'],
-                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = songs.id)`), 'isFavourite'],
-                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = songs.id)`), 'isDownloaded']
+                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = songs.id AND favourites.type = 'song')`), 'isFavourite'],
+                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = songs.id AND downloads.type = 'song')`), 'isDownloaded']
             ],
             include: [{
                     model: ArtistModel,
@@ -477,10 +477,10 @@ module.exports.weeklyTopTen = (where, data) => {
                 'updatedAt',
                 [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id)`), 'totalFavourites'],
                 [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.file_id = songs.id)`), 'totalDownloads'],
-                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.file_id = songs.id) + (SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id)`), 'totalSum'],
+                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.file_id = songs.id AND downloads.type = 'song') + (SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id AND favourites.type = 'song')`), 'totalSum'],
                 [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = songs.artist_id)`), 'isFollowedArtist'],
-                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = songs.id)`), 'isFavourite'],
-                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = songs.id)`), 'isDownloaded']
+                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = songs.id AND favourites.type = 'song')`), 'isFavourite'],
+                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = songs.id AND downloads.type = 'song')`), 'isDownloaded']
             ],
             include: [{
                     model: ArtistModel,
@@ -534,10 +534,10 @@ module.exports.weeklyTopTenPaginate = (where, data) => {
                 'updatedAt',
                 [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id)`), 'totalFavourites'],
                 [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.file_id = songs.id)`), 'totalDownloads'],
-                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.file_id = songs.id) + (SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id)`), 'totalSum'],
+                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.file_id = songs.id AND downloads.type = 'song') + (SELECT count(*) FROM favourites WHERE favourites.file_id = songs.id AND favourites.type = 'song')`), 'totalSum'],
                 [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = songs.artist_id)`), 'isFollowedArtist'],
-                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = songs.id)`), 'isFavourite'],
-                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = songs.id)`), 'isDownloaded'],
+                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = songs.id AND favourites.type = 'song')`), 'isFavourite'],
+                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = songs.id AND downloads.type = 'song')`), 'isDownloaded'],
             ],
             include: [{
                     model: ArtistModel,
