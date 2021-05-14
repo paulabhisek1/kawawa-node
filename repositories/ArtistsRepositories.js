@@ -275,6 +275,22 @@ module.exports.artistList = (whereData) => {
 }
 
 // Find All
+module.exports.artistListSearch = (whereData, data) => {
+    return new Promise((resolve, reject) => {
+        ArtistModel.findAll({
+            where: whereData,
+            attributes: ['id','full_name','profile_image'],
+            limit: data.limit
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
+// Find All
 module.exports.followedArtistList = (whereData, data) => {
     return new Promise((resolve, reject) => {
         ArtistModel.findAndCountAll({

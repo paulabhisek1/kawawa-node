@@ -69,6 +69,7 @@ router.post('/artist-follow/:id', authenticationMiddleware.authenticateRequestAP
 router.get('/followed-artists', validateRequest.validate(songsValidationsSchema.followedArtistsLists, 'query'), authenticationMiddleware.authenticateRequestAPI, artistAPIController.allFollowedArtists); // Artist Follow
 router.get('/favourite-songs', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.allFavouriteSongs); // See All Favourite songs
 router.get('/downloaded-songs', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.allDownloadSongs); // See All Downloaded songs
+router.get('/search', validateRequest.validate(songsValidationsSchema.searchSchema, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.search); // Search
 
 // ################################### PLAYLISTS ########################################### //
 router.post('/create-playlist', validateRequest.validate(songsValidationsSchema.createPlaylist, 'body'), authenticationMiddleware.authenticateRequestAPI, songsController.createPlaylist); // Create Playlist

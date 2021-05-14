@@ -17,6 +17,7 @@ const userPlayedHistoryRepo = require('../../repositories/UserPlayedHistoriesRep
 const albumRepository = require('../../repositories/AlbumRepositories');
 const playlistRepository = require('../../repositories/PlaylistRepositories');
 const userRepositories = require('../../repositories/UsersRepositories');
+const podcastRepositories = require('../../repositories/PodcastRepositories');
 
 // ################################ Sequelize ################################ //
 const sequelize = require('../../config/dbConfig').sequelize;
@@ -1304,6 +1305,62 @@ module.exports.allDownloadSongs = (req, res) => {
             })
         } catch (e) {
             console.log("All Download Songs Error : ", e);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  search
+| Response          :  Respective response message in JSON format
+| Logic             :  Search Songs
+| Request URL       :  BASE_URL/api/search-songs
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.search = (req, res) => {
+    (async()=>{
+        let purpose = "Search Songs";
+        try {
+            let searchString = req.query.search_text;
+            let userID = req.headers.userID;
+
+            let data = {
+                limit: 5,
+                user_id: userID
+            };
+
+            let where = { name: { $like: `%${searchString}%` } };
+            let whereArtist = { full_name: { $like: `%${searchString}%` } };
+
+            let searchSongsList     = await songRepository.searchSongs(where, data);
+            let searchPodcastsList  = await podcastRepositories.userPodcastSearchList(where, data);
+            let searchArtistsList   = await artistRepositories.artistListSearch(whereArtist, data);
+            let searchAlbumsList    = await albumRepository.findAll(where, data);
+            
+            let dataResp = {
+                songs: searchSongsList,
+                podcasts: searchPodcastsList,
+                artist: searchArtistsList,
+                albums: searchAlbumsList
+            }
+
+            return res.send({
+                status: 200,
+                msg: responseMessages.searchData,
+                data: dataResp,
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("Search Songs Error : ", err);
             return res.send({
                 status: 500,
                 msg: responseMessages.serverError,

@@ -85,4 +85,5 @@ module.exports = {
     allfavsongs: `Favourite songs fetched successfully`,
     alldownloadedsongs: `Downloaded songs fetched successfully`,
     followedArtists: `Followed Artists list fetched successfully`,
+    searchData: `Data fetched successfully`,
 }
