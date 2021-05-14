@@ -16,7 +16,7 @@ const genresRepositories = require('../../repositories/GenresRepositories');
 const albumRepositories = require('../../repositories/AlbumRepositories');
 const songsRepositories = require('../../repositories/SongsRepository');
 const podcastRepositories = require('../../repositories/PodcastRepositories');
-
+const countriesRepositories = require('../../repositories/CountriesRepository');
 // ################################ Sequelize ################################ //
 const sequelize = require('../../config/dbConfig').sequelize;
 
@@ -33,6 +33,7 @@ const moment = require('moment');
 const fs = require('fs');
 const path = require('path');
 const { getAudioDurationInSeconds } = require('get-audio-duration');
+const stripe = require('stripe')('sk_test_B6qt8Xp9hOr1mLvClDGLdV6r');
 
 // ################################ Globals ################################ //
 const jwtOptionsAccess = global.constants.jwtAccessTokenOptions;
@@ -53,6 +54,7 @@ module.exports.registerArtist = (req, res) => {
         let purpose = "Register Artist"
         try {
             let body = req.body;
+            console.log("gggyuguguygyuuygyuguygugu")
             let userCount = await artistRepositories.count({ where: { email: body.email } });
 
             let currentDate = moment();
@@ -70,6 +72,7 @@ module.exports.registerArtist = (req, res) => {
             }
 
             if (userCount == 0) {
+
                 let userData;
                 await sequelize.transaction(async(t) => {
                     let createUserData = {
@@ -98,6 +101,24 @@ module.exports.registerArtist = (req, res) => {
 
                 userData['access_token'] = accessToken;
                 userData['refresh_token'] = refreshToken;
+
+
+                let countryData = await countriesRepositories.findOne({id:body.country_id});
+
+                const stripeAccount = await stripe.accounts.create({
+                  type: 'custom',
+                  country: countryData.country_code,
+                  email: userData.email,
+                  capabilities: {
+                    card_payments: {requested: true},
+                    transfers: {requested: true},
+                  },
+                });
+
+
+                let updateData = await artistRepositories.update({ id: userData.id }, { stripe_account: stripeAccount.id });
+
+                //console.log(stripeAccount)
 
                 return res.status(200).send({
                     status: 200,
@@ -216,7 +237,7 @@ module.exports.socialLogin = (req, res) => {
                     let refreshToken = jwt.sign({ user_id: userDetails.id, email: userDetails.email }, jwtOptionsRefresh.secret, jwtOptionsRefresh.options);
 
                     userDetails['access_token'] = accessToken;
-                    userDetails['refresh_token'] = refreshToken;
+                    userDetails['refresh_token'] = refreshToken;                    
 
                     return res.status(200).send({
                         status: 200,
@@ -257,6 +278,20 @@ module.exports.socialLogin = (req, res) => {
 
                 userData['access_token'] = accessToken;
                 userData['refresh_token'] = refreshToken;
+
+
+                const stripeAccount = await stripe.accounts.create({
+                    type: 'custom',
+                    country: 'US',
+                    email: userDetails.email,
+                    capabilities: {
+                        card_payments: {requested: true},
+                        transfers: {requested: true},
+                    },
+                });
+
+
+                let updateData = await artistRepositories.update({ id: userData.id }, { stripe_account: stripeAccount.id });
 
                 return res.status(200).send({
                     status: 200,
@@ -712,6 +747,32 @@ module.exports.saveArtistDeatislStepTwo = (req, res) => {
                 await artistRepositories.updateArtistDetails({ artist_id: artistID }, updateData);
 
                 let artistDetails = await artistRepositories.artistDetails({ id: artistID }, { user_id: artistID });
+
+
+
+                const token = await stripe.tokens.create({
+                  bank_account: {
+                    country: 'US',
+                    currency: 'usd',
+                    account_holder_name: updateData.account_holder_name,
+                    account_holder_type: 'individual',
+                    routing_number: updateData.routing_no,
+                    account_number: updateData.account_number,
+                  },
+                });
+
+
+                /*const bankAccount = await stripe.customers.createSource(
+                  'cus_AJ6bvXbVofMpsW',
+                  {source: 'btok_1IqjfV2eZvKYlo2C43xiOaYU'}
+                );*/
+
+                const bankAccount = await stripe.accounts.createExternalAccount(
+                  'acct_1IqjqUPoDetdlCkx',
+                  {
+                    external_account: token.id,
+                  }
+                );
 
                 return res.status(200).send({
                     status: 200,

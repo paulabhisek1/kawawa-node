@@ -21,7 +21,7 @@
     "dependencies": {
         "@hapi/joi-date": "^2.0.1",
         "body-parser": "^1.19.0",
-        "dotenv": "^8.2.0",
+        "dotenv": "^8.6.0",
         "events": "^3.2.0",
         "express": "^4.17.1",
         "fs": "0.0.1-security",
@@ -36,8 +36,9 @@
         "mysql2": "^2.2.5",
         "nodemailer": "^6.4.17",
         "os": "^0.1.1",
-        "sequelize": "^6.5.0",
-        "socket.io": "^2.1.1"
+        "sequelize": "^6.6.2",
+        "socket.io": "^2.1.1",
+        "stripe": "^8.148.0"
     },
     "devDependencies": {
         "sequelize-cli": "^6.2.0"
