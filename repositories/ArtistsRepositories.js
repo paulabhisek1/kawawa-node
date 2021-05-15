@@ -62,27 +62,23 @@ module.exports.artistDetails = (whereData, data) => {
                 'id',
                 'full_name',
                 'profile_image',
-                'country_id', 
-                'is_active',
-                [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = ${whereData.id})`), 'isFollowedArtist'],
+                'country_id',
+                'is_active', [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = ${whereData.id})`), 'isFollowedArtist'],
             ],
-            include: [
-                {
-                    model: ArtistDetailsModel,
-                    as: 'artist_account_details',
-                    include: [
-                        {
-                            model: GenresModel,
-                            as: 'sample_song_type_details'
-                        },
-                        {
-                            model: AlbumsModel,
-                            as: 'sample_song_album_details'
-                        }
-                    ],
-                    required: false
-                }
-            ]
+            include: [{
+                model: ArtistDetailsModel,
+                as: 'artist_account_details',
+                include: [{
+                        model: GenresModel,
+                        as: 'sample_song_type_details'
+                    },
+                    {
+                        model: AlbumsModel,
+                        as: 'sample_song_album_details'
+                    }
+                ],
+                required: false
+            }]
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
             resolve(result);
@@ -97,16 +93,14 @@ module.exports.artistDetailsAdmin = (whereData, data) => {
     return new Promise((resolve, reject) => {
         ArtistModel.findOne({
             where: whereData,
-            attributes: ['id','full_name','email','mobile_no','dob','login_type','is_active','current_reg_step','reg_steps_completed','profile_image','country_id'],
-            include: [
-                {
+            attributes: ['id', 'full_name', 'email', 'mobile_no', 'dob', 'login_type', 'is_active', 'current_reg_step', 'reg_steps_completed', 'profile_image', 'country_id'],
+            include: [{
                     model: ArtistDetailsModel,
                     as: 'artist_account_details',
-                    include: [
-                        {
+                    include: [{
                             model: CountryModel,
                             as: 'country_details'
-                        },  
+                        },
                         {
                             model: GenresModel,
                             as: 'sample_song_type_details'
@@ -264,7 +258,7 @@ module.exports.artistList = (whereData) => {
     return new Promise((resolve, reject) => {
         ArtistModel.findAll({
             where: whereData,
-            attributes: ['id','full_name','profile_image']
+            attributes: ['id', 'full_name', 'profile_image']
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
             resolve(result);
@@ -279,7 +273,7 @@ module.exports.artistListSearch = (whereData, data) => {
     return new Promise((resolve, reject) => {
         ArtistModel.findAll({
             where: whereData,
-            attributes: ['id','full_name','profile_image'],
+            attributes: ['id', 'full_name', 'profile_image'],
             limit: data.limit
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
@@ -295,14 +289,12 @@ module.exports.followedArtistList = (whereData, data) => {
     return new Promise((resolve, reject) => {
         ArtistModel.findAndCountAll({
             where: whereData,
-            include: [
-                {
-                    model: FollowedArtistsModel,
-                    where: { user_id: data.user_id },
-                    as: 'is_followed',
-                    required: true
-                }
-            ],
+            include: [{
+                model: FollowedArtistsModel,
+                where: { user_id: data.user_id },
+                as: 'is_followed',
+                required: true
+            }],
             offset: data.offset,
             limit: data.limit,
             group: ['id']
@@ -320,7 +312,7 @@ module.exports.artistListPaginate = (whereData, data) => {
     return new Promise((resolve, reject) => {
         ArtistModel.findAndCountAll({
             where: whereData,
-            attributes: ['id','full_name','profile_image'],
+            attributes: ['id', 'full_name', 'profile_image'],
             offset: data.offset,
             limit: data.limit,
             group: ['id']
@@ -338,7 +330,10 @@ module.exports.artistListAdmin = (whereData, data) => {
     return new Promise((resolve, reject) => {
         ArtistModel.findAndCountAll({
             where: whereData,
-            attributes: ['id','full_name','email','mobile_no','profile_image','is_active','current_reg_step','login_type','reg_steps_completed'],
+            order: [
+                ['createdAt', 'desc']
+            ],
+            attributes: ['id', 'full_name', 'email', 'mobile_no', 'profile_image', 'is_active', 'current_reg_step', 'login_type', 'reg_steps_completed'],
             offset: data.offset,
             limit: data.limit,
             group: ['id']
@@ -408,6 +403,3 @@ module.exports.followedArtistsList = (where) => {
             });
     })
 }
-
-
-
