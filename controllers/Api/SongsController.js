@@ -656,7 +656,7 @@ module.exports.favouriteAndUnfavourite = (req, res) => {
                     await songRepository.markFavouriteInsert(createData);
 
                     return res.send({
-                        status: 404,
+                        status: 200,
                         msg: responseMessages.favMessage,
                         data: {},
                         purpose: purpose
@@ -1120,7 +1120,7 @@ module.exports.playlistSongs = (req, res) => {
                 }
 
                 return res.send({
-                    status: 404,
+                    status: 200,
                     msg: responseMessages.playlistSongs,
                     data: dataResp,
                     purpose: purpose
