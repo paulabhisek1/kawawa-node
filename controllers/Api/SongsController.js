@@ -642,7 +642,7 @@ module.exports.favouriteAndUnfavourite = (req, res) => {
                     await songRepository.favDestroy({ id: favDetails.id });
 
                     return res.send({
-                        status: 404,
+                        status: 200,
                         msg: responseMessages.unfavMessage,
                         data: {},
                         purpose: purpose
