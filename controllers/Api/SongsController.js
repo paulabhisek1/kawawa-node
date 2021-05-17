@@ -887,6 +887,7 @@ module.exports.allAlbumsList = (req, res) => {
             let artistID = queryParam.artist_id;
             where.is_active = 1;
             where.artist_id = artistID;
+            where.total_songs = { $gt: 0 };
             data.user_id = userID;
 
             let albumList = await albumRepository.findAndCountAll(where, data);
