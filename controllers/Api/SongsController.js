@@ -124,12 +124,12 @@ module.exports.fetchHomePageData = (req, res) => {
             where.is_active = 1;
             let recommendedSongsData = await songRepository.recommendedSongs(where, data);
 
-            if(recommendedSongsData.length < 6) {
+            if (recommendedSongsData.length < 6) {
                 let userDetails = await userRepositories.findOne({ id: userID });
                 let newWhere = {
                     is_active: 1,
                     country_id: userDetails.country_id
-                } 
+                }
                 let newData = {
                     user_id: userID,
                     limit: (data.limit - recommendedSongsData.length)
@@ -138,7 +138,7 @@ module.exports.fetchHomePageData = (req, res) => {
 
                 recommendedSongsDataNew.rows.forEach((item, index) => {
                     let ind = recommendedSongsData.findIndex(x => x.id === item.id);
-                    if(ind < 0) recommendedSongsData.push(item);
+                    if (ind < 0) recommendedSongsData.push(item);
                 })
             }
 
@@ -339,12 +339,12 @@ module.exports.allRecommend = (req, res) => {
             let recommendedSongsData = await songRepository.recommendedSongsPaginate(where, data);
 
 
-            if(recommendedSongsData.count.length < data.limit) {
+            if (recommendedSongsData.count.length < data.limit) {
                 let userDetails = await userRepositories.findOne({ id: userID });
                 let newWhere = {
                     is_active: 1,
                     country_id: userDetails.country_id
-                } 
+                }
                 let newData = {
                     user_id: userID,
                     limit: (data.limit - recommendedSongsData.count.length)
@@ -353,10 +353,10 @@ module.exports.allRecommend = (req, res) => {
 
                 recommendedSongsDataNew.rows.forEach((item, index) => {
                     let ind = recommendedSongsData.rows.findIndex(x => x.id === item.id);
-                    if(ind < 0) {
+                    if (ind < 0) {
                         recommendedSongsData.rows.push(item);
                         recommendedSongsData.count.length += 1;
-                    } 
+                    }
                 })
             }
 
@@ -1066,7 +1066,7 @@ module.exports.playlistList = (req, res) => {
             }
 
             return res.send({
-                status: 500,
+                status: 200,
                 msg: responseMessages.playlistList,
                 data: dataResp,
                 purpose: purpose
@@ -1326,7 +1326,7 @@ module.exports.allDownloadSongs = (req, res) => {
 |------------------------------------------------
 */
 module.exports.search = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Search Songs";
         try {
             let searchString = req.query.search_text;
@@ -1340,11 +1340,11 @@ module.exports.search = (req, res) => {
             let where = { name: { $like: `%${searchString}%` } };
             let whereArtist = { full_name: { $like: `%${searchString}%` } };
 
-            let searchSongsList     = await songRepository.searchSongs(where, data);
-            let searchPodcastsList  = await podcastRepositories.userPodcastSearchList(where, data);
-            let searchArtistsList   = await artistRepositories.artistListSearch(whereArtist, data);
-            let searchAlbumsList    = await albumRepository.findAll(where, data);
-            
+            let searchSongsList = await songRepository.searchSongs(where, data);
+            let searchPodcastsList = await podcastRepositories.userPodcastSearchList(where, data);
+            let searchArtistsList = await artistRepositories.artistListSearch(whereArtist, data);
+            let searchAlbumsList = await albumRepository.findAll(where, data);
+
             let dataResp = {
                 songs: searchSongsList,
                 podcasts: searchPodcastsList,
@@ -1358,8 +1358,7 @@ module.exports.search = (req, res) => {
                 data: dataResp,
                 purpose: purpose
             })
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Search Songs Error : ", err);
             return res.send({
                 status: 500,
