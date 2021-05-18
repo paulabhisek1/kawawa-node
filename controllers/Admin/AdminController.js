@@ -432,6 +432,7 @@ module.exports.listArtists = (req, res) => {
 
             if (queryParam.search) {
                 where.full_name = { $like: `%${queryParam.search}%` };
+                where.email = { $like: `%${queryParam.search}%` };
             }
 
             let artistList = await artistRepositories.artistListAdmin(where, data);
