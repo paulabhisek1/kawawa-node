@@ -1111,7 +1111,7 @@ module.exports.playlistSongs = (req, res) => {
             let playlistCount = await playlistRepository.count({ id: playlistID, user_id: userID });
 
             if (playlistCount > 0) {
-                where.id = playlistID;
+                where.playlist_id = playlistID;
                 let playlistSongs = await playlistRepository.playlistSongs(where, data);
                 let totalPages = Math.ceil(playlistSongs.count.length / 20);
                 let dataResp = {
