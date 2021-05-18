@@ -431,8 +431,8 @@ module.exports.listArtists = (req, res) => {
             data.offset = data.limit ? data.limit * (page - 1) : null;
 
             if (queryParam.search) {
-                where.full_name = { $like: `%${queryParam.search}%` };
-                where.email = { $like: `%${queryParam.search}%` };
+                // where.full_name = { $like: `%${queryParam.search}%` };
+                where['$or'] = [{ full_name: { $like: `%${queryParam.search}%` } }, { email: { $like: `%${queryParam.search}%` } }]
             }
 
             let artistList = await artistRepositories.artistListAdmin(where, data);
