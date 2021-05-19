@@ -6,7 +6,7 @@ const Joi = JoiBase.extend(JoiDate); // extend Joi with Joi Date
 module.exports.userRegisterSchema = Joi.object().keys({
     full_name: Joi.string().required(),
     email: Joi.string().email().required(),
-    mobile_no: Joi.number().required().min(7).label('Mobile No'),
+    mobile_no: Joi.number().optional().min(7).allow(null, '').label('Mobile No'),
     password: Joi.string().required().min(6),
     confirm_password: Joi.string().equal(Joi.ref('password')).required().messages({
         'any.only': `Confirm Password should match with Password`,
