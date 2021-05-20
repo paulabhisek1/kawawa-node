@@ -15,6 +15,15 @@ module.exports.userRegisterSchema = Joi.object().keys({
     country_id: Joi.number().required()
 });
 
+// Update Profile Schema
+module.exports.updateProfileSchema = Joi.object().keys({
+    full_name: Joi.string().required(),
+    mobile_no: Joi.number().optional().min(7).allow(null, '').label('Mobile No'),
+    dob: Joi.date().required().format("YYYY-MM-DD"),
+    country_id: Joi.number().required(),
+    profile_image: Joi.string().optional().allow('', null)
+});
+
 // Login Schema
 module.exports.loginSchema = Joi.object().keys({
     email: Joi.string().required(),

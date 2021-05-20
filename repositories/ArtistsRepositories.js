@@ -63,7 +63,10 @@ module.exports.artistDetails = (whereData, data) => {
                 'full_name',
                 'profile_image',
                 'country_id',
-                'is_active', [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = ${whereData.id})`), 'isFollowedArtist'],
+                'mobile_no',
+                'is_active',
+                'login_type',
+                [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = ${whereData.id})`), 'isFollowedArtist'],
             ],
             include: [{
                 model: ArtistDetailsModel,
