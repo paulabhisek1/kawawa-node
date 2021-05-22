@@ -62,6 +62,7 @@ module.exports.artistDetails = (whereData, data) => {
                 'id',
                 'full_name',
                 'email',
+                'dob',
                 'profile_image',
                 'country_id',
                 'mobile_no',
