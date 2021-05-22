@@ -2027,8 +2027,8 @@ module.exports.updateArtist = (req, res) => {
                     await artistRepositories.updateArtistDetails({ artist_id: artistID }, { bank_country: body.country_id }, t);
                 })
 
-                return res.status(404).send({
-                    status: 404,
+                return res.status(200).send({
+                    status: 200,
                     msg: responseMessages.artistDetailsStepOne,
                     data: {},
                     purpose: purpose
