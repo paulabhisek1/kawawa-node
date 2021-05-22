@@ -644,7 +644,9 @@ module.exports.favouriteAndUnfavourite = (req, res) => {
                     return res.send({
                         status: 200,
                         msg: responseMessages.unfavMessage,
-                        data: {},
+                        data: {
+                            isFavourite: 0
+                        },
                         purpose: purpose
                     })
                 } else {
@@ -658,7 +660,9 @@ module.exports.favouriteAndUnfavourite = (req, res) => {
                     return res.send({
                         status: 200,
                         msg: responseMessages.favMessage,
-                        data: {},
+                        data: {
+                            isFavourite: 1
+                        },
                         purpose: purpose
                     })
                 }
