@@ -33,11 +33,14 @@ const moment = require('moment');
 const fs = require('fs');
 const path = require('path');
 const { getAudioDurationInSeconds } = require('get-audio-duration');
-const stripe = require('stripe')('sk_test_B6qt8Xp9hOr1mLvClDGLdV6r');
+const stripe = require('stripe')('sk_test_51Ir44wSICwQRfCEwe8osbpcrmMPSABv4QTeF0VKmln3DnHmD7hp6Fxap0PZGMUGPJnA0kJYdq8QtHNl6ZkOdeWnN00QgLgjZ35');
 
 // ################################ Globals ################################ //
 const jwtOptionsAccess = global.constants.jwtAccessTokenOptions;
 const jwtOptionsRefresh = global.constants.jwtRefreshTokenOptions;
+
+
+//var fp = fs.readFileSync('uploads/stripe_doc/');
 
 /*
 |------------------------------------------------ 
@@ -107,18 +110,30 @@ module.exports.registerArtist = (req, res) => {
 
                 const stripeAccount = await stripe.accounts.create({
                   type: 'custom',
-                  country: countryData.country_code,
+                  country: 'AT',
                   email: userData.email,
+                  business_type:'individual',
                   capabilities: {
                     card_payments: {requested: true},
                     transfers: {requested: true},
                   },
                 });
 
+                const account = await stripe.accounts.update(
+                        'acct_1Ir4B2IBPHCTpxfz',
+                        {
+                            
+                            tos_acceptance: {
+                                date: Math.floor(Date.now() / 1000),
+                                ip: req.connection.remoteAddress, // Assumes you're not using a proxy
+                            },
+                        }
+                    );
+
 
                 let updateData = await artistRepositories.update({ id: userData.id }, { stripe_account: stripeAccount.id });
 
-                //console.log(stripeAccount)
+                //console.log(updateData)
 
                 return res.status(200).send({
                     status: 200,
@@ -280,7 +295,7 @@ module.exports.socialLogin = (req, res) => {
                 userData['refresh_token'] = refreshToken;
 
 
-                const stripeAccount = await stripe.accounts.create({
+                /*const stripeAccount = await stripe.accounts.create({
                     type: 'custom',
                     country: 'US',
                     email: userDetails.email,
@@ -291,7 +306,7 @@ module.exports.socialLogin = (req, res) => {
                 });
 
 
-                let updateData = await artistRepositories.update({ id: userData.id }, { stripe_account: stripeAccount.id });
+                let updateData = await artistRepositories.update({ id: userData.id }, { stripe_account: stripeAccount.id });*/
 
                 return res.status(200).send({
                     status: 200,
@@ -552,6 +567,22 @@ module.exports.uploadArtistGovtIDFront = (req, res) => {
         let purpose = "Upload Artist Govt ID FRONT";
         try {
             let filePath = `${global.constants.govt_id_url}/${req.file.filename}`;
+
+
+            var file = await stripe.files.create({
+              purpose: 'identity_document',
+              file: {
+                data: fp,
+                name: req.file.filename,
+                type: 'application/octet-stream',
+              },
+            });
+
+
+            console.log(file)
+
+
+
             return res.status(200).send({
                 status: 200,
                 msg: responseMessages.artistGovtIDUpdate,
@@ -562,12 +593,22 @@ module.exports.uploadArtistGovtIDFront = (req, res) => {
             })
         } catch (err) {
             console.log("Upload Artist Govt ID FRONT ERROR : ", err);
-            return res.status(500).send({
-                status: 500,
-                msg: responseMessages.serverError,
-                data: {},
-                purpose: purpose
-            })
+            if (err.raw) {
+                return res.status(500).send({
+                    status: 500,
+                    msg: err.raw.message,
+                    data: {},
+                    purpose: purpose
+                })
+
+            }else{
+                return res.status(500).send({
+                    status: 500,
+                    msg: responseMessages.serverError,
+                    data: {},
+                    purpose: purpose
+                })
+            }
         }
     })()
 }
@@ -656,8 +697,16 @@ module.exports.saveArtistDetailsStepOne = (req, res) => {
     (async() => {
         let purpose = "Save Artist Details Step One";
         try {
-            let artistID = req.headers.userID;
+            let artistID    = req.headers.userID;
             let artistCount = await artistRepositories.count({ id: artistID, is_active: 1 });
+            let artistData  = await artistRepositories.findOne({ id: artistID });
+            let countryData = await countriesRepositories.findOne({ id: artistData.country_id });
+
+            let dateDOB = new Date(artistData.dob);
+            let month   = dateDOB.getUTCMonth() + 1; //months from 1-12
+            let day     = dateDOB.getUTCDate();
+            let year    = dateDOB.getUTCFullYear();
+
 
             if (artistCount > 0) {
                 let body = req.body;
@@ -676,9 +725,40 @@ module.exports.saveArtistDetailsStepOne = (req, res) => {
 
                     if (artistDetailsCount > 0) {
                         await artistRepositories.updateArtistDetails({ artist_id: artistID }, createData, t);
+
                     } else {
                         await artistRepositories.createArtistDetails(createData, t);
                     }
+
+                    const account = await stripe.accounts.update(
+                        artistData.stripe_account,
+                        {
+                            business_type:'individual',
+                            individual: {
+                                address: {
+                                    city: createData.city,
+                                    country: countryData.country_code,
+                                    line1: createData.street,
+                                    line2: createData.building_no,
+                                    postal_code: createData.zip,
+                                    state: createData.state
+                                },
+                                dob:{
+                                    day: day,
+                                    month: month,
+                                    year: year,
+                                },
+                                first_name: artistData.full_name,
+                                email: artistData.email,
+                                phone: artistData.mobile_no
+                            },
+                            tos_acceptance: {
+                                date: Math.floor(Date.now() / 1000),
+                                ip: req.connection.remoteAddress, // Assumes you're not using a proxy
+                            },
+                            industry:'Software'
+                        }
+                    );
                 });
 
                 let artistDetails = await artistRepositories.artistDetails({ id: artistID }, { user_id: artistID });
@@ -701,12 +781,24 @@ module.exports.saveArtistDetailsStepOne = (req, res) => {
             }
         } catch (err) {
             console.log("Save Artist Details Step One ERROR : ", err);
-            return res.status(500).send({
-                status: 500,
-                msg: responseMessages.serverError,
-                data: {},
-                purpose: purpose
-            })
+            //console.log(err.raw)
+            if (err.raw) {
+                return res.status(500).send({
+                    status: 500,
+                    msg: err.raw.message,
+                    data: {},
+                    purpose: purpose
+                })
+
+            }else{
+                return res.status(500).send({
+                    status: 500,
+                    msg: responseMessages.serverError,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+            
         }
     })()
 }
@@ -727,6 +819,8 @@ module.exports.saveArtistDeatislStepTwo = (req, res) => {
         try {
             let artistID = req.headers.userID;
             let artistCount = await artistRepositories.count({ id: artistID, is_active: 1 });
+            let artistData  = await artistRepositories.findOne({ id: artistID });
+            let countryData = await countriesRepositories.findOne({ id: artistData.country_id });
 
             if (artistCount > 0) {
                 let body = req.body;
@@ -752,23 +846,18 @@ module.exports.saveArtistDeatislStepTwo = (req, res) => {
 
                 const token = await stripe.tokens.create({
                   bank_account: {
-                    country: 'US',
-                    currency: 'usd',
+                    country: countryData.country_code,
+                    currency: updateData.currency,
                     account_holder_name: updateData.account_holder_name,
                     account_holder_type: 'individual',
                     routing_number: updateData.routing_no,
                     account_number: updateData.account_number,
                   },
                 });
-
-
-                /*const bankAccount = await stripe.customers.createSource(
-                  'cus_AJ6bvXbVofMpsW',
-                  {source: 'btok_1IqjfV2eZvKYlo2C43xiOaYU'}
-                );*/
+               
 
                 const bankAccount = await stripe.accounts.createExternalAccount(
-                  'acct_1IqjqUPoDetdlCkx',
+                  artistData.stripe_account,
                   {
                     external_account: token.id,
                   }
@@ -792,12 +881,22 @@ module.exports.saveArtistDeatislStepTwo = (req, res) => {
             }
         } catch (err) {
             console.log("Save Artist Details Step Two ERROR : ", err);
-            return res.status(500).send({
-                status: 500,
-                msg: responseMessages.serverError,
-                data: {},
-                purpose: purpose
-            })
+            if (err.raw) {
+                return res.status(500).send({
+                    status: 500,
+                    msg: err.raw.message,
+                    data: {},
+                    purpose: purpose
+                })
+
+            }else{
+                return res.status(500).send({
+                    status: 500,
+                    msg: responseMessages.serverError,
+                    data: {},
+                    purpose: purpose
+                })
+            }
         }
     })()
 }
