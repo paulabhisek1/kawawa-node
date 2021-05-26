@@ -126,6 +126,18 @@ var storagePodcastCover = multer.diskStorage({
     }
 })
 
+// SET STORAGE FOR ARTIST IMAGE
+var storageArtistImage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        const path = 'uploads/artist_images';
+        fs.mkdirSync(path, { recursive: true });
+        cb(null, path);
+    },
+    filename: function(req, file, cb) {
+        cb(null, 'image_' + Date.now() + path.extname(file.originalname))
+    }
+})
+
 var uploadProfilePicture = multer({ storage: storagePicture });
 var uploadGovtIDFront = multer({ storage: storagePictureGovtIDFront });
 var uploadGovtIDBack = multer({ storage: storagePictureGovtIDBack });
@@ -135,6 +147,7 @@ var uploadSong = multer({ storage: storageSong });
 var uploadSongCover = multer({ storage: storageSongCover });
 var uploadPodcast = multer({ storage: storagePodcast });
 var uploadPodcastCover = multer({ storage: storagePodcastCover });
+var uploadArtistImage = multer({ storage: storageArtistImage });
 
 router.post('/register', validateRequest.validate(artistValidationSchema.userRegisterSchema, 'body'), artistController.registerArtist); // User Registration Route
 router.post('/login', validateRequest.validate(artistValidationSchema.loginSchema, 'body'), artistController.artistLogin); // System Login Route
@@ -144,7 +157,7 @@ router.post('/verify-otp', validateRequest.validate(artistValidationSchema.otpVe
 router.post('/reset-password', validateRequest.validate(artistValidationSchema.resetPassSchema, 'body'), artistController.resetPassword); // Reset Password Route
 router.get('/countries', commonController.fetchCountries); // Fetch Countries
 router.get('/active-countries', commonController.fetchActiveCountries); // Fetch Active Countries
-router.post('/artist-details/upload-profile-picture', authenticationMiddleware.authenticateArtistRequestAPI, uploadProfilePicture.single('file'), artistController.uploadArtistProfilePicture); // Upload Artist Profile Picture
+router.post('/artist-details/upload-profile-picture', authenticationMiddleware.authenticateArtistRequestAPI, uploadArtistImage.single('file'), artistController.uploadArtistProfilePicture); // Upload Artist Profile Picture
 router.post('/artist-details/upload-govt-id-front', authenticationMiddleware.authenticateArtistRequestAPI, uploadGovtIDFront.single('file'), artistController.uploadArtistGovtIDFront); // Upload Artist Govt ID Front
 router.post('/artist-details/upload-govt-id-back', authenticationMiddleware.authenticateArtistRequestAPI, uploadGovtIDBack.single('file'), artistController.uploadArtistGovtIDBack); // Upload Artist Govt ID Back
 router.post('/artist-details/upload-sample-song', authenticationMiddleware.authenticateArtistRequestAPI, uploadSampleSong.single('file'), artistController.uploadSampleSong); // Upload Artist Sample Song
@@ -173,6 +186,7 @@ router.get('/podcast-details/:id', authenticationMiddleware.authenticateArtistRe
 router.get('/podcasts-list', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.podcastsList, 'query'), artistController.podcastList) // Podcast List
 router.put('/update-podcast/:id', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.createPodcast, 'body'), artistController.updatePodcast) // Update Podcast
 router.delete('/delete-podcast/:id', authenticationMiddleware.authenticateArtistRequestAPI, artistController.deletePodcast) // Delete Podcast
+router.put('/update-artist-profile', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.updateProfileSchema, 'body'), artistController.updateArtist); // Update Artist Profile
 
 
 

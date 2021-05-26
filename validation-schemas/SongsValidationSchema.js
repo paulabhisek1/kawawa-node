@@ -16,6 +16,11 @@ module.exports.followedArtistsLists = Joi.object().keys({
     page: Joi.number().min(0).required(),
 });
 
+// Search Schema
+module.exports.searchSchema = Joi.object().keys({
+    search_text: Joi.string().required().allow('', null),
+});
+
 // Artist Wise Songs Schema
 module.exports.artistSongs = Joi.object().keys({
     page: Joi.number().min(1).required(),

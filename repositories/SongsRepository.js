@@ -16,7 +16,6 @@ SongsModel.hasMany(FavouritesModel, { foreignKey: 'file_id', as: 'is_favourite' 
 SongsModel.hasMany(DownloadsModel, { foreignKey: 'file_id', as: 'is_download' });
 SongsModel.belongsTo(CountryModel, { foreignKey: 'country_id', as: 'country_details' });
 
-// Find All
 module.exports.findAll = (whereData) => {
     return new Promise((resolve, reject) => {
         SongsModel.findAll({
@@ -45,7 +44,6 @@ module.exports.findAll = (whereData) => {
     })
 }
 
-// Find One
 module.exports.findOne = (whereData) => {
     return new Promise((resolve, reject) => {
         SongsModel.findOne({
@@ -59,7 +57,6 @@ module.exports.findOne = (whereData) => {
     })
 }
 
-// Count
 module.exports.count = (whereData) => {
     return new Promise((resolve, reject) => {
         SongsModel.count({
@@ -73,7 +70,6 @@ module.exports.count = (whereData) => {
     })
 }
 
-// Find And Count All
 module.exports.findAndCountAll = (where, data) => {
     return new Promise((resolve, reject) => {
         SongsModel.findAndCountAll({
@@ -128,7 +124,6 @@ module.exports.findAndCountAll = (where, data) => {
     })
 }
 
-// Find And Count All
 module.exports.favouriteSongs = (where, data) => {
     return new Promise((resolve, reject) => {
         SongsModel.findAndCountAll({
@@ -185,7 +180,6 @@ module.exports.favouriteSongs = (where, data) => {
     })
 }
 
-// Find And Count All
 module.exports.downloadSongs = (where, data) => {
     return new Promise((resolve, reject) => {
         SongsModel.findAndCountAll({
@@ -242,7 +236,6 @@ module.exports.downloadSongs = (where, data) => {
     })
 }
 
-// Free Songs Without Pagination
 module.exports.freeSongs = (where, data) => {
     return new Promise((resolve, reject) => {
         SongsModel.findAll({
@@ -295,7 +288,6 @@ module.exports.freeSongs = (where, data) => {
     })
 }
 
-// Free Songs Without Pagination
 module.exports.freeSongsPaginate = (where, data) => {
     return new Promise((resolve, reject) => {
         SongsModel.findAndCountAll({
@@ -350,7 +342,6 @@ module.exports.freeSongsPaginate = (where, data) => {
     })
 }
 
-// Recommended Songs Without Pagination
 module.exports.recommendedSongs = (where, data) => {
     return new Promise((resolve, reject) => {
         SongsModel.findAll({
@@ -402,7 +393,6 @@ module.exports.recommendedSongs = (where, data) => {
     })
 }
 
-// Recommended Songs With Pagination
 module.exports.recommendedSongsPaginate = (where, data) => {
     return new Promise((resolve, reject) => {
         SongsModel.findAndCountAll({
@@ -456,7 +446,6 @@ module.exports.recommendedSongsPaginate = (where, data) => {
     })
 }
 
-// Weekly Top 10 Songs Without Pagination
 module.exports.weeklyTopTen = (where, data) => {
     return new Promise((resolve, reject) => {
         SongsModel.findAll({
@@ -512,7 +501,6 @@ module.exports.weeklyTopTen = (where, data) => {
     })
 }
 
-// Weekly Top 10 Songs With Pagination
 module.exports.weeklyTopTenPaginate = (where, data) => {
     return new Promise((resolve, reject) => {
         SongsModel.findAll({
@@ -570,7 +558,6 @@ module.exports.weeklyTopTenPaginate = (where, data) => {
     })
 }
 
-// Add To Liked Songs
 module.exports.markFavouriteInsert = (data) => {
     return new Promise((resolve, reject) => {
         FavouritesModel.create(data)
@@ -584,7 +571,6 @@ module.exports.markFavouriteInsert = (data) => {
     })
 }
 
-// Remove From Liked Songs
 module.exports.favDestroy = (where) => {
     return new Promise((resolve, reject) => {
         FavouritesModel.destroy({
@@ -597,7 +583,6 @@ module.exports.favDestroy = (where) => {
     })
 }
 
-// Fetch Favourite Details
 module.exports.favouriteFindDetails = (where) => {
     return new Promise((resolve, reject) => {
         FavouritesModel.findOne({
@@ -613,7 +598,6 @@ module.exports.favouriteFindDetails = (where) => {
     })
 }
 
-// Update
 module.exports.update = (where, data, t = null) => {
     return new Promise((resolve, reject) => {
         let options = {
@@ -629,7 +613,6 @@ module.exports.update = (where, data, t = null) => {
     })
 }
 
-// Update
 module.exports.delete = (where, t = null) => {
     return new Promise((resolve, reject) => {
         let options = {
@@ -660,7 +643,6 @@ module.exports.songDelete = (where, t = null) => {
     })
 }
 
-// Create
 module.exports.create = (data, t = null) => {
     return new Promise((resolve, reject) => {
         let options = {}
@@ -737,6 +719,59 @@ module.exports.songsList = (where, data) => {
             offset: data.offset,
             limit: data.limit,
             group: ['id']
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
+module.exports.searchSongs = (where, data) => {
+    return new Promise((resolve, reject) => {
+        SongsModel.findAll({
+            where: where,
+            attributes: [
+                'id', 
+                'name', 
+                'cover_picture', 
+                'file_name', 
+                'length', 
+                'is_paid', 
+                'type', 
+                'artist_id', 
+                'genre_id', 
+                'album_id', 
+                'country_id', 
+                'is_paid', 
+                'createdAt', 
+                'updatedAt',
+                [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = songs.artist_id)`), 'isFollowedArtist'],
+                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = songs.id AND favourites.type = 'song')`), 'isFavourite'],
+                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = songs.id AND downloads.type = 'song')`), 'isDownloaded'],
+            ],
+            order: [
+                ['createdAt', 'desc']
+            ],
+            include: [
+                {
+                    model: ArtistModel,
+                    as: 'artist_details',
+                    attributes: ['id', 'full_name', 'profile_image', 'type']
+                },
+                {
+                    model: GenresModel,
+                    as: 'genre_details',
+                    attributes: ['id', 'name']
+                },
+                {
+                    model: AlbumsModel,
+                    as: 'album_details',
+                    attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                },
+            ],
+            limit: data.limit,
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
             resolve(result);

@@ -519,41 +519,6 @@ module.exports.resetPassword = (req, res) => {
 
 /*
 |------------------------------------------------ 
-| API name          :  uploadArtistProfilePicture
-| Response          :  Respective response message in JSON format
-| Logic             :  Upload Artist Profile Picture
-| Request URL       :  BASE_URL/artist/artist-details/upload-profile-picture
-| Request method    :  POST
-| Author            :  Suman Rana
-|------------------------------------------------
-*/
-module.exports.uploadArtistProfilePicture = (req, res) => {
-    (async() => {
-        let purpose = "Upload Artist Profile Picture";
-        try {
-            let filePath = `${global.constants.profile_photo_url}/${req.file.filename}`;
-            return res.status(200).send({
-                status: 200,
-                msg: responseMessages.artistProfilePictureUpdate,
-                data: {
-                    filePath: filePath
-                },
-                purpose: purpose
-            })
-        } catch (err) {
-            console.log("Upload Artist Profile Picture ERROR : ", err);
-            return res.status(500).send({
-                status: 500,
-                msg: responseMessages.serverError,
-                data: {},
-                purpose: purpose
-            })
-        }
-    })()
-}
-
-/*
-|------------------------------------------------ 
 | API name          :  uploadArtistGovtIDFront
 | Response          :  Respective response message in JSON format
 | Logic             :  Upload Artist Govt ID Front
@@ -2154,6 +2119,92 @@ module.exports.deletePodcast = (req, res) => {
         }
         catch(err) {
             console.log("Delete Podcast Error : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  uploadArtistProfilePicture
+| Response          :  Respective response message in JSON format
+| Logic             :  Upload Artist Profile Picture
+| Request URL       :  BASE_URL/artist/artist-details/upload-profile-picture
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.uploadArtistProfilePicture = (req, res) => {
+    (async() => {
+        let purpose = "Upload Artist Profile Picture";
+        try {
+            let filePath = `${global.constants.artist_image_url}/${req.file.filename}`;
+            return res.status(200).send({
+                status: 200,
+                msg: responseMessages.artistProfilePictureUpdate,
+                data: {
+                    filePath: filePath
+                },
+                purpose: purpose
+            })
+        } catch (err) {
+            console.log("Upload Artist Profile Picture ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+module.exports.updateArtist = (req, res) => {
+    (async()=>{
+        let purpose = "Update Artist";
+        try {
+            let artistID = req.headers.userID;
+
+            let artistCount = await artistRepositories.count({ id: artistID });
+
+            if(artistCount > 0) {
+                let body = req.body;
+                let updateData = {
+                    full_name: body.full_name,
+                    mobile_no: body.mobile_no ? body.mobile_no : null,
+                    dob: body.dob,
+                    country_id: body.country_id,
+                    profile_image: body.profile_image ? body.profile_image : null
+                }
+
+                await sequelize.transaction(async(t)=>{
+                    await artistRepositories.updateArtist({ id: artistID }, updateData, t);
+                    await artistRepositories.updateArtistDetails({ artist_id: artistID }, { bank_country: body.country_id }, t);
+                })
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.artistDetailsStepOne,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+            else{
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.artistNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Update Artist Error : ", err);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,
