@@ -86,4 +86,5 @@ module.exports = {
     alldownloadedsongs: `Downloaded songs fetched successfully`,
     followedArtists: `Followed Artists list fetched successfully`,
     searchData: `Data fetched successfully`,
+    graphData: 'Artist graph data fetched successfully'
 }

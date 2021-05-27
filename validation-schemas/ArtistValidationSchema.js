@@ -147,3 +147,8 @@ module.exports.podcastsList = Joi.object().keys({
     page: Joi.number().min(1).required(),
     search: Joi.string().required().allow('', null),
 });
+
+// Graph Schema
+module.exports.graphData = Joi.object().keys({
+    filterType: Joi.number().required().valid(1,2)
+});

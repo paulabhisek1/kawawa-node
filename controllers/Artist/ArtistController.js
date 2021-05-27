@@ -2004,6 +2004,16 @@ module.exports.uploadArtistProfilePicture = (req, res) => {
     })()
 }
 
+/*
+|------------------------------------------------ 
+| API name          :  updateArtist
+| Response          :  Respective response message in JSON format
+| Logic             :  Update Artist
+| Request URL       :  BASE_URL/artist/artist-details/update-artist-profile
+| Request method    :  PUT
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
 module.exports.updateArtist = (req, res) => {
     (async()=>{
         let purpose = "Update Artist";
@@ -2045,6 +2055,104 @@ module.exports.updateArtist = (req, res) => {
         }
         catch(err) {
             console.log("Update Artist Error : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  artistGraphSong
+| Response          :  Respective response message in JSON format
+| Logic             :  Artist Song Graph
+| Request URL       :  BASE_URL/artist/artist-details/song-graph-data
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.artistGraphSong =(req, res) => {
+    (async()=>{
+        let purpose = "Artist Graph For Song";
+        try {
+            let artistID = req.headers.userID;
+            let filterType = req.query.filterType;
+            let where = {};
+            let data = {};
+
+            where.type = 'song';
+            if(filterType == 1) where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 7 DAY)') };
+            if(filterType == 2) where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 30 DAY)') };
+            data.artistID = artistID
+
+            let graphDataSong = await artistRepositories.artistGraphSong(where, data);
+
+            let dataResp = {
+                songsGraph: graphDataSong
+            }
+
+            return res.status(200).send({
+                status: 200,
+                msg: responseMessages.graphData,
+                data: dataResp,
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("Artist Graph For Song Error : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  artistGraphPodcast
+| Response          :  Respective response message in JSON format
+| Logic             :  Artist Podcast Graph
+| Request URL       :  BASE_URL/artist/artist-details/podcast-graph-data
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.artistGraphPodcast =(req, res) => {
+    (async()=>{
+        let purpose = "Artist Graph For Podcast";
+        try {
+            let artistID = req.headers.userID;
+            let filterType = req.query.filterType;
+            let where = {};
+            let data = {};
+
+            where.type = 'podcast';
+            if(filterType == 1) where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 7 DAY)') };
+            if(filterType == 2) where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 30 DAY)') };
+            data.artistID = artistID
+
+            let graphDataSong = await artistRepositories.artistGraphPodcast(where, data);
+
+            let dataResp = {
+                podcastGraph: graphDataSong
+            }
+
+            return res.status(200).send({
+                status: 200,
+                msg: responseMessages.graphData,
+                data: dataResp,
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("Artist Graph For Song Error : ", err);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,
