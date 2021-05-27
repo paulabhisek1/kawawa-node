@@ -106,7 +106,7 @@ module.exports.registerArtist = (req, res) => {
                 userData['refresh_token'] = refreshToken;
 
 
-                let countryData = await countriesRepositories.findOne({id:body.country_id});
+                /*let countryData = await countriesRepositories.findOne({id:body.country_id});
 
                 const stripeAccount = await stripe.accounts.create({
                   type: 'custom',
@@ -120,20 +120,19 @@ module.exports.registerArtist = (req, res) => {
                 });
 
                 const account = await stripe.accounts.update(
-                        'acct_1Ir4B2IBPHCTpxfz',
-                        {
-                            
-                            tos_acceptance: {
-                                date: Math.floor(Date.now() / 1000),
-                                ip: req.connection.remoteAddress, // Assumes you're not using a proxy
-                            },
-                        }
-                    );
+                    'acct_1Ir4B2IBPHCTpxfz',
+                    {
+                        
+                        tos_acceptance: {
+                            date: Math.floor(Date.now() / 1000),
+                            ip: req.connection.remoteAddress, 
+                        },
+                    }
+                );
 
 
-                let updateData = await artistRepositories.update({ id: userData.id }, { stripe_account: stripeAccount.id });
+                let updateData = await artistRepositories.update({ id: userData.id }, { stripe_account: stripeAccount.id });*/
 
-                //console.log(updateData)
 
                 return res.status(200).send({
                     status: 200,
@@ -534,18 +533,14 @@ module.exports.uploadArtistGovtIDFront = (req, res) => {
             let filePath = `${global.constants.govt_id_url}/${req.file.filename}`;
 
 
-            var file = await stripe.files.create({
+           /* var file = await stripe.files.create({
               purpose: 'identity_document',
               file: {
                 data: fp,
                 name: req.file.filename,
                 type: 'application/octet-stream',
               },
-            });
-
-
-            console.log(file)
-
+            });*/
 
 
             return res.status(200).send({
@@ -695,7 +690,7 @@ module.exports.saveArtistDetailsStepOne = (req, res) => {
                         await artistRepositories.createArtistDetails(createData, t);
                     }
 
-                    const account = await stripe.accounts.update(
+                    /*const account = await stripe.accounts.update(
                         artistData.stripe_account,
                         {
                             business_type:'individual',
@@ -719,11 +714,11 @@ module.exports.saveArtistDetailsStepOne = (req, res) => {
                             },
                             tos_acceptance: {
                                 date: Math.floor(Date.now() / 1000),
-                                ip: req.connection.remoteAddress, // Assumes you're not using a proxy
+                                ip: req.connection.remoteAddress,
                             },
                             industry:'Software'
                         }
-                    );
+                    );*/
                 });
 
                 let artistDetails = await artistRepositories.artistDetails({ id: artistID }, { user_id: artistID });
@@ -809,7 +804,7 @@ module.exports.saveArtistDeatislStepTwo = (req, res) => {
 
 
 
-                const token = await stripe.tokens.create({
+                /*const token = await stripe.tokens.create({
                   bank_account: {
                     country: countryData.country_code,
                     currency: updateData.currency,
@@ -826,7 +821,7 @@ module.exports.saveArtistDeatislStepTwo = (req, res) => {
                   {
                     external_account: token.id,
                   }
-                );
+                );*/
 
                 return res.status(200).send({
                     status: 200,
