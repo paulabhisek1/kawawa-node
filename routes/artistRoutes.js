@@ -189,6 +189,7 @@ router.delete('/delete-podcast/:id', authenticationMiddleware.authenticateArtist
 router.put('/update-artist-profile', authenticationMiddleware.authenticateArtistRequestAPI, validateRequest.validate(artistValidationSchema.updateProfileSchema, 'body'), artistController.updateArtist); // Update Artist Profile
 router.get('/song-graph-data', authenticationMiddleware.authenticateRequestAPI, validateRequest.validate(artistValidationSchema.graphData, 'query'), artistController.artistGraphSong);
 router.get('/podcast-graph-data', authenticationMiddleware.authenticateRequestAPI, validateRequest.validate(artistValidationSchema.graphData, 'query'), artistController.artistGraphPodcast);
+router.get('/dashboard-data', authenticationMiddleware.authenticateRequestAPI, artistController.artistDashboardKPI);
 
 
 

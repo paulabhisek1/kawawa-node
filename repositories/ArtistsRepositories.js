@@ -484,3 +484,18 @@ module.exports.artistGraphPodcast = (where, data) => {
         });
     })
 }
+
+module.exports.totalFollowers = (where) => {
+    return new Promise((resolve, reject) => {
+        FollowedArtistsModel.count({
+                where: where
+            })
+            .then((result) => {
+                result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+                resolve(result);
+            })
+            .catch((err) => {
+                reject(err);
+            });
+    })
+}

@@ -2124,7 +2124,7 @@ module.exports.artistGraphSong =(req, res) => {
 | Author            :  Suman Rana
 |------------------------------------------------
 */
-module.exports.artistGraphPodcast =(req, res) => {
+module.exports.artistGraphPodcast = (req, res) => {
     (async()=>{
         let purpose = "Artist Graph For Podcast";
         try {
@@ -2153,6 +2153,56 @@ module.exports.artistGraphPodcast =(req, res) => {
         }
         catch(err) {
             console.log("Artist Graph For Song Error : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+module.exports.artistDashboardKPI = (req, res) => {
+    (async()=>{
+        let purpose = "Artist Dashboard KPI"
+        try {
+            let artistID = req.headers.userID;
+            
+            let totalSongs = await songsRepositories.count({ artist_id: artistID });
+            let totalActiveSongs = await songsRepositories.count({ artist_id: artistID, is_active: 1 });
+            let totalInactiveSongs = await songsRepositories.count({ artist_id: artistID, is_active: 0 });
+            let totalPodcasts = await podcastRepositories.count({ artist_id: artistID });
+            let totalActivePodcasts = await podcastRepositories.count({ artist_id: artistID, is_active: 1 });
+            let totalInactivePodcasts = await podcastRepositories.count({ artist_id: artistID, is_active: 0 });
+            let totalAlbums = await albumRepositories.count({ artist_id: artistID });
+            let totalActiveAlbums = await albumRepositories.count({ artist_id: artistID, is_active: 1 });
+            let totalInactiveAlbums = await albumRepositories.count({ artist_id: artistID, is_active: 0 });
+            let totalFollowers = await artistRepositories.totalFollowers({ artist_id: artistID })
+
+            let dataResp = {
+                totalSongs: totalSongs,
+                totalActiveSongs: totalActiveSongs,
+                totalInactiveSongs: totalInactiveSongs,
+                totalPodcasts: totalPodcasts,
+                totalActivePodcasts: totalActivePodcasts,
+                totalInactivePodcasts: totalInactivePodcasts,
+                totalAlbums: totalAlbums,
+                totalActiveAlbums: totalActiveAlbums,
+                totalInactiveAlbums: totalInactiveAlbums,
+                totalFollowers: totalFollowers
+            }
+
+            return res.status(200).send({
+                status: 200,
+                msg: responseMessages.artistDashboardData,
+                data: dataResp,
+                purpose: purpose
+            })
+            
+        }
+        catch(err) {
+            console.log("Artist Dashboard KPI Error : ", err);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,
