@@ -8,6 +8,8 @@ const AlbumsModel = require('../models/albums')(sequelize, DataTypes);
 const FavouritesModel = require('../models/favourites')(sequelize, DataTypes);
 const FollowedArtistsModel = require('../models/followed_artists')(sequelize, DataTypes);
 const ArtistDetailsModel = require('../models/artist_details')(sequelize, DataTypes);
+const DownloadsModel = require('../models/downloads')(sequelize, DataTypes);
+const PodcastsModel = require('../models/podcasts')(sequelize, DataTypes);
 const commonService = require('../helpers/commonFunctions');
 const _ = require('lodash');
 
@@ -22,6 +24,8 @@ ArtistModel.hasOne(ArtistDetailsModel, { foreignKey: 'artist_id', as: 'artist_ac
 ArtistDetailsModel.belongsTo(GenresModel, { foreignKey: 'sample_song_type', as: 'sample_song_type_details' });
 ArtistDetailsModel.belongsTo(AlbumsModel, { foreignKey: 'sample_song_album', as: 'sample_song_album_details' });
 ArtistDetailsModel.belongsTo(CountryModel, { foreignKey: 'bank_country', as: 'country_details' });
+DownloadsModel.belongsTo(SongsModel, { foreignKey: 'file_id', as: 'download_song_details' });
+DownloadsModel.belongsTo(PodcastsModel, { foreignKey: 'file_id', as: 'download_podcast_details' });
 
 
 // Count
@@ -397,6 +401,93 @@ module.exports.followDetails = (where) => {
 module.exports.followedArtistsList = (where) => {
     return new Promise((resolve, reject) => {
         FollowedArtistsModel.findAll({
+                where: where
+            })
+            .then((result) => {
+                result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+                resolve(result);
+            })
+            .catch((err) => {
+                reject(err);
+            });
+    })
+}
+
+module.exports.artistGraphSong = (where, data) => {
+    return new Promise((resolve, reject)=>{
+        DownloadsModel.findAll({
+            where: where,
+            attributes: [
+                [sequelize.fn('count', sequelize.col('downloads.id')), 'downloadCount'],
+                [sequelize.fn('date_format', sequelize.col('downloads.createdAt'), '%Y-%m-%d'), 'date']
+            ],
+            include:[
+                {
+                    model: SongsModel,
+                    where: { artist_id: data.artistID },
+                    attributes: [
+                        'id',
+                        'name',
+                        'cover_picture'
+                    ],
+                    as: 'download_song_details',
+                    required: true
+                }
+            ],
+            group: ['file_id'],
+            order: [
+                [sequelize.literal(`date`), 'DESC']
+            ]
+        })
+        .then((result) => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        })
+        .catch((err) => {
+            reject(err);
+        });
+    })
+}
+
+module.exports.artistGraphPodcast = (where, data) => {
+    return new Promise((resolve, reject)=>{
+        DownloadsModel.findAll({
+            where: where,
+            attributes: [
+                [sequelize.fn('count', sequelize.col('downloads.id')), 'downloadCount'],
+                [sequelize.fn('date_format', sequelize.col('downloads.createdAt'), '%Y-%m-%d'), 'date']
+            ],
+            include:[
+                {
+                    model: PodcastsModel,
+                    where: { artist_id: data.artistID },
+                    attributes: [
+                        'id',
+                        'name',
+                        'cover_picture'
+                    ],
+                    as: 'download_podcast_details',
+                    required: true
+                }
+            ],
+            group: ['file_id'],
+            order: [
+                [sequelize.literal(`date`), 'DESC']
+            ]
+        })
+        .then((result) => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        })
+        .catch((err) => {
+            reject(err);
+        });
+    })
+}
+
+module.exports.totalFollowers = (where) => {
+    return new Promise((resolve, reject) => {
+        FollowedArtistsModel.count({
                 where: where
             })
             .then((result) => {
