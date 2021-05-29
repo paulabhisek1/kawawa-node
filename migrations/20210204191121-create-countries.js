@@ -14,6 +14,15 @@ module.exports = {
       country_code: {
         type: Sequelize.STRING
       },
+      currency_code: {
+        type: Sequelize.STRING
+      },
+      currency_name: {
+        type: Sequelize.STRING
+      },
+      currency_symbol: {
+        type: Sequelize.STRING
+      },
       telephone_code: {
         type: Sequelize.STRING
       },
@@ -21,6 +30,11 @@ module.exports = {
         type: Sequelize.INTEGER,
         defaultValue: 1,
         comment: '0 => Inactive, 1 => Active'
+      },
+      stripe_type: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0,
+        comment: '1:- US, 2:- UK, 3:- IN, 4:- AU, 5:- BR,SG, 6:- CA, 7:- HK, 8:- JP, 9:- NZ,MY, 10:- MX, 11:- IBAN'
       },
       createdAt: {
         allowNull: false,

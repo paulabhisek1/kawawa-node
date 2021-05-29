@@ -16,8 +16,12 @@ module.exports = (sequelize, DataTypes) => {
   Countries.init({
     name: DataTypes.STRING,
     country_code: DataTypes.STRING,
+    currency_code: DataTypes.STRING,
+    currency_name: DataTypes.STRING,
+    currency_symbol: DataTypes.STRING,
     telephone_code: DataTypes.STRING,
-    is_active: DataTypes.INTEGER
+    is_active: DataTypes.INTEGER,
+    stripe_type: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'countries',
