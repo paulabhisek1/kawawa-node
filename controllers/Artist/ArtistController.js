@@ -2101,6 +2101,9 @@ module.exports.artistGraphSong =(req, res) => {
 
             let finalArray = [...graphDataSongListen]
 
+            console.log("SONG : ", graphDataSong);
+            console.log("FINAL : ", finalArray);
+
             graphDataSongDownload.forEach((item, index) => {
                 let ind = finalArray.findIndex(x => x.date == item.date);
                 if (ind >= 0) {
@@ -2181,11 +2184,7 @@ module.exports.artistGraphPodcast = (req, res) => {
             let graphDataSong = await artistRepositories.artistGraphPodcast(where, data);
             let graphDataSongListen = await artistRepositories.artistGraphPodcastListen(wherePlayed, data);
 
-            let finalArray = [...graphDataSongListen]
-
-
-            console.log("SONG : ", graphDataSong);
-            console.log("FINAL : ", finalArray);
+            let finalArray = [...graphDataSongListen];
 
             graphDataSong.forEach((item, index) => {
                 let ind = finalArray.findIndex(x => x.date == item.date);
