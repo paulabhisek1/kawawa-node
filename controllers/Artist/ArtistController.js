@@ -2101,7 +2101,7 @@ module.exports.artistGraphSong =(req, res) => {
 
             let finalArray = [...graphDataSongListen]
 
-            console.log("SONG : ", graphDataSong);
+            console.log("SONG : ", graphDataSongDownload);
             console.log("FINAL : ", finalArray);
 
             graphDataSongDownload.forEach((item, index) => {
