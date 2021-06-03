@@ -2183,6 +2183,10 @@ module.exports.artistGraphPodcast = (req, res) => {
 
             let finalArray = [...graphDataSongListen]
 
+
+            console.log("SONG : ", graphDataSong);
+            console.log("FINAL : ", finalArray);
+
             graphDataSong.forEach((item, index) => {
                 let ind = finalArray.findIndex(x => x.date == item.date);
                 if (ind >= 0) {
