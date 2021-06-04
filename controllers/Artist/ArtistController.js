@@ -2099,10 +2099,7 @@ module.exports.artistGraphSong =(req, res) => {
             let graphDataSongDownload = await artistRepositories.artistGraphSong(where, data);
             let graphDataSongListen = await artistRepositories.artistGraphSongListen(wherePlayed, data);
 
-            let finalArray = [...graphDataSongListen]
-
-            console.log("SONG : ", graphDataSongDownload);
-            console.log("FINAL : ", finalArray);
+            let finalArray = [...graphDataSongListen];
 
             graphDataSongDownload.forEach((item, index) => {
                 let ind = finalArray.findIndex(x => x.date == item.date);
