@@ -433,7 +433,7 @@ module.exports.artistGraphSong = (where, data) => {
                     required: true
                 }
             ],
-            group: ['file_id'],
+            group: [sequelize.literal(`date`)],
             order: [
                 [sequelize.literal(`date`), 'DESC']
             ]
@@ -456,7 +456,6 @@ module.exports.artistGraphSongListen = (where, data) => {
                 [sequelize.fn('count', sequelize.col('user_played_histories.id')), 'playedCount'],
                 [sequelize.fn('date_format', sequelize.col('user_played_histories.updatedAt'), '%Y-%m-%d'), 'date']
             ],
-            group: ['file_id'],
             include:[
                 {
                     model: SongsModel,
@@ -466,6 +465,7 @@ module.exports.artistGraphSongListen = (where, data) => {
                     required: true
                 }
             ],
+            group: [sequelize.literal(`date`)],
             order: [
                 [sequelize.literal(`date`), 'DESC']
             ]
