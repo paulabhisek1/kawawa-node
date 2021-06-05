@@ -2092,8 +2092,8 @@ module.exports.artistGraphSong =(req, res) => {
                 wherePlayed.updatedAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 7 DAY)') };
             } 
             if(filterType == 2) {
-                where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 15 DAY)') };
-                wherePlayed.updatedAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 15 DAY)') };
+                where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 30 DAY)') };
+                wherePlayed.updatedAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 30 DAY)') };
             } 
             data.artistID = artistID
 
@@ -2124,7 +2124,7 @@ module.exports.artistGraphSong =(req, res) => {
             })
 
             if(filterType == 1) startDate = moment().subtract(7, 'days'); 
-            if(filterType == 2) startDate = moment().subtract(15, 'days');
+            if(filterType == 2) startDate = moment().subtract(30, 'days');
 
             endDate = moment();
             let dates = [];
@@ -2200,8 +2200,8 @@ module.exports.artistGraphPodcast = (req, res) => {
                 wherePlayed.updatedAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 7 DAY)') };
             } 
             if(filterType == 2) {
-                where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 15 DAY)') };
-                wherePlayed.updatedAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 15 DAY)') };
+                where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 30 DAY)') };
+                wherePlayed.updatedAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 30 DAY)') };
             } 
             data.artistID = artistID
 
@@ -2232,7 +2232,7 @@ module.exports.artistGraphPodcast = (req, res) => {
             })
 
             if(filterType == 1) startDate = moment().subtract(7, 'days'); 
-            if(filterType == 2) startDate = moment().subtract(15, 'days');
+            if(filterType == 2) startDate = moment().subtract(30, 'days');
 
             endDate = moment();
             let dates = [];
