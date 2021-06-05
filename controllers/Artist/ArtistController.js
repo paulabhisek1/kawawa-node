@@ -2084,6 +2084,7 @@ module.exports.artistGraphSong =(req, res) => {
             let where = {};
             let wherePlayed = {};
             let data = {};
+            let startDate = undefined;
 
             where.type = 'song';
             if(filterType == 1) {
@@ -2122,10 +2123,35 @@ module.exports.artistGraphSong =(req, res) => {
                 return x;
             })
 
+            if(filterType == 1) startDate = moment().subtract(7, 'days'); 
+            if(filterType == 2) startDate = moment().subtract(30, 'days');
+
+            endDate = moment();
+            let dates = [];
+            let now = startDate.clone();
+
+            while(now.isSameOrBefore(endDate)) {
+                dates.push(now.format('YYYY-MM-DD'));
+                now.add(1, 'days');
+            }
+
+            responseArray = [];
+            dates.forEach(x => {
+                let ind = finalArray.findIndex(item => item.date === x);
+                if(ind >= 0) {
+                    responseArray.push(finalArray[ind])
+                }
+                else {
+                    responseArray.push({
+                        date: x,
+                        playedCount: 0,
+                        downloadCount: 0
+                    })
+                }
+            })
+
             let dataResp = {
-                // downloadData: graphDataSongDownload,
-                // playedData: graphDataSongListen,
-                songsGraph: finalArray,
+                songsGraph: responseArray,
             }
 
             return res.status(200).send({
@@ -2166,6 +2192,7 @@ module.exports.artistGraphPodcast = (req, res) => {
             let where = {};
             let wherePlayed = {};
             let data = {};
+            let startDate = undefined;
 
             where.type = 'podcast';
             if(filterType == 1) {
@@ -2204,8 +2231,35 @@ module.exports.artistGraphPodcast = (req, res) => {
                 return x;
             })
 
+            if(filterType == 1) startDate = moment().subtract(7, 'days'); 
+            if(filterType == 2) startDate = moment().subtract(30, 'days');
+
+            endDate = moment();
+            let dates = [];
+            let now = startDate.clone();
+
+            while(now.isSameOrBefore(endDate)) {
+                dates.push(now.format('YYYY-MM-DD'));
+                now.add(1, 'days');
+            }
+
+            responseArray = [];
+            dates.forEach(x => {
+                let ind = finalArray.findIndex(item => item.date === x);
+                if(ind >= 0) {
+                    responseArray.push(finalArray[ind])
+                }
+                else {
+                    responseArray.push({
+                        date: x,
+                        playedCount: 0,
+                        downloadCount: 0
+                    })
+                }
+            })
+
             let dataResp = {
-                podcastGraph: finalArray
+                podcastGraph: responseArray
             }
 
             return res.status(200).send({

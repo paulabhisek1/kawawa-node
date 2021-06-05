@@ -59,7 +59,9 @@ module.exports.followArtist = (req, res) => {
                     return res.send({
                         status: 200,
                         msg: `${responseMessages.artistUnfollowed} ${artistDetails.full_name}`,
-                        data: {},
+                        data: {
+                            isFollowedArtist: 0
+                        },
                         purpose: purpose
                     })
                 }
@@ -69,7 +71,9 @@ module.exports.followArtist = (req, res) => {
                     return res.send({
                         status: 200,
                         msg: `${responseMessages.artistFollowed} ${artistDetails.full_name}`,
-                        data: {},
+                        data: {
+                            isFollowedArtist: 1
+                        },
                         purpose: purpose
                     })
                 }
