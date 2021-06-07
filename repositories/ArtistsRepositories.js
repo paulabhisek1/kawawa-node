@@ -499,3 +499,19 @@ module.exports.totalFollowers = (where) => {
             });
     })
 }
+
+
+
+// Find One artist details data
+module.exports.getArtistDetailsData = (whereData) => {
+    return new Promise((resolve, reject) => {
+        ArtistDetailsModel.findOne({
+            where: whereData,
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}

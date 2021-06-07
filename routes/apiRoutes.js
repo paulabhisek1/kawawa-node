@@ -81,4 +81,8 @@ router.get('/playlist-songs', validateRequest.validate(songsValidationsSchema.pl
 router.get('/podcast/homepage', authenticationMiddleware.authenticateRequestAPI, validateRequest.validate(podcastsValidationsSchema.homepageData, 'query'), podcastController.podcastHomepage); // Podcast Homepage
 router.get('/podcast/all-recently-played', authenticationMiddleware.authenticateRequestAPI, validateRequest.validate(podcastsValidationsSchema.allRecentlyPlayed, 'query'), podcastController.allRecentlyPlayed); // All Recently Played Podcasts
 
+
+// ################################### SUBSCRIPTION ########################################### //
+router.post('/create-subscription', authenticationMiddleware.authenticateRequestAPI, validateRequest.validate(usersValidationSchema.userSubscriptionSchema, 'body'), usersController.createSubscription); //Create Subscription
+
 module.exports = router;

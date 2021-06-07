@@ -62,3 +62,12 @@ module.exports.updateUserDetails = Joi.object().keys({
 module.exports.updateUserCountry = Joi.object().keys({
     country_id: Joi.number().required()
 });
+
+
+// User Subscription Schema
+module.exports.userSubscriptionSchema = Joi.object().keys({
+    payment_ammount: Joi.number().required(),
+    recurring_period: Joi.string().required(),
+    card_token: Joi.string().required(),
+    payment_description: Joi.string().required()
+});

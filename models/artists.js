@@ -16,7 +16,6 @@ module.exports = (sequelize, DataTypes) => {
   Artists.init({
     full_name: DataTypes.STRING,
     email: DataTypes.STRING,
-    stripe_account: DataTypes.STRING,
     mobile_no: DataTypes.STRING,
     password: DataTypes.STRING,
     dob: DataTypes.STRING,

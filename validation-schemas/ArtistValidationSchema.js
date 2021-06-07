@@ -72,17 +72,28 @@ module.exports.artistDetailsStepOne = Joi.object().keys({
 
 // Artist Details Step Two Schema
 module.exports.artistDetailsStepTwo = Joi.object().keys({
-    account_holder_name: Joi.string().required(),
-    account_number: Joi.string().required(),
-    routing_no: Joi.string().required(),
-    branch_address: Joi.string().required(),
-    branch_name: Joi.string().required(),
-    bank_country: Joi.number().required(),
-    bank_state: Joi.string().required(),
-    bank_city: Joi.string().required(),
-    bank_zip: Joi.string().required(),
+    stripe_type: Joi.number().required(),
+    bank_country: Joi.string().required(),
+    country_code: Joi.string().required(),
+    id_number: Joi.string().required(),
     currency: Joi.string().required(),
-    swift_code: Joi.string().required(),
+    account_holder_first_name: Joi.string().required().allow('', null),
+    account_holder_last_name: Joi.string().required().allow('', null),
+    sort_code: Joi.string().required().allow('', null),
+    ifsc_code: Joi.string().required().allow('', null),
+    bsb_code: Joi.string().required().allow('', null),
+    bank_code: Joi.string().required().allow('', null),
+    branch_code: Joi.string().required().allow('', null),
+    clearing_code: Joi.string().required().allow('', null),
+    transit_number: Joi.string().required().allow('', null),
+    institution_number: Joi.string().required().allow('', null),
+    routing_no: Joi.string().required().allow('', null),
+    account_number: Joi.string().required().allow('', null),
+    clabe: Joi.string().required().allow('', null),
+    iban: Joi.string().required().allow('', null),
+    branch_name: Joi.string().required().allow('', null),
+    bank_name: Joi.string().required().allow('', null),
+    
 });
 
 // Artist Details Step Three Schema

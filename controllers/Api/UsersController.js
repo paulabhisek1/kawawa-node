@@ -31,6 +31,9 @@ const moment = require('moment');
 const jwtOptionsAccess = global.constants.jwtAccessTokenOptions;
 const jwtOptionsRefresh = global.constants.jwtRefreshTokenOptions;
 
+
+const stripe = require('stripe')('sk_test_51Ir44wSICwQRfCEwe8osbpcrmMPSABv4QTeF0VKmln3DnHmD7hp6Fxap0PZGMUGPJnA0kJYdq8QtHNl6ZkOdeWnN00QgLgjZ35');
+
 /*
 |------------------------------------------------ 
 | API name          :  registerUser
@@ -692,6 +695,112 @@ module.exports.updateUserCountry = (req, res) => {
                 data: {},
                 purpose: purpose
             })
+        }
+    })()
+}
+
+
+
+/*
+|------------------------------------------------ 
+| API name          :  createSubscription
+| Response          :  Respective response message in JSON format
+| Logic             :  create User Subscription
+| Request URL       :  BASE_URL/api/create-subscription
+| Request method    :  POST
+| Author            :  Jayanta Mondal
+|------------------------------------------------
+*/
+module.exports.createSubscription = (req, res) => {
+    (async() => {
+        let purpose = "Create User Subscription"
+        try {
+            let body = req.body;
+            let userID = req.headers.userID;
+
+            let userCount = await userRepositories.count({ id: userID, is_active: 1 });
+
+            if (userCount > 0) {
+                
+                let userDetails = await userRepositories.findOne({ id: userID });
+
+
+                const token = await stripe.tokens.create({
+                  card: {
+                    number: '4242424242424242',
+                    exp_month: 6,
+                    exp_year: 2022,
+                    cvc: '314',
+                  },
+                });
+
+                const customer = await stripe.customers.create({
+                    name: userDetails.full_name,
+                    email: userDetails.email,
+                    phone: userDetails.mobile_no,
+                    description: userDetails.full_name+' is Kawawa Music user',
+                    //source: body.card_token,
+                    source: token.id
+                }); 
+
+
+                const product = await stripe.products.create({
+                    name: 'Subscription for '+userDetails.full_name,
+                });
+
+                var payment_ammount = (Number(body.payment_ammount) * 100);
+
+                const price = await stripe.prices.create({
+                    unit_amount: payment_ammount,
+                    currency: userDetails.country.currency_code,
+                    //currency: "usd",
+                    recurring: {interval: 'day', interval_count: body.recurring_period},
+                    product: product.id,
+                });
+
+
+                const subscription = await stripe.subscriptions.create({
+                    customer: customer.id,
+                    items: [
+                        {price: price.id},
+                    ],
+                });
+
+              
+                return res.send({
+                    status: 200,
+                    msg: responseMessages.userCountryUpdate,
+                    data: {
+                        user_details: userDetails
+                    },
+                    purpose: purpose
+                })
+            } else {
+                return res.send({
+                    status: 500,
+                    msg: responseMessages.userNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        } catch (e) {
+            console.log("REGISTER USER ERROR : ", e.raw);
+            if (e.raw) {
+                return res.status(500).send({
+                    status: 500,
+                    msg: e.raw.message,
+                    data: {},
+                    purpose: purpose
+                })
+
+            }else{
+                return res.status(500).send({
+                    status: 500,
+                    msg: responseMessages.serverError,
+                    data: {},
+                    purpose: purpose
+                })
+            }
         }
     })()
 }

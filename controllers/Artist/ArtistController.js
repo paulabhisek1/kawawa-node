@@ -105,35 +105,6 @@ module.exports.registerArtist = (req, res) => {
                 userData['access_token'] = accessToken;
                 userData['refresh_token'] = refreshToken;
 
-
-                /*let countryData = await countriesRepositories.findOne({id:body.country_id});
-
-                const stripeAccount = await stripe.accounts.create({
-                  type: 'custom',
-                  country: 'AT',
-                  email: userData.email,
-                  business_type:'individual',
-                  capabilities: {
-                    card_payments: {requested: true},
-                    transfers: {requested: true},
-                  },
-                });
-
-                const account = await stripe.accounts.update(
-                    'acct_1Ir4B2IBPHCTpxfz',
-                    {
-                        
-                        tos_acceptance: {
-                            date: Math.floor(Date.now() / 1000),
-                            ip: req.connection.remoteAddress, 
-                        },
-                    }
-                );
-
-
-                let updateData = await artistRepositories.update({ id: userData.id }, { stripe_account: stripeAccount.id });*/
-
-
                 return res.status(200).send({
                     status: 200,
                     msg: responseMessages.registrationSuccess,
@@ -662,10 +633,7 @@ module.exports.saveArtistDetailsStepOne = (req, res) => {
             let artistData  = await artistRepositories.findOne({ id: artistID });
             let countryData = await countriesRepositories.findOne({ id: artistData.country_id });
 
-            let dateDOB = new Date(artistData.dob);
-            let month   = dateDOB.getUTCMonth() + 1; //months from 1-12
-            let day     = dateDOB.getUTCDate();
-            let year    = dateDOB.getUTCFullYear();
+            
 
 
             if (artistCount > 0) {
@@ -690,35 +658,7 @@ module.exports.saveArtistDetailsStepOne = (req, res) => {
                         await artistRepositories.createArtistDetails(createData, t);
                     }
 
-                    /*const account = await stripe.accounts.update(
-                        artistData.stripe_account,
-                        {
-                            business_type:'individual',
-                            individual: {
-                                address: {
-                                    city: createData.city,
-                                    country: countryData.country_code,
-                                    line1: createData.street,
-                                    line2: createData.building_no,
-                                    postal_code: createData.zip,
-                                    state: createData.state
-                                },
-                                dob:{
-                                    day: day,
-                                    month: month,
-                                    year: year,
-                                },
-                                first_name: artistData.full_name,
-                                email: artistData.email,
-                                phone: artistData.mobile_no
-                            },
-                            tos_acceptance: {
-                                date: Math.floor(Date.now() / 1000),
-                                ip: req.connection.remoteAddress,
-                            },
-                            industry:'Software'
-                        }
-                    );*/
+                    
                 });
 
                 let artistDetails = await artistRepositories.artistDetails({ id: artistID }, { user_id: artistID });
@@ -777,51 +717,182 @@ module.exports.saveArtistDeatislStepTwo = (req, res) => {
     (async() => {
         let purpose = "Save Artist Details Step Two"
         try {
-            let artistID = req.headers.userID;
+
+            let artistID    = req.headers.userID;
             let artistCount = await artistRepositories.count({ id: artistID, is_active: 1 });
             let artistData  = await artistRepositories.findOne({ id: artistID });
             let countryData = await countriesRepositories.findOne({ id: artistData.country_id });
 
             if (artistCount > 0) {
                 let body = req.body;
+
+                /*if (body.country_code=='BR') {
+                    const stripeAccount = await stripe.accounts.create({
+                      type: 'express',
+                      country: body.country_code,
+                      email: artistData.email,
+                      business_type:'individual',
+                      capabilities: {
+                        card_payments: {requested: true},
+                        transfers: {requested: true},
+                      },
+                    });
+                }else{*/
+                    const stripeAccount = await stripe.accounts.create({
+                      type: 'custom',
+                      country: body.country_code,
+                      email: artistData.email,
+                      business_type:'individual',
+                      capabilities: {
+                        card_payments: {requested: true},
+                        transfers: {requested: true},
+                      },
+                    });
+                /*}*/
+
+                /*console.log("stripeAccount");
+                console.log(stripeAccount);*/
+
+                
+
+                let dateDOB = new Date(artistData.dob);
+                let month   = dateDOB.getUTCMonth() + 1; //months from 1-12
+                let day     = dateDOB.getUTCDate();
+                let year    = dateDOB.getUTCFullYear();
+
+
+                let detailsArtist = await artistRepositories.getArtistDetailsData({ artist_id: artistID });
+
+                //let artistName = artistData.full_name.split(" ");
+
+                //let artistName = body.account_holder_name.split(" ");
+
+                const account = await stripe.accounts.update(
+                    stripeAccount.id,
+                    {
+                        business_type:'individual',
+                        business_profile: {
+                            mcc:"5815",
+                            product_description: 'Kawawa is the one-stop solution for all your music needs. Gaana offers you free, unlimited access to over 45 million Hindi Songs, Bollywood Music, English MP3 songs, Regional Music & Mirchi Play.',
+                        },
+                        individual: {
+                            address: {
+                                city: detailsArtist.city,
+                                country: body.country_code,
+                                line1: detailsArtist.street,
+                                line2: detailsArtist.building_no,
+                                postal_code: detailsArtist.zip,
+                                state: detailsArtist.state
+                            },
+                            dob:{
+                                day: day,
+                                month: month,
+                                year: year,
+                            },
+                            first_name: body.account_holder_first_name,
+                            last_name: body.account_holder_last_name,
+                            email: artistData.email,
+                            phone: artistData.mobile_no,
+                            id_number: body.id_number
+                        },
+                        tos_acceptance: {
+                            date: Math.floor(Date.now() / 1000),
+                            ip: req.connection.remoteAddress,
+                        },
+                    }
+                );
+
+                let routing_number = "";
+
+                if (body.ifsc_code!='') {
+                    routing_number = body.ifsc_code;
+                }else if (body.bsb_code) {
+                    routing_number = body.bsb_code;
+                }else if (body.routing_no) {
+                    routing_number = body.routing_no;
+                }else if(body.sort_code){
+                    routing_number = body.sort_code;
+                }else if (body.bank_code!='' && body.branch_code!='') {
+                    routing_number = body.bank_code+'-'+body.branch_code;
+                }else if (body.institution_number!='' && body.transit_number!='') {
+                    routing_number = body.transit_number+'-'+body.institution_number;
+                }else if (body.branch_code!='' &&  body.clearing_code!='') {
+                    routing_number = body.branch_code+'-'+body.clearing_code;
+                }
+
+
+                if(body.iban!=''){
+                    var token = await stripe.tokens.create({
+                      bank_account: {
+                        country: body.country_code,
+                        currency: body.currency,
+                        account_holder_name: body.account_holder_first_name+' '+body.account_holder_last_name,
+                        account_holder_type: 'individual',
+                        account_number: body.iban,
+                      },
+                    });
+                }else if(body.country_code=='NZ' || body.country_code=='MX'){
+                    var token = await stripe.tokens.create({
+                      bank_account: {
+                        country: body.country_code,
+                        currency: body.currency,
+                        account_holder_name: body.account_holder_first_name+' '+body.account_holder_last_name,
+                        account_holder_type: 'individual',
+                        account_number: body.account_number,
+                      },
+                    });
+
+                }else {
+                    var token = await stripe.tokens.create({
+                      bank_account: {
+                        country: body.country_code,
+                        currency: body.currency,
+                        account_holder_name: body.account_holder_first_name+' '+body.account_holder_last_name,
+                        account_holder_type: 'individual',
+                        routing_number: routing_number,
+                        account_number: body.account_number,
+                      },
+                    });
+                }               
+               
+
+                const bankAccount = await stripe.accounts.createExternalAccount(
+                  stripeAccount.id,
+                  {
+                    external_account: token.id,
+                  }
+                );
+
+
                 let updateData = {
-                    account_holder_name: body.account_holder_name,
+                    stripe_type: body.stripe_type,
+                    stripe_account: stripeAccount.id,
+                    stripe_bank_account: bankAccount.id,
+                    account_holder_name: body.account_holder_first_name+' '+body.account_holder_last_name,
+                    id_number: body.id_number,
                     account_number: body.account_number,
-                    routing_no: body.routing_no,
-                    branch_address: body.branch_address,
+                    routing_no:  body.routing_no,
+                    branch_code: body.branch_code,
                     branch_name: body.branch_name,
+                    country_code: body.country_code,
                     bank_country: body.bank_country,
-                    bank_state: body.bank_state,
-                    bank_city: body.bank_city,
-                    bank_zip: body.bank_zip,
+                    bank_code: body.bank_code,
+                    bank_name: body.bank_name,
+                    bsb_code: body.bsb_code,
                     currency: body.currency,
-                    swift_code: body.swift_code
+                    clabe: body.clabe,
+                    sort_code: body.sort_code,
+                    clearing_code: body.clearing_code,
+                    iban: body.iban,
+                    ifsc_code: body.ifsc_code,
+                    institution_number: body.institution_number,
+                    transit_number: body.transit_number
                 }
 
                 await artistRepositories.updateArtistDetails({ artist_id: artistID }, updateData);
 
+
                 let artistDetails = await artistRepositories.artistDetails({ id: artistID }, { user_id: artistID });
-
-
-
-                /*const token = await stripe.tokens.create({
-                  bank_account: {
-                    country: countryData.country_code,
-                    currency: updateData.currency,
-                    account_holder_name: updateData.account_holder_name,
-                    account_holder_type: 'individual',
-                    routing_number: updateData.routing_no,
-                    account_number: updateData.account_number,
-                  },
-                });
-               
-
-                const bankAccount = await stripe.accounts.createExternalAccount(
-                  artistData.stripe_account,
-                  {
-                    external_account: token.id,
-                  }
-                );*/
 
                 return res.status(200).send({
                     status: 200,
@@ -877,6 +948,7 @@ module.exports.saveArtistDeatislStepThree = (req, res) => {
         try {
             let artistID = req.headers.userID;
             let artistCount = await artistRepositories.count({ id: artistID, is_active: 1 });
+            let detailsArtist = await artistRepositories.getArtistDetailsData({ artist_id: artistID });
 
             if (artistCount > 0) {
                 let body = req.body;
@@ -884,6 +956,45 @@ module.exports.saveArtistDeatislStepThree = (req, res) => {
                     govt_id_front: body.govt_id_front,
                     govt_id_back: body.govt_id_back,
                 }
+
+
+                var front_file = await stripe.files.create({
+                  purpose: 'identity_document',
+                  file: {
+                    data: fs.readFileSync('.'+body.govt_id_front),
+                    name: 'front_file.jpg',
+                    type: 'application/octet-stream',
+                  },
+                });
+
+                var back_file = await stripe.files.create({
+                  purpose: 'identity_document',
+                  file: {
+                    data: fs.readFileSync('.'+body.govt_id_back),
+                    name: 'back_file.jpg',
+                    type: 'application/octet-stream',
+                  },
+                });
+
+
+                const account = await stripe.accounts.update(
+                    detailsArtist.stripe_account,
+                    {
+                        individual: {
+                            verification: {
+                                document: {
+                                    front: front_file.id,
+                                    back:back_file.id
+                                },
+                                additional_document: {
+                                    front: front_file.id,
+                                    back:back_file.id
+                                },
+                            },
+                           
+                        } 
+                    }
+                );
 
                 // let mainUpdateData = {
                 //     profile_image: body.profile_image
@@ -914,12 +1025,22 @@ module.exports.saveArtistDeatislStepThree = (req, res) => {
             }
         } catch (err) {
             console.log("Save Artist Details Step Three ERROR : ", err);
-            return res.status(500).send({
-                status: 500,
-                msg: responseMessages.serverError,
-                data: {},
-                purpose: purpose
-            })
+            if (err.raw) {
+                return res.status(500).send({
+                    status: 500,
+                    msg: err.raw.message,
+                    data: {},
+                    purpose: purpose
+                })
+
+            }else{
+                return res.status(500).send({
+                    status: 500,
+                    msg: responseMessages.serverError,
+                    data: {},
+                    purpose: purpose
+                })
+            }
         }
     })()
 }
@@ -1004,7 +1125,27 @@ module.exports.fetchArtistDetails = (req, res) => {
             let artistCount = await artistRepositories.count({ id: artistID, is_active: 1 });
             if (artistCount > 0) {
                 let artistDetails = await artistRepositories.artistDetails({ id: artistID }, { user_id: artistID });
+             
 
+                if (artistDetails.artist_account_details.stripe_account) {
+                     
+                    const account = await stripe.accounts.retrieve(
+                      artistDetails.artist_account_details.stripe_account,
+                    );
+
+                    if (artistDetails.artist_account_details.stripe_disabled_reason!='' || artistDetails.artist_account_details.stripe_disabled_reason!=null) {
+
+                        var disabled_reason = account.requirements.disabled_reason.split('.');
+                        artistDetails.artist_account_details.stripe_disabled_reason = disabled_reason[1];
+                    }else{
+                        artistDetails.artist_account_details.stripe_disabled_reason = '';
+                    }
+                    
+                }else{
+                    artistDetails.artist_account_details.stripe_disabled_reason = '';
+                }
+
+                
                 return res.status(200).send({
                     status: 200,
                     msg: responseMessages.artistDetailsFetch,
