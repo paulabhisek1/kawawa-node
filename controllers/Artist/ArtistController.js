@@ -2378,17 +2378,76 @@ module.exports.artistGraphSong =(req, res) => {
             let artistID = req.headers.userID;
             let filterType = req.query.filterType;
             let where = {};
+            let wherePlayed = {};
             let data = {};
+            let startDate = undefined;
 
             where.type = 'song';
-            if(filterType == 1) where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 7 DAY)') };
-            if(filterType == 2) where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 30 DAY)') };
+            if(filterType == 1) {
+                where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 7 DAY)') };
+                wherePlayed.updatedAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 7 DAY)') };
+            } 
+            if(filterType == 2) {
+                where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 30 DAY)') };
+                wherePlayed.updatedAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 30 DAY)') };
+            } 
             data.artistID = artistID
 
-            let graphDataSong = await artistRepositories.artistGraphSong(where, data);
+            let graphDataSongDownload = await artistRepositories.artistGraphSong(where, data);
+            let graphDataSongListen = await artistRepositories.artistGraphSongListen(wherePlayed, data);
+
+            let finalArray = [...graphDataSongListen];
+
+            graphDataSongDownload.forEach((item, index) => {
+                let ind = finalArray.findIndex(x => x.date == item.date);
+                if (ind >= 0) {
+                    finalArray[ind].downloadCount = item.downloadCount;
+                }
+                else {
+                    if (finalArray.findIndex(x => x.date == item.date) < 0) {
+                        finalArray.push({
+                            downloadCount: item.downloadCount,
+                            date: item.date
+                        })
+                    }
+                }
+            })
+
+            finalArray.map(x => {
+                if(!x.playedCount) x.playedCount = 0;
+                if(!x.downloadCount) x.downloadCount = 0;
+                return x;
+            })
+
+            if(filterType == 1) startDate = moment().subtract(7, 'days'); 
+            if(filterType == 2) startDate = moment().subtract(30, 'days');
+
+            endDate = moment();
+            let dates = [];
+            let now = startDate.clone();
+
+            while(now.isSameOrBefore(endDate)) {
+                dates.push(now.format('YYYY-MM-DD'));
+                now.add(1, 'days');
+            }
+
+            responseArray = [];
+            dates.forEach(x => {
+                let ind = finalArray.findIndex(item => item.date === x);
+                if(ind >= 0) {
+                    responseArray.push(finalArray[ind])
+                }
+                else {
+                    responseArray.push({
+                        date: x,
+                        playedCount: 0,
+                        downloadCount: 0
+                    })
+                }
+            })
 
             let dataResp = {
-                songsGraph: graphDataSong
+                songsGraph: responseArray,
             }
 
             return res.status(200).send({
@@ -2427,17 +2486,76 @@ module.exports.artistGraphPodcast = (req, res) => {
             let artistID = req.headers.userID;
             let filterType = req.query.filterType;
             let where = {};
+            let wherePlayed = {};
             let data = {};
+            let startDate = undefined;
 
             where.type = 'podcast';
-            if(filterType == 1) where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 7 DAY)') };
-            if(filterType == 2) where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 30 DAY)') };
+            if(filterType == 1) {
+                where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 7 DAY)') };
+                wherePlayed.updatedAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 7 DAY)') };
+            } 
+            if(filterType == 2) {
+                where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 30 DAY)') };
+                wherePlayed.updatedAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 30 DAY)') };
+            } 
             data.artistID = artistID
 
             let graphDataSong = await artistRepositories.artistGraphPodcast(where, data);
+            let graphDataSongListen = await artistRepositories.artistGraphPodcastListen(wherePlayed, data);
+
+            let finalArray = [...graphDataSongListen];
+
+            graphDataSong.forEach((item, index) => {
+                let ind = finalArray.findIndex(x => x.date == item.date);
+                if (ind >= 0) {
+                    finalArray[ind].downloadCount = item.downloadCount;
+                }
+                else {
+                    if (finalArray.findIndex(x => x.date == item.date) < 0) {
+                        finalArray.push({
+                            downloadCount: item.downloadCount,
+                            date: item.date
+                        })
+                    }
+                }
+            })
+
+            finalArray.map(x => {
+                if(!x.playedCount) x.playedCount = 0;
+                if(!x.downloadCount) x.downloadCount = 0;
+                return x;
+            })
+
+            if(filterType == 1) startDate = moment().subtract(7, 'days'); 
+            if(filterType == 2) startDate = moment().subtract(30, 'days');
+
+            endDate = moment();
+            let dates = [];
+            let now = startDate.clone();
+
+            while(now.isSameOrBefore(endDate)) {
+                dates.push(now.format('YYYY-MM-DD'));
+                now.add(1, 'days');
+            }
+
+            responseArray = [];
+            dates.forEach(x => {
+                let ind = finalArray.findIndex(item => item.date === x);
+                if(ind >= 0) {
+                    responseArray.push(finalArray[ind])
+                }
+                else {
+                    responseArray.push({
+                        date: x,
+                        playedCount: 0,
+                        downloadCount: 0
+                    })
+                }
+            })
 
             let dataResp = {
-                podcastGraph: graphDataSong
+                podcastGraph: responseArray
             }
 
             return res.status(200).send({
