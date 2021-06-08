@@ -98,45 +98,95 @@ module.exports.adminLogin = (req, res) => {
 
 /*
 |------------------------------------------------ 
-| API name          :  addCountry
+| API name          :  updateCountry
 | Response          :  Respective response message in JSON format
-| Logic             :  Add Country
-| Request URL       :  BASE_URL/admin/country-add
-| Request method    :  POST
+| Logic             :  Update Country
+| Request URL       :  BASE_URL/admin/country-update
+| Request method    :  PUT
 | Author            :  Suman Rana
 |------------------------------------------------
 */
-module.exports.addCountry = (req, res) => {
+module.exports.updateCountry = (req, res) => {
     (async() => {
-        let purpose = "Add Country";
+        let purpose = "Update Country";
         try {
             let body = req.body;
-            let countryCount = await adminRepositories.countCountry({ country_code: body.country_code.toUpperCase() });
+            let countryID = req.params.id;
+            let countryCount = await adminRepositories.countCountry({ id: countryID });
 
             if (countryCount > 0) {
-                return res.status(409).send({
-                    status: 409,
-                    msg: responseMessages.duplicateCountry,
+                let updateData = {
+                    user_plan_amount: body.user_plan_amount,
+                    user_plan_length: body.user_plan_length,
+                    artist_withdraw_amount: body.artist_withdraw_amount
+                }
+
+                let where = {
+                    id: countryID
+                }
+
+                await adminRepositories.updateCountry(where, updateData);
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.countryUpdate,
                     data: {},
                     purpose: purpose
                 })
             } else {
-                let createData = {
-                    name: body.name,
-                    country_code: body.country_code.toUpperCase(),
-                    telephone_code: body.telephone_code
-                }
-
-                let countryDet = await adminRepositories.addCountry(createData);
-                return res.status(200).send({
-                    status: 200,
-                    msg: responseMessages.countryAdd,
-                    data: countryDet,
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.countryNoyFound,
+                    data: {},
                     purpose: purpose
                 })
             }
         } catch (err) {
-            console.log("Add Country ERROR : ", err);
+            console.log("Update Country ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  countryDetails
+| Response          :  Respective response message in JSON format
+| Logic             :  Country Details
+| Request URL       :  BASE_URL/admin/country-details
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.countryDetails = (req, res) => {
+    (async() => {
+        let purpose = "Country Details";
+        try {
+            let countryID = req.params.id;
+            let countryCount = await adminRepositories.countCountry({ id: countryID });
+
+            if (countryCount > 0) {
+                let countryDetails = await adminRepositories.fetchCountry({ id: countryID })
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.countryUpdate,
+                    data: countryDetails,
+                    purpose: purpose
+                })
+            } else {
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.countryNoyFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        } catch (err) {
+            console.log("Country Details ERROR : ", err);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,

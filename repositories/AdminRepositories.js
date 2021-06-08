@@ -45,6 +45,18 @@ module.exports.addCountry = (data) => {
     })
 }
 
+// Add Country
+module.exports.addCountry = (data) => {
+    return new Promise((resolve, reject) => {
+        CountryModel.create(data).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
 // Count Country
 module.exports.countCountry = (whereData) => {
     return new Promise((resolve, reject) => {
