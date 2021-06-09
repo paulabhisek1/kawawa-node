@@ -10,9 +10,9 @@ module.exports.loginSchema = Joi.object().keys({
 
 // Add Country Schema
 module.exports.addCountrySchema = Joi.object().keys({
-    name: Joi.string().required(),
-    country_code: Joi.string().required(),
-    telephone_code: Joi.number().required(),
+    user_plan_amount: Joi.number().required().allow('', null),
+    user_plan_length: Joi.number().required().allow('', null),
+    artist_withdraw_amount: Joi.number().required().allow('', null)
 });
 
 // Add Genre Schema

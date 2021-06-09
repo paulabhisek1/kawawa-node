@@ -21,7 +21,10 @@ module.exports = (sequelize, DataTypes) => {
     currency_symbol: DataTypes.STRING,
     telephone_code: DataTypes.STRING,
     is_active: DataTypes.INTEGER,
-    stripe_type: DataTypes.INTEGER
+    stripe_type: DataTypes.INTEGER,
+    user_plan_amount: DataTypes.INTEGER,
+    user_plan_length: DataTypes.INTEGER,
+    artist_withdraw_amount: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'countries',

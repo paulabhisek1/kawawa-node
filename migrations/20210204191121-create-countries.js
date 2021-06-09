@@ -36,6 +36,18 @@ module.exports = {
         defaultValue: 0,
         comment: '1:- US, 2:- UK, 3:- IN, 4:- AU, 5:- BR,SG, 6:- CA, 7:- HK, 8:- JP, 9:- NZ,MY, 10:- MX, 11:- IBAN'
       },
+      user_plan_amount: {
+        type: Sequelize.INTEGER,
+        comment: 'Amount For User'
+      },
+      user_plan_length: {
+        type: Sequelize.INTEGER,
+        comment: 'In Days'
+      },
+      artist_withdraw_amount: {
+        type: Sequelize.INTEGER,
+        comment: 'Withdrawl Amount For Artist'
+      },
       createdAt: {
         allowNull: false,
         defaultValue : Sequelize.literal('CURRENT_TIMESTAMP'),

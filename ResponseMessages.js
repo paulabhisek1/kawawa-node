@@ -49,6 +49,7 @@ module.exports = {
     artistDetailsFetch: `Artist details fetched successfully`,
     duplicateCountry: `This country is already added`,
     countryAdd: `Country added successfully`,
+    countryDetails: `Country details fetched successfully`,
     countryList: `Country list fetched successfully`,
     countryUpdate: `Country details updated successfully`,
     countryNoyFound: `Country not found`,
