@@ -40,7 +40,40 @@ const jwtOptionsAccess = global.constants.jwtAccessTokenOptions;
 const jwtOptionsRefresh = global.constants.jwtRefreshTokenOptions;
 
 
-//var fp = fs.readFileSync('uploads/stripe_doc/');
+const cron = require('node-cron');
+
+
+/*
+|------------------------------------------------ 
+| API name          :  Cron
+| Logic             :  Crone setup for payout to the artist
+| Author            :  Jayanta Mondal
+|------------------------------------------------
+*/
+
+cron.schedule('* * * * *', () => {
+    
+    (async() => {
+        let purpose = "Register Artist"
+        try {
+            console.log('running a task every minute'+ purpose);
+
+            const transfer = await stripe.transfers.create({
+              amount: (400*100),
+              currency: 'USD',
+              destination: 'acct_1J0A9REn0P4IN6DY',
+              transfer_group: 'ORDER_95',
+            });
+
+            console.log(transfer);
+        } catch (e) {
+            console.log(e)
+        }
+    })()
+});
+
+
+
 
 /*
 |------------------------------------------------ 
@@ -1133,7 +1166,7 @@ module.exports.fetchArtistDetails = (req, res) => {
                       artistDetails.artist_account_details.stripe_account,
                     );
 
-                    if (artistDetails.artist_account_details.stripe_disabled_reason!='' || artistDetails.artist_account_details.stripe_disabled_reason!=null) {
+                    if (artistDetails.artist_account_details.stripe_disabled_reason) {
 
                         var disabled_reason = account.requirements.disabled_reason.split('.');
                         artistDetails.artist_account_details.stripe_disabled_reason = disabled_reason[1];
