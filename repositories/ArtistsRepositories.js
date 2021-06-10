@@ -327,7 +327,7 @@ module.exports.artistListPaginate = (whereData, data) => {
             include: [{
                 model: FollowedArtistsModel,
                 where: { user_id: data.user_id },
-                as: 'is_followed',
+                //as: 'is_followed',
             }],
             offset: data.offset,
             limit: data.limit,
