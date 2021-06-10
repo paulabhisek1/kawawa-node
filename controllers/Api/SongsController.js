@@ -507,7 +507,7 @@ module.exports.allArtist = (req, res) => {
             data.user_id = userID;
             where.is_active = 1;
             let allartist = await artistRepositories.artistListPaginate(where, data);
-            if (allartist.rows.is_followed) {
+            if (allartist.rows.is_artist_followed.length > 0) {
                 allartist.rows.is_followed = 1;
             } else {
                 allartist.rows.is_followed = 0;

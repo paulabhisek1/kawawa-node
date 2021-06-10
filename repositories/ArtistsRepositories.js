@@ -324,7 +324,7 @@ module.exports.artistListPaginate = (whereData, data) => {
     return new Promise((resolve, reject) => {
         ArtistModel.findAndCountAll({
             where: whereData,
-            // attributes: ['id', 'full_name', 'profile_image'],
+            attributes: ['id', 'full_name', 'profile_image'],
             include: [{
                 model: FollowedArtistsModel,
                 where: { user_id: data.user_id },
