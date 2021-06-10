@@ -507,12 +507,16 @@ module.exports.allArtist = (req, res) => {
             data.user_id = userID;
             where.is_active = 1;
             let allartist = await artistRepositories.artistListPaginate(where, data);
-            console.log('-----------------------', allartist.rows.is_artist_followed);
-            if (allartist.rows.is_artist_followed) {
-                allartist.rows.is_followed = 1;
-            } else {
-                allartist.rows.is_followed = 0;
-            }
+            allartist.rows.forEach(element => {
+
+                if (element.is_artist_followed.length > 0) {
+                    element.is_followed = 1;
+                } else {
+                    element.is_followed = 0;
+                }
+            });
+            console.log('-----------------------', allartist.rows);
+
             let totalPages = Math.ceil(allartist.count.length / 20);
             let dataResp = {
                 allartist: allartist.rows,
