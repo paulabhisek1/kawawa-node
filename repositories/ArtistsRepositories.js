@@ -328,7 +328,6 @@ module.exports.artistListPaginate = (whereData, data) => {
                 model: FollowedArtistsModel,
                 where: { user_id: data.user_id },
                 as: 'is_followed',
-                // required: true
             }],
             offset: data.offset,
             limit: data.limit,
