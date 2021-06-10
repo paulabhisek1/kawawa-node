@@ -29,6 +29,7 @@ DownloadsModel.belongsTo(SongsModel, { foreignKey: 'file_id', as: 'download_song
 DownloadsModel.belongsTo(PodcastsModel, { foreignKey: 'file_id', as: 'download_podcast_details' });
 UserPlayedModel.belongsTo(SongsModel, { foreignKey: 'file_id', as: 'played_song_details' });
 UserPlayedModel.belongsTo(PodcastsModel, { foreignKey: 'file_id', as: 'played_podcast_details' });
+ArtistModel.belongsTo(FollowedArtistsModel, { foreignKey: 'artist_id', as: 'is_artist_followed' });
 
 
 // Count
@@ -327,7 +328,7 @@ module.exports.artistListPaginate = (whereData, data) => {
             include: [{
                 model: FollowedArtistsModel,
                 where: { user_id: data.user_id },
-                //as: 'is_followed',
+                as: 'is_artist_followed',
             }],
             offset: data.offset,
             limit: data.limit,
