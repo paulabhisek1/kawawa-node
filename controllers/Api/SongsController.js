@@ -514,8 +514,9 @@ module.exports.allArtist = (req, res) => {
                 } else {
                     element.is_followed = 0;
                 }
+                delete element.is_artist_followed;
             });
-            delete allartist.rows.is_artist_followed;
+
             //console.log('-----------------------', allartist.rows);
 
             let totalPages = Math.ceil(allartist.count.length / 20);
