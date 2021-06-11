@@ -20,9 +20,6 @@ module.exports = {
       already_paid: {
         type: Sequelize.DOUBLE
       },
-      due_payment: {
-        type: Sequelize.DOUBLE
-      },
       last_payment_date: {
         type: Sequelize.DATE
       },

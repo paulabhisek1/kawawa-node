@@ -17,7 +17,6 @@ module.exports = (sequelize, DataTypes) => {
     artist_id: DataTypes.INTEGER,
     current_balance: DataTypes.INTEGER,
     already_paid: DataTypes.INTEGER,
-    due_payment: DataTypes.INTEGER,
     last_payment_date: DataTypes.DATE
   }, {
     sequelize,
