@@ -29,6 +29,7 @@ DownloadsModel.belongsTo(SongsModel, { foreignKey: 'file_id', as: 'download_song
 DownloadsModel.belongsTo(PodcastsModel, { foreignKey: 'file_id', as: 'download_podcast_details' });
 UserPlayedModel.belongsTo(SongsModel, { foreignKey: 'file_id', as: 'played_song_details' });
 UserPlayedModel.belongsTo(PodcastsModel, { foreignKey: 'file_id', as: 'played_podcast_details' });
+ArtistModel.hasMany(FollowedArtistsModel, { foreignKey: 'artist_id', as: 'is_artist_followed' });
 
 
 // Count
@@ -74,8 +75,7 @@ module.exports.artistDetails = (whereData, data) => {
                 'country_id',
                 'mobile_no',
                 'is_active',
-                'login_type',
-                [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = ${whereData.id})`), 'isFollowedArtist'],
+                'login_type', [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = ${whereData.id})`), 'isFollowedArtist'],
             ],
             include: [{
                 model: ArtistDetailsModel,
@@ -325,6 +325,12 @@ module.exports.artistListPaginate = (whereData, data) => {
         ArtistModel.findAndCountAll({
             where: whereData,
             attributes: ['id', 'full_name', 'profile_image'],
+            include: [{
+                model: FollowedArtistsModel,
+                where: { user_id: data.user_id },
+                as: 'is_artist_followed',
+                required: false
+            }],
             offset: data.offset,
             limit: data.limit,
             group: ['id']
@@ -417,130 +423,122 @@ module.exports.followedArtistsList = (where) => {
 }
 
 module.exports.artistGraphSong = (where, data) => {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         DownloadsModel.findAll({
-            where: where,
-            attributes: [
-                [sequelize.fn('count', sequelize.col('downloads.id')), 'downloadCount'],
-                [sequelize.fn('date_format', sequelize.col('downloads.createdAt'), '%Y-%m-%d'), 'date']
-            ],
-            include:[
-                {
+                where: where,
+                attributes: [
+                    [sequelize.fn('count', sequelize.col('downloads.id')), 'downloadCount'],
+                    [sequelize.fn('date_format', sequelize.col('downloads.createdAt'), '%Y-%m-%d'), 'date']
+                ],
+                include: [{
                     model: SongsModel,
                     where: { artist_id: data.artistID },
                     attributes: [],
                     as: 'download_song_details',
                     required: true
-                }
-            ],
-            group: [sequelize.literal(`date`)],
-            order: [
-                [sequelize.literal(`date`), 'DESC']
-            ]
-        })
-        .then((result) => {
-            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
-            resolve(result);
-        })
-        .catch((err) => {
-            reject(err);
-        });
+                }],
+                group: [sequelize.literal(`date`)],
+                order: [
+                    [sequelize.literal(`date`), 'DESC']
+                ]
+            })
+            .then((result) => {
+                result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+                resolve(result);
+            })
+            .catch((err) => {
+                reject(err);
+            });
     })
 }
 
 module.exports.artistGraphSongListen = (where, data) => {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         UserPlayedModel.findAll({
-            where: where,
-            attributes: [
-                [sequelize.fn('count', sequelize.col('user_played_histories.id')), 'playedCount'],
-                [sequelize.fn('date_format', sequelize.col('user_played_histories.updatedAt'), '%Y-%m-%d'), 'date']
-            ],
-            include:[
-                {
+                where: where,
+                attributes: [
+                    [sequelize.fn('count', sequelize.col('user_played_histories.id')), 'playedCount'],
+                    [sequelize.fn('date_format', sequelize.col('user_played_histories.updatedAt'), '%Y-%m-%d'), 'date']
+                ],
+                include: [{
                     model: SongsModel,
                     where: { artist_id: data.artistID },
                     attributes: [],
                     as: 'played_song_details',
                     required: true
-                }
-            ],
-            group: [sequelize.literal(`date`)],
-            order: [
-                [sequelize.literal(`date`), 'DESC']
-            ]
-        })
-        .then((result) => {
-            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
-            resolve(result);
-        })
-        .catch((err) => {
-            reject(err);
-        });
+                }],
+                group: [sequelize.literal(`date`)],
+                order: [
+                    [sequelize.literal(`date`), 'DESC']
+                ]
+            })
+            .then((result) => {
+                result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+                resolve(result);
+            })
+            .catch((err) => {
+                reject(err);
+            });
     })
 }
 
 module.exports.artistGraphPodcast = (where, data) => {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         DownloadsModel.findAll({
-            where: where,
-            attributes: [
-                [sequelize.fn('count', sequelize.col('downloads.id')), 'downloadCount'],
-                [sequelize.fn('date_format', sequelize.col('downloads.createdAt'), '%Y-%m-%d'), 'date']
-            ],
-            include:[
-                {
+                where: where,
+                attributes: [
+                    [sequelize.fn('count', sequelize.col('downloads.id')), 'downloadCount'],
+                    [sequelize.fn('date_format', sequelize.col('downloads.createdAt'), '%Y-%m-%d'), 'date']
+                ],
+                include: [{
                     model: PodcastsModel,
                     where: { artist_id: data.artistID },
                     attributes: [],
                     as: 'download_podcast_details',
                     required: true
-                }
-            ],
-            group: ['file_id'],
-            order: [
-                [sequelize.literal(`date`), 'DESC']
-            ]
-        })
-        .then((result) => {
-            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
-            resolve(result);
-        })
-        .catch((err) => {
-            reject(err);
-        });
+                }],
+                group: ['file_id'],
+                order: [
+                    [sequelize.literal(`date`), 'DESC']
+                ]
+            })
+            .then((result) => {
+                result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+                resolve(result);
+            })
+            .catch((err) => {
+                reject(err);
+            });
     })
 }
 
 module.exports.artistGraphPodcastListen = (where, data) => {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         UserPlayedModel.findAll({
-            where: where,
-            attributes: [
-                [sequelize.fn('count', sequelize.col('user_played_histories.id')), 'playedCount'],
-                [sequelize.fn('date_format', sequelize.col('user_played_histories.updatedAt'), '%Y-%m-%d'), 'date']
-            ],
-            group: ['file_id'],
-            include:[
-                {
+                where: where,
+                attributes: [
+                    [sequelize.fn('count', sequelize.col('user_played_histories.id')), 'playedCount'],
+                    [sequelize.fn('date_format', sequelize.col('user_played_histories.updatedAt'), '%Y-%m-%d'), 'date']
+                ],
+                group: ['file_id'],
+                include: [{
                     model: PodcastsModel,
                     where: { artist_id: data.artistID },
                     attributes: [],
                     as: 'played_podcast_details',
                     required: true
-                }
-            ],
-            order: [
-                [sequelize.literal(`date`), 'DESC']
-            ]
-        })
-        .then((result) => {
-            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
-            resolve(result);
-        })
-        .catch((err) => {
-            reject(err);
-        });
+                }],
+                order: [
+                    [sequelize.literal(`date`), 'DESC']
+                ]
+            })
+            .then((result) => {
+                result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+                resolve(result);
+            })
+            .catch((err) => {
+                reject(err);
+            });
     })
 }
 
