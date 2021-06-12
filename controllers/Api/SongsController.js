@@ -18,6 +18,7 @@ const albumRepository = require('../../repositories/AlbumRepositories');
 const playlistRepository = require('../../repositories/PlaylistRepositories');
 const userRepositories = require('../../repositories/UsersRepositories');
 const podcastRepositories = require('../../repositories/PodcastRepositories');
+const genresRepositories = require('../../repositories/GenresRepositories');
 
 // ################################ Sequelize ################################ //
 const sequelize = require('../../config/dbConfig').sequelize;
@@ -1378,6 +1379,12 @@ module.exports.search = (req, res) => {
                 element.search_type = 'album';
             });
 
+            let genres = await genresRepositories.findAll({});
+
+            // genres.forEach(element => {
+            //     element.search_type = 'album';
+            // });
+
             let allSearchData = [...searchSongsList, ...searchPodcastsList, ...searchArtistsList, ...searchAlbumsList];
 
 
@@ -1393,6 +1400,7 @@ module.exports.search = (req, res) => {
                 status: 200,
                 msg: responseMessages.searchData,
                 data: allSearchData,
+                meta: genres,
                 purpose: purpose
             })
         } catch (err) {
