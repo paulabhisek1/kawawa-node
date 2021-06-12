@@ -1381,9 +1381,32 @@ module.exports.search = (req, res) => {
 
             let genres = await genresRepositories.findAll({});
 
-            // genres.forEach(element => {
-            //     element.search_type = 'album';
-            // });
+            genres.forEach(element => {
+                element.type = 'genre';
+                delete element.createdAt;
+                delete element.updatedAt;
+            });
+
+            let staticData = [
+
+                {
+                    id: -1,
+                    name: "Podcast",
+                    type: "static_data"
+                },
+                {
+                    id: -2,
+                    name: "Weekly 10 ten",
+                    type: "static_data"
+                },
+                {
+                    id: -3,
+                    name: "Recently Played",
+                    type: "static_data"
+                }
+            ]
+
+            genres.unshift(staticData);
 
             let allSearchData = [...searchSongsList, ...searchPodcastsList, ...searchArtistsList, ...searchAlbumsList];
 
