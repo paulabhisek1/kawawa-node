@@ -1378,9 +1378,7 @@ module.exports.search = (req, res) => {
                 element.search_type = 'album';
             });
 
-            let allSearchData = []
-
-            allSearchData.push(...searchSongsList, ...searchPodcastsList, ...searchArtistsList, ...searchAlbumsList);
+            let allSearchData = [...searchSongsList, ...searchPodcastsList, ...searchArtistsList, ...searchAlbumsList];
 
 
 
