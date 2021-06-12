@@ -1358,21 +1358,41 @@ module.exports.search = (req, res) => {
             let whereArtist = { full_name: { $like: `%${searchString}%` } };
 
             let searchSongsList = await songRepository.searchSongs(where, data);
+
+            searchSongsList.forEach(element => {
+                element.search_type = 'song';
+            });
             let searchPodcastsList = await podcastRepositories.userPodcastSearchList(where, data);
+
+            searchPodcastsList.forEach(element => {
+                element.search_type = 'podcast';
+            });
             let searchArtistsList = await artistRepositories.artistListSearch(whereArtist, data);
+
+            searchArtistsList.forEach(element => {
+                element.search_type = 'artist';
+            });
             let searchAlbumsList = await albumRepository.findAll(where, data);
 
-            let dataResp = {
-                songs: searchSongsList,
-                podcasts: searchPodcastsList,
-                artist: searchArtistsList,
-                albums: searchAlbumsList
-            }
+            searchAlbumsList.forEach(element => {
+                element.search_type = 'album';
+            });
+
+            let allSearchData = [...searchSongsList, ...searchPodcastsList, ...searchArtistsList, ...searchAlbumsList];
+
+
+
+            // let dataResp = {
+            //     songs: searchSongsList,
+            //     podcasts: searchPodcastsList,
+            //     artist: searchArtistsList,
+            //     albums: searchAlbumsList
+            // }
 
             return res.send({
                 status: 200,
                 msg: responseMessages.searchData,
-                data: dataResp,
+                data: allSearchData,
                 purpose: purpose
             })
         } catch (err) {
