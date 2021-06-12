@@ -1378,7 +1378,6 @@ module.exports.searchLandingPage = (req, res) => {
                 status: 200,
                 msg: responseMessages.searchData,
                 data: genres,
-                meta: genres,
                 purpose: purpose
             })
         } catch (err) {
