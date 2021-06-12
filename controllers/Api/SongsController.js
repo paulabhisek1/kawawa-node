@@ -1387,26 +1387,24 @@ module.exports.search = (req, res) => {
                 delete element.updatedAt;
             });
 
-            let staticData = [
-
-                {
-                    id: -1,
-                    name: "Podcast",
-                    type: "static_data"
-                },
-                {
-                    id: -2,
-                    name: "Weekly 10 ten",
-                    type: "static_data"
-                },
-                {
-                    id: -3,
-                    name: "Recently Played",
-                    type: "static_data"
-                }
-            ]
-
-            genres.unshift(staticData);
+            let staticData1 = {
+                id: -1,
+                name: "Podcast",
+                type: "static_data"
+            }
+            let staticData2 = {
+                id: -2,
+                name: "Weekly 10 ten",
+                type: "static_data"
+            }
+            let staticData3 = {
+                id: -3,
+                name: "Recently Played",
+                type: "static_data"
+            }
+            genres.unshift(staticData3);
+            genres.unshift(staticData2);
+            genres.unshift(staticData1);
 
             let allSearchData = [...searchSongsList, ...searchPodcastsList, ...searchArtistsList, ...searchAlbumsList];
 
