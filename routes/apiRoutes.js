@@ -63,6 +63,7 @@ router.get('/all-free-songs', validateRequest.validate(songsValidationsSchema.al
 // ################################### SONGS ########################################### //
 router.get('/artist-songs', validateRequest.validate(songsValidationsSchema.artistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.artistWiseTrack); // Artist wise songs
 router.get('/album-songs', validateRequest.validate(songsValidationsSchema.albumSongs, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.albumWiseTrack); // Album wise songs
+router.get('/genre-songs', validateRequest.validate(songsValidationsSchema.genreSongs, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.genreWiseSongs); // Genre wise songs
 router.get('/artist-albums', validateRequest.validate(songsValidationsSchema.artistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.allAlbumsList); // Artist wise album list
 router.post('/mark-unmark-liked/:id', authenticationMiddleware.authenticateRequestAPI, songsController.favouriteAndUnfavourite); // Mark & Unmark Favourite
 router.post('/artist-follow/:id', authenticationMiddleware.authenticateRequestAPI, artistAPIController.followArtist); // Artist Follow

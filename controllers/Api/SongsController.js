@@ -1494,3 +1494,72 @@ module.exports.search = (req, res) => {
         }
     })()
 }
+
+module.exports.genreWiseSongs = (req, res) => {
+    (async() => {
+        let purpose = "Genre Wise Track List"
+        try {
+            let queryParam = req.query;
+            let userID = req.headers.userID;
+            let where = {};
+            let data = {};
+            let page = queryParam.page ? parseInt(queryParam.page) : 1;
+            data.limit = 20;
+            data.offset = data.limit ? data.limit * (page - 1) : null;
+            let genreID = queryParam.genre_id;
+            let numberOfItems = queryParam.number_of_items;
+            if (numberOfItems > 0) data.limit = parseInt(numberOfItems);
+            let playlistId = queryParam.playlist_id;
+            if (playlistId > 0) where.id = { $lte: playlistId };
+            where.is_active = 1;
+            where.genre_id = genreID;
+            data.user_id = userID;
+
+            let genreSongs = await songRepository.findAndCountAll(where, data);
+
+            // Implementing Circular Queue
+            if (genreSongs.count.length < data.limit && playlistId > 0 && (numberOfItems > genreSongs.count.length)) {
+                data.limit = data.limit - parseInt(genreSongs.count.length);
+                data.offset = data.limit ? data.limit * (page - 1) : null;
+                if (playlistId > 0) where.id = { $gt: playlistId };
+
+                let newAlbumSongs = await songRepository.findAndCountAll(where, data);
+
+                genreSongs.count.length = genreSongs.count.length + newAlbumSongs.count.length
+                genreSongs.rows = genreSongs.rows.concat(newAlbumSongs.rows);
+            }
+
+            genreSongs.rows.forEach((item, index) => {
+                item.playListId = item.id
+                if (item.genre_details == '') {
+                    item.genre_details = {};
+                }
+                if (item.album_details == '') {
+                    item.album_details = {};
+                }
+            });
+
+            let totalPages = Math.ceil(genreSongs.count.length / 20);
+            let dataResp = {
+                genre_songs: genreSongs.rows,
+                total_count: genreSongs.count.length,
+                total_page: totalPages
+            }
+
+            return res.send({
+                status: 200,
+                msg: responseMessages.genreSongs,
+                data: dataResp,
+                purpose: purpose
+            })
+        } catch (err) {
+            console.log("Genre Wise Track List Err : ", err);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
