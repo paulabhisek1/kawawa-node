@@ -11,6 +11,20 @@ const adminValidationSchema = require('../validation-schemas/AdminValidationSche
 /* ############################################ Controllers ############################################ */
 const adminController = require('../controllers/Admin/AdminController');
 
+// SET STORAGE FOR Gener COVER IMAGE
+var storageGenerCover = multer.diskStorage({
+    destination: function(req, file, cb) {
+        const path = 'uploads/gener_covers';
+        fs.mkdirSync(path, { recursive: true });
+        cb(null, path);
+    },
+    filename: function(req, file, cb) {
+        cb(null, 'gener_cover_' + Date.now() + path.extname(file.originalname))
+    }
+})
+
+var uploadGenerCover = multer({ storage: storageGenerCover });
+
 /* ############################################ Routes  ############################################ */
 
 router.post('/login', validateRequest.validate(adminValidationSchema.loginSchema, 'body'), adminController.adminLogin); // System Login Route
@@ -18,7 +32,7 @@ router.put('/country-update/:id', authenticationMiddleware.authenticateAdminRequ
 router.get('/country-details/:id', authenticationMiddleware.authenticateAdminRequestAPI, adminController.countryDetails); // Country Details
 router.get('/country-list', authenticationMiddleware.authenticateAdminRequestAPI, validateRequest.validate(adminValidationSchema.listCountrySchema, 'query'), adminController.listCountry); // List Country
 router.put('/country-status-change/:id', authenticationMiddleware.authenticateAdminRequestAPI, adminController.statusChangeCountry); // Country Status Change
-router.post('/genre-add', authenticationMiddleware.authenticateAdminRequestAPI, uploadPodcastCover.single('file'), validateRequest.validate(adminValidationSchema.addGenreSchema, 'body'), adminController.addGenre); // Add Genre
+router.post('/genre-add', authenticationMiddleware.authenticateAdminRequestAPI, uploadGenerCover.single('file'), validateRequest.validate(adminValidationSchema.addGenreSchema, 'body'), adminController.addGenre); // Add Genre
 router.get('/genre-list', authenticationMiddleware.authenticateAdminRequestAPI, validateRequest.validate(adminValidationSchema.listCountrySchema, 'query'), adminController.listGenre); // List Genre
 router.delete('/delete-genre/:id', authenticationMiddleware.authenticateAdminRequestAPI, adminController.deleteGenre); // Delete Genre
 router.get('/artist-list', authenticationMiddleware.authenticateAdminRequestAPI, validateRequest.validate(adminValidationSchema.listCountrySchema, 'query'), adminController.listArtists); // List Artists
