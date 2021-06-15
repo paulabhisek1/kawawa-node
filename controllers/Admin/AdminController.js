@@ -32,6 +32,9 @@ const moment = require('moment');
 const jwtOptionsAccess = global.constants.jwtAccessTokenOptions;
 const jwtOptionsRefresh = global.constants.jwtRefreshTokenOptions;
 
+const fs = require('fs');
+const path = require('path');
+
 /*
 |------------------------------------------------ 
 | API name          :  userLogin
