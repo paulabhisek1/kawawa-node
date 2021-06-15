@@ -332,7 +332,7 @@ module.exports.addGenre = (req, res) => {
         try {
             let body = req.body;
             let filePath = `${global.constants.gener_cover_url}/${req.file.filename}`;
-            let genreCount = await adminRepositories.countGenre({ name: body.name, cover_picture: filePath });
+            let genreCount = await adminRepositories.countGenre({ name: body.name });
 
             if (genreCount > 0) {
                 return res.status(409).send({
@@ -344,6 +344,7 @@ module.exports.addGenre = (req, res) => {
             } else {
                 let createData = {
                     name: body.name,
+                    cover_picture: filePath
                 }
 
                 let genreDet = await adminRepositories.addGenre(createData);
