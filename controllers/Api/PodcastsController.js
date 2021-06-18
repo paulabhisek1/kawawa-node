@@ -78,6 +78,9 @@ module.exports.podcastHomepage = (req, res) => {
                 if (item.podcast_details.podcast_category_details == '') {
                     item.podcast_details.podcast_category_details = {};
                 }
+                if (item.podcast_details.podcast_artist_details == '') {
+                    item.podcast_details.podcast_artist_details = {};
+                }
                 newAllRecentlyPlayed.push(item.podcast_details);
             });
             allRecentlyPlayed = newAllRecentlyPlayed;
@@ -92,6 +95,16 @@ module.exports.podcastHomepage = (req, res) => {
             where.is_active = 1;
             data.user_id = userID;
             let allPodcastsList = await podcastRepository.userPodcastList(where, data);
+
+            allPodcastsList.rows.forEach((item, index) => {
+                item.playListId = item.id
+                if (item.podcast_category_details == '') {
+                    item.podcast_category_details = {};
+                }
+                if (item.podcast_artist_details == '') {
+                    item.podcast_artist_details = {};
+                }
+            });
 
             let totalPages = Math.ceil(allPodcastsList.count.length / data.limit);
 
