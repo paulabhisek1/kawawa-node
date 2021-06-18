@@ -163,6 +163,18 @@ module.exports.allRecentlyPlayed = (req, res) => {
             data.user_id = userID;
 
             let allRecentlyPlayedPodcasts = await userPlayedHistoryRepo.allRecentlyPlayedPodcasts(where, data);
+            let newAllRecentlyPlayed = [];
+            allRecentlyPlayedPodcasts.rows.forEach((item, index) => {
+                item.podcast_details.playListId = item.id; // Push the playlist item id it the array
+                if (item.podcast_details.podcast_category_details == '') {
+                    item.podcast_details.podcast_category_details = {};
+                }
+                if (item.podcast_details.podcast_artist_details == '') {
+                    item.podcast_details.podcast_artist_details = {};
+                }
+                newAllRecentlyPlayed.push(item.podcast_details);
+            });
+            allRecentlyPlayedPodcasts.rows = newAllRecentlyPlayed;
 
             let totalPages = Math.ceil(allRecentlyPlayedPodcasts.count.length / data.limit);
 
