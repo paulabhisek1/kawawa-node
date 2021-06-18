@@ -101,8 +101,8 @@ module.exports.podcastHomepage = (req, res) => {
                 if (item.podcast_category_details == '') {
                     item.podcast_category_details = {};
                 }
-                if (item.podcast_artist_details == '') {
-                    item.podcast_artist_details = {};
+                if (item.artist_details == '') {
+                    item.artist_details = {};
                 }
             });
 
