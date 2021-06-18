@@ -36,8 +36,10 @@ router.get('/country-details/:id', authenticationMiddleware.authenticateAdminReq
 router.get('/country-list', authenticationMiddleware.authenticateAdminRequestAPI, validateRequest.validate(adminValidationSchema.listCountrySchema, 'query'), adminController.listCountry); // List Country
 router.put('/country-status-change/:id', authenticationMiddleware.authenticateAdminRequestAPI, adminController.statusChangeCountry); // Country Status Change
 router.post('/genre-add', authenticationMiddleware.authenticateAdminRequestAPI, uploadGenerCover.single('file'), validateRequest.validate(adminValidationSchema.addGenreSchema, 'body'), adminController.addGenre); // Add Genre
+router.put('/genre-edit/:id', authenticationMiddleware.authenticateAdminRequestAPI, uploadGenerCover.single('file'), validateRequest.validate(adminValidationSchema.addGenreSchema, 'body'), adminController.editGenre); // Update Genre
 router.get('/genre-list', authenticationMiddleware.authenticateAdminRequestAPI, validateRequest.validate(adminValidationSchema.listCountrySchema, 'query'), adminController.listGenre); // List Genre
 router.delete('/delete-genre/:id', authenticationMiddleware.authenticateAdminRequestAPI, adminController.deleteGenre); // Delete Genre
+router.get('/genre-details/:id', authenticationMiddleware.authenticateAdminRequestAPI, adminController.genreDetails); // Genre Details
 router.get('/artist-list', authenticationMiddleware.authenticateAdminRequestAPI, validateRequest.validate(adminValidationSchema.listCountrySchema, 'query'), adminController.listArtists); // List Artists
 router.get('/artist-details/:id', authenticationMiddleware.authenticateAdminRequestAPI, adminController.artistDetails); // Artists Details
 router.put('/artist-verify/:id', authenticationMiddleware.authenticateAdminRequestAPI, adminController.verifyArtist); // Artists verify

@@ -370,6 +370,65 @@ module.exports.addGenre = (req, res) => {
 
 /*
 |------------------------------------------------ 
+| API name          :  editGenre
+| Response          :  Respective response message in JSON format
+| Logic             :  Edit Genre
+| Request URL       :  BASE_URL/admin/genre-edit/<< Genre ID >>
+| Request method    :  PUT
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.editGenre = (req, res) => {
+    (async() => {
+        let purpose = "Edit Genre";
+        try {
+            let body = req.body;
+            let filePath = undefined;
+            if(req.file) {
+                filePath = `${global.constants.gener_cover_url}/${req.file.filename}`;
+            }
+
+            let genreID = req.params.id;
+
+            let genreCount = await adminRepositories.countGenre({ id: genreID });
+
+            if (genreCount > 0) {
+                let updateData = {
+                    name: body.name,
+                }
+                if(filePath) updateData.cover_picture = filePath;
+
+                await adminRepositories.updateGenre({ id: genreID }, updateData);
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.genreUpdate,
+                    data: {},
+                    purpose: purpose
+                })
+
+            } else {
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.genreNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        } catch (err) {
+            console.log("Edit Genre ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
 | API name          :  listGenre
 | Response          :  Respective response message in JSON format
 | Logic             :  Fetch Genre List
@@ -406,6 +465,54 @@ module.exports.listGenre = (req, res) => {
             })
         } catch (err) {
             console.log("List Genre ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  genreDetails
+| Response          :  Respective response message in JSON format
+| Logic             :  Genre Details
+| Request URL       :  BASE_URL/admin/genre-details/<< Genre ID >>
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.genreDetails = (req, res) => {
+    (async() => {
+        let purpose = "Genre Details";
+        try {
+            let genreID = req.params.id;
+
+            let genreCount = await adminRepositories.countGenre({ id: genreID });
+
+            if (genreCount > 0) {
+                let genreDetails = await adminRepositories.fetchGenre({ id: genreID })
+
+                return res.status(200).send({
+                    status: 200,
+                    msg: responseMessages.genreDetails,
+                    data: genreDetails,
+                    purpose: purpose
+                })
+
+            } else {
+                return res.status(404).send({
+                    status: 404,
+                    msg: responseMessages.genreNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        } catch (err) {
+            console.log("Genre Details ERROR : ", err);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,
