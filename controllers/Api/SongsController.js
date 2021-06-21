@@ -1424,11 +1424,16 @@ module.exports.search = (req, res) => {
 
             searchSongsList.forEach(element => {
                 element.search_type = 'song';
+                if(element.artist_details == '') element.artist_details = {};
+                if(element.genre_details == '') element.genre_details = {};
+                if(element.album_details == '') element.album_details = {};
             });
             let searchPodcastsList = await podcastRepositories.userPodcastSearchList(where, data);
 
             searchPodcastsList.forEach(element => {
                 element.search_type = 'podcast';
+                if(element.artist_details == '') element.artist_details = {};
+                if(element.podcast_category_details == '') element.podcast_category_details = {};
             });
             let searchArtistsList = await artistRepositories.artistListSearch(whereArtist, data);
 
