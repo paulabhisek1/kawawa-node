@@ -33,7 +33,8 @@ const moment = require('moment');
 const fs = require('fs');
 const path = require('path');
 const { getAudioDurationInSeconds } = require('get-audio-duration');
-const stripe = require('stripe')('sk_test_51Ir44wSICwQRfCEwe8osbpcrmMPSABv4QTeF0VKmln3DnHmD7hp6Fxap0PZGMUGPJnA0kJYdq8QtHNl6ZkOdeWnN00QgLgjZ35');
+//const stripe = require('stripe')('sk_test_51Ir44wSICwQRfCEwe8osbpcrmMPSABv4QTeF0VKmln3DnHmD7hp6Fxap0PZGMUGPJnA0kJYdq8QtHNl6ZkOdeWnN00QgLgjZ35');
+const stripe = require('stripe')('sk_test_51G6le1Hyo8q6i2DXPoxEeBsNdDTZnptHQArZ93bDUpgoiZ04EBe8UVZjQSsi5mZZhvsTMUGJ8eGHPYz4DorCRL1i00ZrPLYCLR');
 
 // ################################ Globals ################################ //
 const jwtOptionsAccess = global.constants.jwtAccessTokenOptions;
@@ -59,9 +60,9 @@ cron.schedule('* * * * *', () => {
             console.log('running a task every minute'+ purpose);
 
             const transfer = await stripe.transfers.create({
-              amount: (400*100),
-              currency: 'USD',
-              destination: 'acct_1J0A9REn0P4IN6DY',
+              amount: (100*100),
+              currency: 'INR',
+              destination: 'acct_1J1dKKQn8UMxt5Pq',
               transfer_group: 'ORDER_95',
             });
 

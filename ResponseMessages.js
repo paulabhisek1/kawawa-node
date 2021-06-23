@@ -88,5 +88,6 @@ module.exports = {
     followedArtists: `Followed Artists list fetched successfully`,
     searchData: `Data fetched successfully`,
     graphData: 'Artist graph data fetched successfully',
-    artistDashboardData: 'Artist dashboard data fetched successfully'
+    artistDashboardData: 'Artist dashboard data fetched successfully',
+    subscriptiobCreated: 'Subscription created successfully'
 }

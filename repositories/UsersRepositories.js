@@ -3,6 +3,8 @@ var DataTypes = require('sequelize/lib/data-types');
 const UsersModel = require('../models/users')(sequelize, DataTypes);
 const CountryModel = require('../models/countries')(sequelize, DataTypes);
 const DonwloadModel = require('../models/downloads')(sequelize, DataTypes);
+const UserSubscriptionModel = require('../models/user_subscriptions')(sequelize, DataTypes);
+
 
 // Associations
 UsersModel.belongsTo(CountryModel, { foreignKey: 'country_id' });
@@ -93,5 +95,23 @@ module.exports.fetchCountryId = (whereData) => {
         }).catch((error) => {
             reject(error);
         })
+    })
+}
+
+
+// Create Subscription
+module.exports.createSubscription = (data, t = null) => {
+    return new Promise((resolve, reject) => {
+        let options = {}
+            //if trunsaction exist
+        if (t != null) options.transaction = t;
+        UserSubscriptionModel.create(data, options)
+            .then((result) => {
+                result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+                resolve(result);
+            })
+            .catch((err) => {
+                reject(err);
+            });
     })
 }

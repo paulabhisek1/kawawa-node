@@ -32,7 +32,8 @@ const jwtOptionsAccess = global.constants.jwtAccessTokenOptions;
 const jwtOptionsRefresh = global.constants.jwtRefreshTokenOptions;
 
 
-const stripe = require('stripe')('sk_test_51Ir44wSICwQRfCEwe8osbpcrmMPSABv4QTeF0VKmln3DnHmD7hp6Fxap0PZGMUGPJnA0kJYdq8QtHNl6ZkOdeWnN00QgLgjZ35');
+//const stripe = require('stripe')('sk_test_51Ir44wSICwQRfCEwe8osbpcrmMPSABv4QTeF0VKmln3DnHmD7hp6Fxap0PZGMUGPJnA0kJYdq8QtHNl6ZkOdeWnN00QgLgjZ35');
+const stripe = require('stripe')('sk_test_51G6le1Hyo8q6i2DXPoxEeBsNdDTZnptHQArZ93bDUpgoiZ04EBe8UVZjQSsi5mZZhvsTMUGJ8eGHPYz4DorCRL1i00ZrPLYCLR');
 
 /*
 |------------------------------------------------ 
@@ -766,10 +767,31 @@ module.exports.createSubscription = (req, res) => {
                     ],
                 });
 
+
+                console.log(subscription)
+
+
+                let createSubscriptionData = {
+                    user_id:  userID ,
+                    customer_id:  subscription.customer,
+                    subscription_id:  subscription.id,
+                    invoice_id:  subscription.latest_invoice,
+                    price_id:  subscription.plan.id,
+                    product_id:  subscription.plan.product,
+                    price:  (subscription.plan.amount/100),
+                    currency:  subscription.plan.currency,
+                    subscription_interval:  subscription.plan.interval,
+                    subscription_interval_length:  subscription.plan.interval_count,
+                    status:  subscription.status,
+                }
+
+                let subscriptionData = await userRepositories.createSubscription(createSubscriptionData);
+
+
               
                 return res.send({
                     status: 200,
-                    msg: responseMessages.userCountryUpdate,
+                    msg: responseMessages.subscriptiobCreated,
                     data: {
                         user_details: userDetails
                     },
@@ -784,7 +806,7 @@ module.exports.createSubscription = (req, res) => {
                 })
             }
         } catch (e) {
-            console.log("REGISTER USER ERROR : ", e.raw);
+            console.log("REGISTER USER ERROR : ", e);
             if (e.raw) {
                 return res.status(500).send({
                     status: 500,
