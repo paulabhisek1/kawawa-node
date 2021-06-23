@@ -2708,7 +2708,7 @@ module.exports.songsAndPodcastsChart = (req, res) => {
                         thirtyDays: thirdPlayed.playedCount
                     }
                 },
-                podcasr: {
+                podcast: {
                     download: {
                         sevenDays: firstDownloadPodcast.downloadCount,
                         fifteenDays: secondDownloadPodcast.downloadCount,
