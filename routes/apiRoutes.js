@@ -63,12 +63,14 @@ router.get('/all-free-songs', validateRequest.validate(songsValidationsSchema.al
 // ################################### SONGS ########################################### //
 router.get('/artist-songs', validateRequest.validate(songsValidationsSchema.artistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.artistWiseTrack); // Artist wise songs
 router.get('/album-songs', validateRequest.validate(songsValidationsSchema.albumSongs, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.albumWiseTrack); // Album wise songs
+router.get('/genre-songs', validateRequest.validate(songsValidationsSchema.genreSongs, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.genreWiseSongs); // Genre wise songs
 router.get('/artist-albums', validateRequest.validate(songsValidationsSchema.artistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.allAlbumsList); // Artist wise album list
 router.post('/mark-unmark-liked/:id', authenticationMiddleware.authenticateRequestAPI, songsController.favouriteAndUnfavourite); // Mark & Unmark Favourite
 router.post('/artist-follow/:id', authenticationMiddleware.authenticateRequestAPI, artistAPIController.followArtist); // Artist Follow
 router.get('/followed-artists', validateRequest.validate(songsValidationsSchema.followedArtistsLists, 'query'), authenticationMiddleware.authenticateRequestAPI, artistAPIController.allFollowedArtists); // Artist Follow
 router.get('/favourite-songs', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.allFavouriteSongs); // See All Favourite songs
 router.get('/downloaded-songs', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.allDownloadSongs); // See All Downloaded songs
+router.get('/search-landing-page', authenticationMiddleware.authenticateRequestAPI, songsController.searchLandingPage); // Search Landing Page
 router.get('/search', validateRequest.validate(songsValidationsSchema.searchSchema, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.search); // Search
 
 // ################################### PLAYLISTS ########################################### //

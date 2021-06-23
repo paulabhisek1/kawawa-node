@@ -190,6 +190,7 @@ router.put('/update-artist-profile', authenticationMiddleware.authenticateArtist
 router.get('/song-graph-data', authenticationMiddleware.authenticateRequestAPI, validateRequest.validate(artistValidationSchema.graphData, 'query'), artistController.artistGraphSong);
 router.get('/podcast-graph-data', authenticationMiddleware.authenticateRequestAPI, validateRequest.validate(artistValidationSchema.graphData, 'query'), artistController.artistGraphPodcast);
 router.get('/dashboard-data', authenticationMiddleware.authenticateRequestAPI, artistController.artistDashboardKPI);
+router.get('/dashboard-chart', authenticationMiddleware.authenticateRequestAPI, artistController.songsAndPodcastsChart);
 
 
 

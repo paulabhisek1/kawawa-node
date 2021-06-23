@@ -1,10 +1,11 @@
 module.exports = {
-    allowMimeType: ['image/jpeg', 'image/png', 'application/pdf','video/mp4', 'image/svg'],
+    allowMimeType: ['image/jpeg', 'image/png', 'application/pdf', 'video/mp4', 'image/svg'],
     profile_photo_url: '/uploads/profile_images',
     artist_image_url: '/uploads/artist_images',
     govt_id_url: '/uploads/govt_ids',
     sample_songs_url: '/uploads/songs/sample',
     album_cover_url: '/uploads/album_covers',
+    gener_cover_url: '/uploads/gener_covers',
     songs_cover_url: '/uploads/songs_cover',
     songs_url: '/uploads/songs',
     podcasts_cover_url: '/uploads/podcasts_cover',

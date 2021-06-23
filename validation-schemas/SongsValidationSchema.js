@@ -39,6 +39,15 @@ module.exports.albumSongs = Joi.object().keys({
     artist_id: Joi.number().allow()
 });
 
+// Genre Wise Songs Schema
+module.exports.genreSongs = Joi.object().keys({
+    page: Joi.number().min(1).required(),
+    genre_id: Joi.number().required(),
+    playlist_id: Joi.number().min(0),
+    number_of_items: Joi.number().min(0),
+    artist_id: Joi.number().allow()
+});
+
 // Create Playlist
 module.exports.createPlaylist = Joi.object().keys({
     name: Joi.string().required().label('Playlist name'),
