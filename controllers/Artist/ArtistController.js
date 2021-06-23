@@ -2366,7 +2366,7 @@ module.exports.updateArtist = (req, res) => {
 | API name          :  artistGraphSong
 | Response          :  Respective response message in JSON format
 | Logic             :  Artist Song Graph
-| Request URL       :  BASE_URL/artist/artist-details/song-graph-data
+| Request URL       :  BASE_URL/artist/song-graph-data
 | Request method    :  GET
 | Author            :  Suman Rana
 |------------------------------------------------
@@ -2474,7 +2474,7 @@ module.exports.artistGraphSong =(req, res) => {
 | API name          :  artistGraphPodcast
 | Response          :  Respective response message in JSON format
 | Logic             :  Artist Podcast Graph
-| Request URL       :  BASE_URL/artist/artist-details/podcast-graph-data
+| Request URL       :  BASE_URL/artist/podcast-graph-data
 | Request method    :  GET
 | Author            :  Suman Rana
 |------------------------------------------------
@@ -2577,6 +2577,16 @@ module.exports.artistGraphPodcast = (req, res) => {
     })()
 }
 
+/*
+|------------------------------------------------ 
+| API name          :  artistDashboardKPI
+| Response          :  Respective response message in JSON format
+| Logic             :  Artist Podcast Graph
+| Request URL       :  BASE_URL/artist/dashboard-data
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
 module.exports.artistDashboardKPI = (req, res) => {
     (async()=>{
         let purpose = "Artist Dashboard KPI"
@@ -2617,6 +2627,110 @@ module.exports.artistDashboardKPI = (req, res) => {
         }
         catch(err) {
             console.log("Artist Dashboard KPI Error : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  songsAndPodcastsChart
+| Response          :  Respective response message in JSON format
+| Logic             :  Artist Podcast Graph
+| Request URL       :  BASE_URL/artist/dashboard-chart
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.songsAndPodcastsChart = (req, res) => {
+    (async()=>{
+        let purpose = "Song And Podcast Chart"
+        try {
+            let artistID = req.headers.userID;
+            let where = {};
+            let wherePlayed = {};
+            let data = {};
+            where.type = 'song';
+            data.artistID = artistID
+
+            where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 7 DAY)') };
+            let firstDownload = await artistRepositories.artistGraphSongCount(where, data);
+
+            where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 15 DAY)') };
+            let secondDownload = await artistRepositories.artistGraphSongCount(where, data);
+
+            where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 30 DAY)') };
+            let thirdDownload = await artistRepositories.artistGraphSongCount(where, data);
+
+            wherePlayed.updatedAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 7 DAY)') };
+            let firstPlayed = await artistRepositories.artistGraphSongListenCount(wherePlayed, data);
+
+            wherePlayed.updatedAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 15 DAY)') };
+            let secondPlayed = await artistRepositories.artistGraphSongListenCount(wherePlayed, data);
+
+            wherePlayed.updatedAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 30 DAY)') };
+            let thirdPlayed = await artistRepositories.artistGraphSongListenCount(wherePlayed, data);
+
+            where.type = 'podcast';
+            where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 7 DAY)') };
+            let firstDownloadPodcast = await artistRepositories.artistGraphPodcastCount(where, data);
+
+            where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 15 DAY)') };
+            let secondDownloadPodcast = await artistRepositories.artistGraphPodcastCount(where, data);
+
+            where.createdAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 30 DAY)') };
+            let thirdDownloadPodcast = await artistRepositories.artistGraphPodcastCount(where, data);
+
+            wherePlayed.updatedAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 7 DAY)') };
+            let firstPlayedPodcast = await artistRepositories.artistGraphPodcastListenCount(wherePlayed, data);
+
+            wherePlayed.updatedAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 15 DAY)') };
+            let secondPlayedPodcast = await artistRepositories.artistGraphPodcastListenCount(wherePlayed, data);
+
+            wherePlayed.updatedAt = { $gte: sequelize.literal('(CURDATE() - INTERVAL 30 DAY)') };
+            let thirdPlayedPodcast = await artistRepositories.artistGraphPodcastListenCount(wherePlayed, data);
+            
+            let dataResp = {
+                song: {
+                    download: {
+                        sevenDays: firstDownload.downloadCount,
+                        fifteenDays: secondDownload.downloadCount,
+                        thirtyDays: thirdDownload.downloadCount
+                    },
+                    played: {
+                        sevenDays: firstPlayed.playedCount,
+                        fifteenDays: secondPlayed.playedCount,
+                        thirtyDays: thirdPlayed.playedCount
+                    }
+                },
+                podcasr: {
+                    download: {
+                        sevenDays: firstDownloadPodcast.downloadCount,
+                        fifteenDays: secondDownloadPodcast.downloadCount,
+                        thirtyDays: thirdDownloadPodcast.downloadCount
+                    },
+                    played: {
+                        sevenDays: firstPlayedPodcast.playedCount,
+                        fifteenDays: secondPlayedPodcast.playedCount,
+                        thirtyDays: thirdPlayedPodcast.playedCount
+                    }
+                }
+            }
+
+            return res.status(200).send({
+                status: 200,
+                msg: responseMessages.graphData,
+                data: dataResp,
+                purpose: purpose
+            })
+        }
+        catch(err) {
+            console.log("Song And Podcast Chart Error : ", err);
             return res.status(500).send({
                 status: 500,
                 msg: responseMessages.serverError,

@@ -452,6 +452,31 @@ module.exports.artistGraphSong = (where, data) => {
     })
 }
 
+module.exports.artistGraphSongCount = (where, data) => {
+    return new Promise((resolve, reject) => {
+        DownloadsModel.findOne({
+                where: where,
+                attributes: [
+                    [sequelize.fn('count', sequelize.col('downloads.id')), 'downloadCount'],
+                ],
+                include: [{
+                    model: SongsModel,
+                    where: { artist_id: data.artistID },
+                    attributes: [],
+                    as: 'download_song_details',
+                    required: true
+                }],
+            })
+            .then((result) => {
+                result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+                resolve(result);
+            })
+            .catch((err) => {
+                reject(err);
+            });
+    })
+}
+
 module.exports.artistGraphSongListen = (where, data) => {
     return new Promise((resolve, reject) => {
         UserPlayedModel.findAll({
@@ -471,6 +496,31 @@ module.exports.artistGraphSongListen = (where, data) => {
                 order: [
                     [sequelize.literal(`date`), 'DESC']
                 ]
+            })
+            .then((result) => {
+                result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+                resolve(result);
+            })
+            .catch((err) => {
+                reject(err);
+            });
+    })
+}
+
+module.exports.artistGraphSongListenCount = (where, data) => {
+    return new Promise((resolve, reject) => {
+        UserPlayedModel.findOne({
+                where: where,
+                attributes: [
+                    [sequelize.fn('count', sequelize.col('user_played_histories.id')), 'playedCount'],
+                ],
+                include: [{
+                    model: SongsModel,
+                    where: { artist_id: data.artistID },
+                    attributes: [],
+                    as: 'played_song_details',
+                    required: true
+                }]
             })
             .then((result) => {
                 result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
@@ -512,6 +562,31 @@ module.exports.artistGraphPodcast = (where, data) => {
     })
 }
 
+module.exports.artistGraphPodcastCount = (where, data) => {
+    return new Promise((resolve, reject) => {
+        DownloadsModel.findOne({
+                where: where,
+                attributes: [
+                    [sequelize.fn('count', sequelize.col('downloads.id')), 'downloadCount'],
+                ],
+                include: [{
+                    model: PodcastsModel,
+                    where: { artist_id: data.artistID },
+                    attributes: [],
+                    as: 'download_podcast_details',
+                    required: true
+                }]
+            })
+            .then((result) => {
+                result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+                resolve(result);
+            })
+            .catch((err) => {
+                reject(err);
+            });
+    })
+}
+
 module.exports.artistGraphPodcastListen = (where, data) => {
     return new Promise((resolve, reject) => {
         UserPlayedModel.findAll({
@@ -531,6 +606,31 @@ module.exports.artistGraphPodcastListen = (where, data) => {
                 order: [
                     [sequelize.literal(`date`), 'DESC']
                 ]
+            })
+            .then((result) => {
+                result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+                resolve(result);
+            })
+            .catch((err) => {
+                reject(err);
+            });
+    })
+}
+
+module.exports.artistGraphPodcastListenCount = (where, data) => {
+    return new Promise((resolve, reject) => {
+        UserPlayedModel.findOne({
+                where: where,
+                attributes: [
+                    [sequelize.fn('count', sequelize.col('user_played_histories.id')), 'playedCount'],
+                ],
+                include: [{
+                    model: PodcastsModel,
+                    where: { artist_id: data.artistID },
+                    attributes: [],
+                    as: 'played_podcast_details',
+                    required: true
+                }],
             })
             .then((result) => {
                 result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
