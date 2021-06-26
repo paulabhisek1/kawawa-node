@@ -125,7 +125,7 @@ module.exports.allFollowedArtists = (req, res) => {
 
             // change the response as per requirement
             artistList.rows.forEach((item, index) => {
-                item.is_followed = item.id
+                item.is_followed = 1
             });
 
             let totalPages = Math.ceil(artistList.count.length / data.limit);
