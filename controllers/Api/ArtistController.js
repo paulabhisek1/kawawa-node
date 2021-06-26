@@ -123,7 +123,10 @@ module.exports.allFollowedArtists = (req, res) => {
 
             let artistList = await artistRepositories.followedArtistList(where, { user_id: userID });
 
-            artistList.rows.is_followed = 1; // change the response as per requirement
+            // change the response as per requirement
+            artistList.rows.forEach((item, index) => {
+                item.is_followed = item.id
+            });
 
             let totalPages = Math.ceil(artistList.count.length / data.limit);
             let dataResp = {
