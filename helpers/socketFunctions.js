@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const userRepositories = require('../repositories/UsersRepositories');
 const userPlayedHistoryRepositories = require('../repositories/UserPlayedHistoriesRepositories');
 const songRepositories = require('../repositories/SongsRepository');
+const pocastRepositories = require('../repositories/PodcastRepositories');
 const artistRepositories = require('../repositories/ArtistsRepositories');
 const artistPaymentRepositories = require('../repositories/ArtistPaymentRepositories');
 const countryRepositories = require('../repositories/CountriesRepository');
@@ -85,6 +86,76 @@ module.exports.socketResponse = (socket) => {
             })
         }
     });
+
+    // Save Pocast Details
+    socket.on('user-played-podcast', async(data, callback) => {
+        let podcastID = data.podcastID;
+        let accessToken = data.accessToken.split(' ')[1];
+        try {
+            jwt.verify(accessToken, jwtOptionsAccess.secret, async(err, decodedToken) => {
+                if (err) {
+                    callback({
+                        status: 0,
+                        msg: responseMessages.authFailure,
+                    })
+                } else {
+                    let userCount = await userRepositories.count({ where: { id: decodedToken.user_id } });
+
+                    if (userCount > 0) {
+                        let userID = decodedToken.user_id;
+                        let podcastCount = await pocastRepositories.count({ id: podcastID, is_active: 1 });
+
+                        if (podcastCount > 0) {
+                            checkArtistPaymentPodcast(podcastID);
+                            let podcastDet = await pocastRepositories.findOne({ id: podcastID, is_active: 1 });
+                            let updateData = {};
+                            if (podcastDet.playedCount) updateData.playedCount = podcastDet.playedCount + 1;
+                            else updateData.playedCount = 1;
+
+                            await pocastRepositories.update({ id: podcastID }, updateData)
+
+                            let recentlyPlayedCount = await userPlayedHistoryRepositories.count({ user_id: userID, file_id: podcastID });
+
+                            if (recentlyPlayedCount > 0) {
+
+                                await userPlayedHistoryRepositories.updateNew({ user_id: userID, file_id: podcastID }, { type: 'podcast', updatedAt: Date.now() });
+
+                                callback({
+                                    status: 1,
+                                    msg: `User Played History Updated`,
+                                })
+
+                            } else {
+
+                                await userPlayedHistoryRepositories.create({ user_id: userID, file_id: podcastID, type: 'podcast' });
+
+                                callback({
+                                    status: 1,
+                                    msg: `User Played History Added`,
+                                })
+                            }
+
+                        } else {
+                            callback({
+                                status: 0,
+                                msg: `Invalid Podcast ID Provided`,
+                            })
+                        }
+                    } else {
+                        callback({
+                            status: 0,
+                            msg: responseMessages.authFailure,
+                        })
+                    }
+                }
+            })
+        } catch (err) {
+            callback({
+                status: 0,
+                msg: responseMessages.serverError,
+            })
+        }
+    });
 }
 
 async function checkArtistPayment(songID) {
@@ -106,6 +177,34 @@ async function checkArtistPayment(songID) {
                     artist_id: artistDetails.id,
                     country_id: countryID,
                     current_balance: songDetails.price,
+                    already_paid: 0,
+                    last_payment_date: null
+                }
+                await artistPaymentRepositories.create(createData)
+            }
+        })
+    }
+}
+
+async function checkArtistPaymentPodcast(podcastID) {
+    let podcastDetails = await pocastRepositories.findOne({ id: podcastID });
+    if(podcastDetails.is_paid == 1) {
+        let artistDetails = await artistRepositories.findOne({ id: podcastDetails.artist_id });
+        let countryID = artistDetails.country_id;
+
+        await sequelize.transaction(async (t)=>{
+            let paymentDetails = await artistPaymentRepositories.findOne({ artist_id: artistDetails.id });
+            if(paymentDetails) {
+                let updateData = {
+                    current_balance: Number(paymentDetails.current_balance + podcastDetails.price)
+                }
+                await artistPaymentRepositories.update({ id: paymentDetails.id }, updateData, t)
+            }
+            else {
+                let createData = {
+                    artist_id: artistDetails.id,
+                    country_id: countryID,
+                    current_balance: podcastDetails.price,
                     already_paid: 0,
                     last_payment_date: null
                 }
