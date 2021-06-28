@@ -42,18 +42,18 @@ const jwtOptionsRefresh = global.constants.jwtRefreshTokenOptions;
 |------------------------------------------------
 */
 module.exports.followArtist = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Follow Artist"
-        try{
+        try {
             let artistID = req.params.id;
             let userID = req.headers.userID;
 
             let artistDetails = await artistRepositories.findOne({ id: artistID, is_active: 1 });
 
-            if(artistDetails) {
+            if (artistDetails) {
                 let followDetails = await artistRepositories.followDetails({ user_id: userID, artist_id: artistID });
 
-                if(followDetails) {
+                if (followDetails) {
                     await artistRepositories.unfollowArtist({ id: followDetails.id });
 
                     return res.send({
@@ -64,9 +64,8 @@ module.exports.followArtist = (req, res) => {
                         },
                         purpose: purpose
                     })
-                }
-                else{
-                    await artistRepositories.followArtist({user_id: userID, artist_id: artistID  });
+                } else {
+                    await artistRepositories.followArtist({ user_id: userID, artist_id: artistID });
 
                     return res.send({
                         status: 200,
@@ -77,8 +76,7 @@ module.exports.followArtist = (req, res) => {
                         purpose: purpose
                     })
                 }
-            }
-            else{
+            } else {
                 return res.send({
                     status: 404,
                     msg: responseMessages.artistNotFound,
@@ -86,8 +84,7 @@ module.exports.followArtist = (req, res) => {
                     purpose: purpose
                 })
             }
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Follow Artist Error : ", err);
             return res.send({
                 status: 500,
@@ -110,9 +107,9 @@ module.exports.followArtist = (req, res) => {
 |------------------------------------------------
 */
 module.exports.allFollowedArtists = (req, res) => {
-    (async()=>{
+    (async() => {
         let purpose = "Follow Artist"
-        try{
+        try {
             let userID = req.headers.userID;
 
             let queryParam = req.query;
@@ -125,6 +122,11 @@ module.exports.allFollowedArtists = (req, res) => {
             data.user_id = userID;
 
             let artistList = await artistRepositories.followedArtistList(where, { user_id: userID });
+
+            // change the response as per requirement
+            artistList.rows.forEach((item, index) => {
+                item.is_followed = 1
+            });
 
             let totalPages = Math.ceil(artistList.count.length / data.limit);
             let dataResp = {
@@ -139,8 +141,7 @@ module.exports.allFollowedArtists = (req, res) => {
                 data: dataResp,
                 purpose: purpose
             })
-        }
-        catch(err) {
+        } catch (err) {
             console.log("Follow Artist List Error : ", err);
             return res.send({
                 status: 500,
