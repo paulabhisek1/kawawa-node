@@ -1054,6 +1054,82 @@ module.exports.addSongToPlaylist = (req, res) => {
 
 /*
 |------------------------------------------------ 
+| API name          :  addSongToPlaylist
+| Response          :  Respective response message in JSON format
+| Logic             :  Add Podcast To Playlist
+| Request URL       :  BASE_URL/api/add-podcast-to-playlist
+| Request method    :  POST
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.addPodcastToPlaylist = (req, res) => {
+    (async() => {
+        let purpose = "Add Podcast To Playlist"
+        try {
+            let playlistID = req.body.playlist_id;
+            let podcastID = req.body.file_id;
+            let userID = req.headers.userID;
+
+            let playlistDetails = await playlistRepository.findOne({ id: playlistID, user_id: userID });
+
+            if (playlistDetails) {
+                let podcastCount = await podcastRepositories.count({ id: podcastID, is_active: 1, type: 'podcast' });
+
+                if (podcastCount > 0) {
+                    let playlistSong = await playlistRepository.playlistSongsCount({ file_id: podcastID, playlist_id: playlistID });
+
+                    if (playlistSong > 0) {
+                        return res.send({
+                            status: 409,
+                            msg: responseMessages.duplicatePlaylistSong,
+                            data: {},
+                            purpose: purpose
+                        })
+                    } else {
+                        let createData = {
+                            file_id: podcastID,
+                            playlist_id: playlistID,
+                            type: 'podcast'
+                        }
+                        await playlistRepository.playlistSongsAdd(createData);
+
+                        return res.send({
+                            status: 200,
+                            msg: `Added to ${playlistDetails.name}`,
+                            data: {},
+                            purpose: purpose
+                        })
+                    }
+                } else {
+                    return res.send({
+                        status: 404,
+                        msg: responseMessages.podcastNotFound,
+                        data: {},
+                        purpose: purpose
+                    })
+                }
+            } else {
+                return res.send({
+                    status: 404,
+                    msg: responseMessages.playlistNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        } catch (err) {
+            console.log("Add Podcast To Playlist Error : ", err);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
 | API name          :  playlistList
 | Response          :  Respective response message in JSON format
 | Logic             :  List Of Playlists
@@ -1134,14 +1210,24 @@ module.exports.playlistSongs = (req, res) => {
 
                 let newArray = [];
                 playlistSongs.rows.forEach(x => {
+                    let mergedData = {};
                     let newObj = {
                         playlist_id: x.playlist_id,
                         file_id: x.file_id,
                         type: x.type,
                     }
-                    x.song_details.songID = x.song_details.id;
-                    delete x.song_details.id;
-                    let mergedData = Object.assign({}, newObj, x.song_details);
+
+                    if(x.song_details) {
+                        x.song_details.songID = x.song_details.id;
+                        delete x.song_details.id;
+                        mergedData = Object.assign({}, newObj, x.song_details);
+                    }
+                    else if(x.podcast_details) {
+                        x.podcast_details.podcastID = x.podcast_details.id;
+                        delete x.podcast_details.id;
+                        mergedData = Object.assign({}, newObj, x.podcast_details);
+                    }
+                   
                     newArray.push(mergedData);
                 })
 
@@ -1177,6 +1263,16 @@ module.exports.playlistSongs = (req, res) => {
     })()
 }
 
+/*
+|------------------------------------------------ 
+| API name          :  removeSongFromPlaylist
+| Response          :  Respective response message in JSON format
+| Logic             :  Remove Song From Playlist
+| Request URL       :  BASE_URL/api/remove-song-from-playlist
+| Request method    :  DELETE
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
 module.exports.removeSongFromPlaylist = (req, res) => {
     (async()=>{
         let purpose = "Remove From Playlist";
@@ -1203,6 +1299,112 @@ module.exports.removeSongFromPlaylist = (req, res) => {
                 return res.send({
                     status: 404,
                     msg: responseMessages.playlistSongNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Remove From Playlist Error : ", err);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  removeSongFromPlaylist
+| Response          :  Respective response message in JSON format
+| Logic             :  Remove Song From Playlist
+| Request URL       :  BASE_URL/api/remove-song-from-playlist
+| Request method    :  DELETE
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.removeSongFromPlaylist = (req, res) => {
+    (async()=>{
+        let purpose = "Remove From Playlist";
+        try {
+            let fileID = req.query.file_id;
+            let playlistID = req.query.playlist_id;
+            let userID = req.headers.userID;
+
+            let playlistDetails = await playlistRepository.findOne({ id: playlistID, user_id: userID });
+
+            let songCount = await playlistRepository.playlistSongsCount({ playlist_id: playlistID, file_id: fileID, type: 'song'  });
+
+            if(songCount > 0) {
+                await playlistRepository.removeFile({ playlist_id: playlistID, file_id: fileID, type: 'song' });
+                
+                return res.send({
+                    status: 200,
+                    msg: `Removed from ${playlistDetails.name}`,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+            else {
+                return res.send({
+                    status: 404,
+                    msg: responseMessages.playlistSongNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Remove From Playlist Error : ", err);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  removePodcastFromPlaylist
+| Response          :  Respective response message in JSON format
+| Logic             :  Remove Song From Playlist
+| Request URL       :  BASE_URL/api/remove-podcast-from-playlist
+| Request method    :  DELETE
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
+module.exports.removePodcastFromPlaylist = (req, res) => {
+    (async()=>{
+        let purpose = "Remove From Playlist";
+        try {
+            let fileID = req.query.file_id;
+            let playlistID = req.query.playlist_id;
+            let userID = req.headers.userID;
+
+            let playlistDetails = await playlistRepository.findOne({ id: playlistID, user_id: userID });
+
+            let podcastCount = await playlistRepository.playlistSongsCount({ playlist_id: playlistID, file_id: fileID, type: 'podcast'  });
+
+            if(podcastCount > 0) {
+                await playlistRepository.removeFile({ playlist_id: playlistID, file_id: fileID, type: 'podcast' });
+                
+                return res.send({
+                    status: 200,
+                    msg: `Removed from ${playlistDetails.name}`,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+            else {
+                return res.send({
+                    status: 404,
+                    msg: responseMessages.playlistPodcastNotFound,
                     data: {},
                     purpose: purpose
                 })

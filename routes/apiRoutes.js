@@ -76,7 +76,9 @@ router.get('/search', validateRequest.validate(songsValidationsSchema.searchSche
 // ################################### PLAYLISTS ########################################### //
 router.post('/create-playlist', validateRequest.validate(songsValidationsSchema.createPlaylist, 'body'), authenticationMiddleware.authenticateRequestAPI, songsController.createPlaylist); // Create Playlist
 router.post('/add-song-to-playlist', validateRequest.validate(songsValidationsSchema.addSongToPlaylist, 'body'), authenticationMiddleware.authenticateRequestAPI, songsController.addSongToPlaylist); // Add Song To Playlist
+router.post('/add-podcast-to-playlist', validateRequest.validate(songsValidationsSchema.addSongToPlaylist, 'body'), authenticationMiddleware.authenticateRequestAPI, songsController.addPodcastToPlaylist); // Add Podcast To Playlist
 router.delete('/remove-song-from-playlist', validateRequest.validate(songsValidationsSchema.addSongToPlaylist, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.removeSongFromPlaylist); // Remove Song From Playlist
+router.delete('/remove-podcast-from-playlist', validateRequest.validate(songsValidationsSchema.addSongToPlaylist, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.removePodcastFromPlaylist); // Remove Podcast From Playlist
 router.get('/playlist-list', validateRequest.validate(songsValidationsSchema.playlistList, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.playlistList); // Playlist List
 router.get('/playlist-songs', validateRequest.validate(songsValidationsSchema.playlistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.playlistSongs); // Playlist Songs
 
