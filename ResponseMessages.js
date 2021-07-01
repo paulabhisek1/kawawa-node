@@ -34,6 +34,7 @@ module.exports = {
     artistDetails: `Artist details fetched successfully`,
     playlistCreate: `Playlist created successfully`,
     playlistNotFound: `Playlist not found`,
+    playlistSongNotFound: `This song is not added in this playlist`,
     duplicatePlaylistSong: `This is already in your playlist`,
     playlistList: `Playlist list fetched successfully`,
     playlistSongs: `Playlist songs fetched successfully`,

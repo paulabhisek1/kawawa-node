@@ -48,6 +48,21 @@ module.exports.count = (whereData) => {
     })
 }
 
+module.exports.removeFile = (where, t = null) => {
+    return new Promise((resolve, reject) => {
+        let options = {
+            where: where
+        }
+            //if trunsaction exist
+        if (t != null) options.transaction = t;
+        PlaylistSongsModel.destroy(options).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
+
 module.exports.playlistSongsCount = (where) => {
     return new Promise((resolve, reject) => {
         PlaylistSongsModel.count({

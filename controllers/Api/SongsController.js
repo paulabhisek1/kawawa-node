@@ -1131,8 +1131,22 @@ module.exports.playlistSongs = (req, res) => {
                 where.playlist_id = playlistID;
                 let playlistSongs = await playlistRepository.playlistSongs(where, data);
                 let totalPages = Math.ceil(playlistSongs.count.length / 20);
+
+                let newArray = [];
+                playlistSongs.rows.forEach(x => {
+                    let newObj = {
+                        playlist_id: x.playlist_id,
+                        file_id: x.file_id,
+                        type: x.type,
+                    }
+                    x.song_details.songID = x.song_details.id;
+                    delete x.song_details.id;
+                    let mergedData = Object.assign({}, newObj, x.song_details);
+                    newArray.push(mergedData);
+                })
+
                 let dataResp = {
-                    playlist_songs: playlistSongs.rows,
+                    playlist_songs: newArray,
                     total_count: playlistSongs.count.length,
                     total_page: totalPages
                 }
@@ -1153,6 +1167,49 @@ module.exports.playlistSongs = (req, res) => {
             }
         } catch (err) {
             console.log("Playlist Songs Error : ", err);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+module.exports.removeSongFromPlaylist = (req, res) => {
+    (async()=>{
+        let purpose = "Remove From Playlist";
+        try {
+            let fileID = req.query.file_id;
+            let playlistID = req.query.playlist_id;
+            let userID = req.headers.userID;
+
+            let playlistDetails = await playlistRepository.findOne({ id: playlistID, user_id: userID });
+
+            let songCount = await playlistRepository.playlistSongsCount({ playlist_id: playlistID, file_id: fileID, type: 'song'  });
+
+            if(songCount > 0) {
+                await playlistRepository.removeFile({ playlist_id: playlistID, file_id: fileID, type: 'song' });
+                
+                return res.send({
+                    status: 200,
+                    msg: `Removed from ${playlistDetails.name}`,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+            else {
+                return res.send({
+                    status: 404,
+                    msg: responseMessages.playlistSongNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        }
+        catch(err) {
+            console.log("Remove From Playlist Error : ", err);
             return res.send({
                 status: 500,
                 msg: responseMessages.serverError,
@@ -1503,6 +1560,16 @@ module.exports.search = (req, res) => {
     })()
 }
 
+/*
+|------------------------------------------------ 
+| API name          :  genreWiseSongs
+| Response          :  Respective response message in JSON format
+| Logic             :  Genre Wise Songs
+| Request URL       :  BASE_URL/api/genre-songs
+| Request method    :  GET
+| Author            :  Suman Rana
+|------------------------------------------------
+*/
 module.exports.genreWiseSongs = (req, res) => {
     (async() => {
         let purpose = "Genre Wise Track List"
