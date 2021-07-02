@@ -1903,7 +1903,7 @@ module.exports.playlistSongSearch = (req, res) => {
                 let ind = x.playlist_data.findIndex(e => e.playlist_id == playlistID);
                 if(ind >= 0) x.addedInPlaylist = 1;
                 else x.addedInPlaylist = 0;
-                delete x.playlist_data;
+                // delete x.playlist_data;
             });
 
             allSearchData.sort(function (a, b) {
