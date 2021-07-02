@@ -72,6 +72,7 @@ router.get('/favourite-songs', validateRequest.validate(songsValidationsSchema.a
 router.get('/downloaded-songs', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.allDownloadSongs); // See All Downloaded songs
 router.get('/search-landing-page', authenticationMiddleware.authenticateRequestAPI, songsController.searchLandingPage); // Search Landing Page
 router.get('/search', validateRequest.validate(songsValidationsSchema.searchSchema, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.search); // Search
+router.get('/search-playlist-files', validateRequest.validate(songsValidationsSchema.searchPlaylistFileSchema, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.playlistSongSearch); // Search Playlist Files
 
 // ################################### PLAYLISTS ########################################### //
 router.post('/create-playlist', validateRequest.validate(songsValidationsSchema.createPlaylist, 'body'), authenticationMiddleware.authenticateRequestAPI, songsController.createPlaylist); // Create Playlist

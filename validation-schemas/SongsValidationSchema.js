@@ -21,6 +21,13 @@ module.exports.searchSchema = Joi.object().keys({
     search_text: Joi.string().required().allow('', null),
 });
 
+// Search Schema
+module.exports.searchPlaylistFileSchema = Joi.object().keys({
+    page: Joi.number().min(1).required(),
+    search_text: Joi.string().required().allow('', null),
+    playlist_id: Joi.number().required(),
+});
+
 // Artist Wise Songs Schema
 module.exports.artistSongs = Joi.object().keys({
     page: Joi.number().min(1).required(),
