@@ -280,6 +280,7 @@ module.exports.userPodcastSearchListPlaylist = (where, data) => {
                 {
                     model: PlaylistSongsModel,
                     as: 'playlist_data',
+                    where: { type: 'podcast' },
                     required: false
                 },
                 {

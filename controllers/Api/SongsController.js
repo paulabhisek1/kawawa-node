@@ -1871,51 +1871,63 @@ module.exports.playlistSongSearch = (req, res) => {
             let searchString = req.query.search_text;
             let userID = req.headers.userID;
             let page = req.query.page > 0 ? parseInt(req.query.page) : 1;
-            let limit = 5
+            let limit = 5;
 
-            let data = {
-                limit: limit,
-                offset: limit ? limit * (page - 1) : null,
-                user_id: userID
-            };
+            let playlistCount = await playlistRepository.count({ id: playlistID, user_id: userID });
 
-            let where = { name: { $like: `%${searchString}%` } };
-            let searchSongsList = await songRepository.searchPlaylistSongs(where, data);
-
-            searchSongsList.forEach(element => {
-                element.search_type = 'song';
-                if(element.artist_details == '') element.artist_details = {};
-                if(element.genre_details == '') element.genre_details = {};
-                if(element.album_details == '') element.album_details = {};
-            });
-
-            let searchPodcastsList = await podcastRepositories.userPodcastSearchListPlaylist(where, data);
-
-            searchPodcastsList.forEach(element => {
-                element.search_type = 'podcast';
-                if(element.artist_details == '') element.artist_details = {};
-                if(element.podcast_category_details == '') element.podcast_category_details = {};
-            });
-
-            let allSearchData = [...searchSongsList, ...searchPodcastsList];
-
-            allSearchData.forEach(x => {
-                let ind = x.playlist_data.findIndex(e => e.playlist_id == playlistID);
-                if(ind >= 0) x.addedInPlaylist = 1;
-                else x.addedInPlaylist = 0;
-                // delete x.playlist_data;
-            });
-
-            allSearchData.sort(function (a, b) {
-                return b.addedInPlaylist - a.addedInPlaylist;
-            });
-            
-            return res.send({
-                status: 200,
-                msg: responseMessages.searchData,
-                data: allSearchData,
-                purpose: purpose
-            })
+            if(playlistCount > 0) {
+                let data = {
+                    limit: limit,
+                    offset: limit ? limit * (page - 1) : null,
+                    user_id: userID
+                };
+    
+                let where = { name: { $like: `%${searchString}%` } };
+                let searchSongsList = await songRepository.searchPlaylistSongs(where, data);
+    
+                searchSongsList.forEach(element => {
+                    element.search_type = 'song';
+                    if(element.artist_details == '') element.artist_details = {};
+                    if(element.genre_details == '') element.genre_details = {};
+                    if(element.album_details == '') element.album_details = {};
+                });
+    
+                let searchPodcastsList = await podcastRepositories.userPodcastSearchListPlaylist(where, data);
+    
+                searchPodcastsList.forEach(element => {
+                    element.search_type = 'podcast';
+                    if(element.artist_details == '') element.artist_details = {};
+                    if(element.podcast_category_details == '') element.podcast_category_details = {};
+                });
+    
+                let allSearchData = [...searchSongsList, ...searchPodcastsList];
+    
+                allSearchData.forEach(x => {
+                    let ind = x.playlist_data.findIndex(e => e.playlist_id == playlistID);
+                    if(ind >= 0) x.addedInPlaylist = 1;
+                    else x.addedInPlaylist = 0;
+                    // delete x.playlist_data;
+                });
+    
+                allSearchData.sort(function (a, b) {
+                    return b.addedInPlaylist - a.addedInPlaylist;
+                });
+                
+                return res.send({
+                    status: 200,
+                    msg: responseMessages.searchData,
+                    data: allSearchData,
+                    purpose: purpose
+                })
+            }
+            else {
+                return res.send({
+                    status: 404,
+                    msg: responseMessages.playlistNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
         }
         catch(err) {
             console.log("Playlist Files Search Err : ", err);

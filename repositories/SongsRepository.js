@@ -813,6 +813,7 @@ module.exports.searchPlaylistSongs = (where, data) => {
                 {
                     model: PlaylistSongsModel,
                     as: 'playlist_data',
+                    where: { type: 'song' },
                     required: false
                 },
                 {
