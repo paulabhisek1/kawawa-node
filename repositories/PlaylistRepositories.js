@@ -5,10 +5,20 @@ const PlaylistSongsModel = require('../models/playlist_songs')(sequelize, DataTy
 const SongsModel = require('../models/songs')(sequelize, DataTypes);
 const PodcastModel = require('../models/podcasts')(sequelize, DataTypes);
 const FavouritesModel = require('../models/favourites')(sequelize, DataTypes);
-SongsModel.hasMany(FavouritesModel, { foreignKey: 'file_id', as: 'is_favourite' });
+const ArtistModel = require('../models/artists')(sequelize, DataTypes);
+const GenresModel = require('../models/genres')(sequelize, DataTypes);
+const AlbumsModel = require('../models/albums')(sequelize, DataTypes);
+const PodcastCategoryModel = require('../models/podcast_categories')(sequelize, DataTypes);
 
+
+SongsModel.belongsTo(ArtistModel, { foreignKey: 'artist_id', as: 'artist_details' });
+SongsModel.belongsTo(GenresModel, { foreignKey: 'genre_id', as: 'genre_details' });
+SongsModel.belongsTo(AlbumsModel, { foreignKey: 'album_id', as: 'album_details' });
+SongsModel.hasMany(FavouritesModel, { foreignKey: 'file_id', as: 'is_favourite' });
 PlaylistSongsModel.belongsTo(SongsModel, { foreignKey: 'file_id', as: 'song_details' });
 PlaylistSongsModel.belongsTo(PodcastModel, { foreignKey: 'file_id', as: 'podcast_details' });
+PodcastModel.belongsTo(PodcastCategoryModel, { foreignKey: 'category_id', as: 'podcast_category_details' });
+PodcastModel.belongsTo(ArtistModel, { foreignKey: 'artist_id', as: 'artist_details' });
 
 // Create Playlist
 module.exports.createPlaylist = (data) => {
@@ -115,6 +125,23 @@ module.exports.playlistSongs = (where, data) => {
                     model: SongsModel,
                     where: { is_active: 1 },
                     as: 'song_details',
+                    include: [
+                        {
+                            model: ArtistModel,
+                            as: 'artist_details',
+                            attributes: ['id', 'full_name', 'profile_image', 'type']
+                        },
+                        {
+                            model: GenresModel,
+                            as: 'genre_details',
+                            attributes: ['id', 'name']
+                        },
+                        {
+                            model: AlbumsModel,
+                            as: 'album_details',
+                            attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                        }
+                    ],
                     attributes: [
                         'id',
                         'name',
@@ -139,6 +166,18 @@ module.exports.playlistSongs = (where, data) => {
                     model: PodcastModel,
                     where: { is_active: 1 },
                     as: 'podcast_details',
+                    include: [
+                        {
+                            model: ArtistModel,
+                            as: 'artist_details',
+                            attributes: ['id', 'full_name', 'profile_image', 'type']
+                        },
+                        {
+                            model: PodcastCategoryModel,
+                            as: 'podcast_category_details',
+                            attributes: ['id', 'name']
+                        },
+                    ],
                     attributes: [
                         'id', 
                         'name', 

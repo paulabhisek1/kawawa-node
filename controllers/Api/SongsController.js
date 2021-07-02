@@ -1231,6 +1231,18 @@ module.exports.playlistSongs = (req, res) => {
                     newArray.push(mergedData);
                 })
 
+                newArray.forEach((item, index) => {
+                    if (item.genre_details == '') {
+                        item.genre_details = {};
+                    }
+                    if (item.album_details == '') {
+                        item.album_details = {};
+                    }
+                    if(item.podcast_category_details == '') {
+                        item.podcast_category_details = {};
+                    }
+                });
+
                 let dataResp = {
                     playlist_songs: newArray,
                     total_count: playlistSongs.count.length,
