@@ -986,7 +986,7 @@ module.exports.createPlaylist = (req, res) => {
 | Author            :  Suman Rana
 |------------------------------------------------
 */
-module.exports.addSongToPlaylist = (req, res) => {
+module.exports.addRemoveSongToPlaylist = (req, res) => {
     (async() => {
         let purpose = "Add Song To Playlist"
         try {
@@ -1000,12 +1000,14 @@ module.exports.addSongToPlaylist = (req, res) => {
                 let songCount = await songRepository.count({ id: songID, is_active: 1, type: 'song' });
 
                 if (songCount > 0) {
-                    let playlistSong = await playlistRepository.playlistSongsCount({ file_id: songID, playlist_id: playlistID });
+                    let playlistSong = await playlistRepository.playlistSongsCount({ file_id: songID, playlist_id: playlistID, type: 'song' });
 
                     if (playlistSong > 0) {
+                        await playlistRepository.removeFile({ playlist_id: playlistID, file_id: songID, type: 'song' });
+                
                         return res.send({
-                            status: 409,
-                            msg: responseMessages.duplicatePlaylistSong,
+                            status: 200,
+                            msg: `Removed from ${playlistDetails.name}`,
                             data: {},
                             purpose: purpose
                         })
@@ -1062,7 +1064,7 @@ module.exports.addSongToPlaylist = (req, res) => {
 | Author            :  Suman Rana
 |------------------------------------------------
 */
-module.exports.addPodcastToPlaylist = (req, res) => {
+module.exports.addRemovePodcastToPlaylist = (req, res) => {
     (async() => {
         let purpose = "Add Podcast To Playlist"
         try {
@@ -1076,12 +1078,14 @@ module.exports.addPodcastToPlaylist = (req, res) => {
                 let podcastCount = await podcastRepositories.count({ id: podcastID, is_active: 1, type: 'podcast' });
 
                 if (podcastCount > 0) {
-                    let playlistSong = await playlistRepository.playlistSongsCount({ file_id: podcastID, playlist_id: playlistID });
+                    let playlistSong = await playlistRepository.playlistSongsCount({ file_id: podcastID, playlist_id: playlistID, type: 'podcast' });
 
                     if (playlistSong > 0) {
+                        await playlistRepository.removeFile({ playlist_id: playlistID, file_id: podcastID, type: 'podcast' });
+                
                         return res.send({
-                            status: 409,
-                            msg: responseMessages.duplicatePlaylistSong,
+                            status: 200,
+                            msg: `Removed from ${playlistDetails.name}`,
                             data: {},
                             purpose: purpose
                         })
@@ -1265,165 +1269,6 @@ module.exports.playlistSongs = (req, res) => {
             }
         } catch (err) {
             console.log("Playlist Songs Error : ", err);
-            return res.send({
-                status: 500,
-                msg: responseMessages.serverError,
-                data: {},
-                purpose: purpose
-            })
-        }
-    })()
-}
-
-/*
-|------------------------------------------------ 
-| API name          :  removeSongFromPlaylist
-| Response          :  Respective response message in JSON format
-| Logic             :  Remove Song From Playlist
-| Request URL       :  BASE_URL/api/remove-song-from-playlist
-| Request method    :  DELETE
-| Author            :  Suman Rana
-|------------------------------------------------
-*/
-module.exports.removeSongFromPlaylist = (req, res) => {
-    (async()=>{
-        let purpose = "Remove From Playlist";
-        try {
-            let fileID = req.query.file_id;
-            let playlistID = req.query.playlist_id;
-            let userID = req.headers.userID;
-
-            let playlistDetails = await playlistRepository.findOne({ id: playlistID, user_id: userID });
-
-            let songCount = await playlistRepository.playlistSongsCount({ playlist_id: playlistID, file_id: fileID, type: 'song'  });
-
-            if(songCount > 0) {
-                await playlistRepository.removeFile({ playlist_id: playlistID, file_id: fileID, type: 'song' });
-                
-                return res.send({
-                    status: 200,
-                    msg: `Removed from ${playlistDetails.name}`,
-                    data: {},
-                    purpose: purpose
-                })
-            }
-            else {
-                return res.send({
-                    status: 404,
-                    msg: responseMessages.playlistSongNotFound,
-                    data: {},
-                    purpose: purpose
-                })
-            }
-        }
-        catch(err) {
-            console.log("Remove From Playlist Error : ", err);
-            return res.send({
-                status: 500,
-                msg: responseMessages.serverError,
-                data: {},
-                purpose: purpose
-            })
-        }
-    })()
-}
-
-/*
-|------------------------------------------------ 
-| API name          :  removeSongFromPlaylist
-| Response          :  Respective response message in JSON format
-| Logic             :  Remove Song From Playlist
-| Request URL       :  BASE_URL/api/remove-song-from-playlist
-| Request method    :  DELETE
-| Author            :  Suman Rana
-|------------------------------------------------
-*/
-module.exports.removeSongFromPlaylist = (req, res) => {
-    (async()=>{
-        let purpose = "Remove From Playlist";
-        try {
-            let fileID = req.query.file_id;
-            let playlistID = req.query.playlist_id;
-            let userID = req.headers.userID;
-
-            let playlistDetails = await playlistRepository.findOne({ id: playlistID, user_id: userID });
-
-            let songCount = await playlistRepository.playlistSongsCount({ playlist_id: playlistID, file_id: fileID, type: 'song'  });
-
-            if(songCount > 0) {
-                await playlistRepository.removeFile({ playlist_id: playlistID, file_id: fileID, type: 'song' });
-                
-                return res.send({
-                    status: 200,
-                    msg: `Removed from ${playlistDetails.name}`,
-                    data: {},
-                    purpose: purpose
-                })
-            }
-            else {
-                return res.send({
-                    status: 404,
-                    msg: responseMessages.playlistSongNotFound,
-                    data: {},
-                    purpose: purpose
-                })
-            }
-        }
-        catch(err) {
-            console.log("Remove From Playlist Error : ", err);
-            return res.send({
-                status: 500,
-                msg: responseMessages.serverError,
-                data: {},
-                purpose: purpose
-            })
-        }
-    })()
-}
-
-/*
-|------------------------------------------------ 
-| API name          :  removePodcastFromPlaylist
-| Response          :  Respective response message in JSON format
-| Logic             :  Remove Song From Playlist
-| Request URL       :  BASE_URL/api/remove-podcast-from-playlist
-| Request method    :  DELETE
-| Author            :  Suman Rana
-|------------------------------------------------
-*/
-module.exports.removePodcastFromPlaylist = (req, res) => {
-    (async()=>{
-        let purpose = "Remove From Playlist";
-        try {
-            let fileID = req.query.file_id;
-            let playlistID = req.query.playlist_id;
-            let userID = req.headers.userID;
-
-            let playlistDetails = await playlistRepository.findOne({ id: playlistID, user_id: userID });
-
-            let podcastCount = await playlistRepository.playlistSongsCount({ playlist_id: playlistID, file_id: fileID, type: 'podcast'  });
-
-            if(podcastCount > 0) {
-                await playlistRepository.removeFile({ playlist_id: playlistID, file_id: fileID, type: 'podcast' });
-                
-                return res.send({
-                    status: 200,
-                    msg: `Removed from ${playlistDetails.name}`,
-                    data: {},
-                    purpose: purpose
-                })
-            }
-            else {
-                return res.send({
-                    status: 404,
-                    msg: responseMessages.playlistPodcastNotFound,
-                    data: {},
-                    purpose: purpose
-                })
-            }
-        }
-        catch(err) {
-            console.log("Remove From Playlist Error : ", err);
             return res.send({
                 status: 500,
                 msg: responseMessages.serverError,
