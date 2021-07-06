@@ -1573,17 +1573,20 @@ module.exports.search = (req, res) => {
             let staticData1 = {
                 id: -1,
                 name: "Podcast",
-                type: "static_data"
+                type: "static_data",
+                img: '/uploads/common_images/podcast.png'
             }
             let staticData2 = {
                 id: -2,
                 name: "Weekly top 10",
-                type: "static_data"
+                type: "static_data",
+                img: '/uploads/common_images/top_ten.png'
             }
             let staticData3 = {
                 id: -3,
                 name: "Recently Played",
-                type: "static_data"
+                type: "static_data",
+                img: '/uploads/common_images/recently_played.png'
             }
             genres.unshift(staticData3);
             genres.unshift(staticData2);
