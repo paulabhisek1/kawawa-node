@@ -1475,19 +1475,19 @@ module.exports.searchLandingPage = (req, res) => {
                 id: -1,
                 name: "Podcast",
                 type: "static_data",
-                cover_picture: ''
+                cover_picture: '/uploads/common_images/podcast.png'
             }
             let staticData2 = {
                 id: -2,
                 name: "Weekly top 10",
                 type: "static_data",
-                cover_picture: ''
+                cover_picture: '/uploads/common_images/top_ten.png'
             }
             let staticData3 = {
                 id: -3,
                 name: "Recently Played",
                 type: "static_data",
-                cover_picture: ''
+                cover_picture: '/uploads/common_images/recently_played.png'
             }
             genres.unshift(staticData3);
             genres.unshift(staticData2);
