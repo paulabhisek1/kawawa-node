@@ -33,7 +33,8 @@ const jwtOptionsRefresh = global.constants.jwtRefreshTokenOptions;
 
 
 //const stripe = require('stripe')('sk_test_51Ir44wSICwQRfCEwe8osbpcrmMPSABv4QTeF0VKmln3DnHmD7hp6Fxap0PZGMUGPJnA0kJYdq8QtHNl6ZkOdeWnN00QgLgjZ35');
-const stripe = require('stripe')('sk_test_51G6le1Hyo8q6i2DXPoxEeBsNdDTZnptHQArZ93bDUpgoiZ04EBe8UVZjQSsi5mZZhvsTMUGJ8eGHPYz4DorCRL1i00ZrPLYCLR');
+//const stripe = require('stripe')('sk_test_51G6le1Hyo8q6i2DXPoxEeBsNdDTZnptHQArZ93bDUpgoiZ04EBe8UVZjQSsi5mZZhvsTMUGJ8eGHPYz4DorCRL1i00ZrPLYCLR');
+const stripe = require('stripe')('sk_test_51J2MAdKo1mxzeQazTDCpVpHAfzwXcbBFRiNFY8NMRkfpEKfgfFXepZYm5K3s7dXrIlYHIZt2erM3FpstHY4ThIGc00Q69lO6Kc');
 
 /*
 |------------------------------------------------ 

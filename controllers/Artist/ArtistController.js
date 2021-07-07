@@ -34,7 +34,8 @@ const fs = require('fs');
 const path = require('path');
 const { getAudioDurationInSeconds } = require('get-audio-duration');
 //const stripe = require('stripe')('sk_test_51Ir44wSICwQRfCEwe8osbpcrmMPSABv4QTeF0VKmln3DnHmD7hp6Fxap0PZGMUGPJnA0kJYdq8QtHNl6ZkOdeWnN00QgLgjZ35');
-const stripe = require('stripe')('sk_test_51G6le1Hyo8q6i2DXPoxEeBsNdDTZnptHQArZ93bDUpgoiZ04EBe8UVZjQSsi5mZZhvsTMUGJ8eGHPYz4DorCRL1i00ZrPLYCLR');
+//const stripe = require('stripe')('sk_test_51G6le1Hyo8q6i2DXPoxEeBsNdDTZnptHQArZ93bDUpgoiZ04EBe8UVZjQSsi5mZZhvsTMUGJ8eGHPYz4DorCRL1i00ZrPLYCLR');
+const stripe = require('stripe')('sk_test_51J2MAdKo1mxzeQazTDCpVpHAfzwXcbBFRiNFY8NMRkfpEKfgfFXepZYm5K3s7dXrIlYHIZt2erM3FpstHY4ThIGc00Q69lO6Kc');
 
 // ################################ Globals ################################ //
 const jwtOptionsAccess = global.constants.jwtAccessTokenOptions;
@@ -59,18 +60,92 @@ cron.schedule('* * * * *', () => {
         try {
             console.log('running a task every minute'+ purpose);
 
-            const transfer = await stripe.transfers.create({
-              amount: (100*100),
-              currency: 'INR',
-              destination: 'acct_1J1dKKQn8UMxt5Pq',
+
+
+           /* const account = await stripe.accounts.create({
+              type: 'express',
+            });
+
+            console.log("=======================================")
+            console.log(account)
+            console.log("=======================================")
+
+            const accountLinks = await stripe.accountLinks.create({
+              account: account.id,
+              refresh_url: 'https://example.com/reauth',
+              return_url: 'https://example.com/return',
+              type: 'account_onboarding',
+            });
+
+            console.log("****************************************")
+            console.log(accountLinks)
+            console.log("****************************************")*/
+
+            const topup =  await stripe.topups.create({
+              amount: 2000,
+              currency: 'GBP',
+              description: 'Top-up for week of May 31',
+              statement_descriptor: 'Weekly top-up',
+            });
+
+
+            console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+            console.log(topup)
+            console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+
+            /*const transfer = await stripe.transfers.create({
+              amount: (10*100),
+              currency: 'GBP',
+              destination: 'acct_1J5bpH4JhZeZWn0t',
               transfer_group: 'ORDER_95',
             });
 
-            console.log(transfer);
+            console.log(transfer);*/
+
+            /*const token = await stripe.tokens.create({
+                  card: {
+                    number: '4242424242424242',
+                    exp_month: 6,
+                    exp_year: 2022,
+                    cvc: '314',
+                  },
+                });*/
+
+
+            /*const source = await stripe.sources.create({
+              type: 'ach_credit_transfer',
+              currency: 'USD',
+              owner: {
+                email: 'jenny.rosen@example.com'
+              },
+              usage:'reusable'
+            });
+
+            const charge = await stripe.charges.create({
+              amount: 1099,
+              currency: 'usd',
+              source: source.id,
+            });
+
+
+            console.log(charge)
+
+
+            const topup = await stripe.topups.create({
+              amount: 2000,
+              currency: 'GBP',
+              description: 'Top-up for Jenny Rosen',
+              statement_descriptor: 'Top-up',
+              source: source.id
+            });*/
+
         } catch (e) {
             console.log(e)
         }
     })()
+
+
+
 });
 
 
