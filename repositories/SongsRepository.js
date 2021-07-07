@@ -7,6 +7,7 @@ const AlbumsModel = require('../models/albums')(sequelize, DataTypes);
 const FavouritesModel = require('../models/favourites')(sequelize, DataTypes);
 const CountryModel = require('../models/countries')(sequelize, DataTypes);
 const DownloadsModel = require('../models/downloads')(sequelize, DataTypes);
+const PlaylistSongsModel = require('../models/playlist_songs')(sequelize, DataTypes);
 
 
 SongsModel.belongsTo(ArtistModel, { foreignKey: 'artist_id', as: 'artist_details' });
@@ -15,6 +16,7 @@ SongsModel.belongsTo(AlbumsModel, { foreignKey: 'album_id', as: 'album_details' 
 SongsModel.hasMany(FavouritesModel, { foreignKey: 'file_id', as: 'is_favourite' });
 SongsModel.hasMany(DownloadsModel, { foreignKey: 'file_id', as: 'is_download' });
 SongsModel.belongsTo(CountryModel, { foreignKey: 'country_id', as: 'country_details' });
+SongsModel.hasMany(PlaylistSongsModel, { foreignKey: 'file_id', as: 'playlist_data' });
 
 module.exports.findAll = (whereData) => {
     return new Promise((resolve, reject) => {
@@ -771,6 +773,66 @@ module.exports.searchSongs = (where, data) => {
                     attributes: ['id', 'name', 'cover_picture', 'total_songs']
                 },
             ],
+            limit: data.limit,
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+
+module.exports.searchPlaylistSongs = (where, data) => {
+    return new Promise((resolve, reject) => {
+        SongsModel.findAll({
+            where: where,
+            attributes: [
+                'id', 
+                'name', 
+                'cover_picture', 
+                'file_name', 
+                'length', 
+                'is_paid', 
+                'type', 
+                'artist_id', 
+                'genre_id', 
+                'album_id', 
+                'country_id', 
+                'is_paid', 
+                'createdAt', 
+                'updatedAt',
+                [sequelize.literal(`(SELECT count(*) FROM followed_artists WHERE followed_artists.user_id = ${data.user_id} AND followed_artists.artist_id = songs.artist_id)`), 'isFollowedArtist'],
+                [sequelize.literal(`(SELECT count(*) FROM favourites WHERE favourites.user_id = ${data.user_id} AND favourites.file_id = songs.id AND favourites.type = 'song')`), 'isFavourite'],
+                [sequelize.literal(`(SELECT count(*) FROM downloads WHERE downloads.user_id = ${data.user_id} AND downloads.file_id = songs.id AND downloads.type = 'song')`), 'isDownloaded'],
+            ],
+            order: [
+                ['createdAt', 'desc']
+            ],
+            include: [
+                {
+                    model: PlaylistSongsModel,
+                    as: 'playlist_data',
+                    where: { type: 'song' },
+                    required: false
+                },
+                {
+                    model: ArtistModel,
+                    as: 'artist_details',
+                    attributes: ['id', 'full_name', 'profile_image', 'type']
+                },
+                {
+                    model: GenresModel,
+                    as: 'genre_details',
+                    attributes: ['id', 'name']
+                },
+                {
+                    model: AlbumsModel,
+                    as: 'album_details',
+                    attributes: ['id', 'name', 'cover_picture', 'total_songs']
+                },
+            ],
+            offset: data.offset,
             limit: data.limit,
         }).then(result => {
             result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));

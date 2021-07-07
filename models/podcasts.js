@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     country_id: DataTypes.INTEGER,
     is_active: DataTypes.INTEGER,
     price: DataTypes.INTEGER,
+    playedCount: DataTypes.INTEGER,
     type: DataTypes.STRING
   }, {
     sequelize,

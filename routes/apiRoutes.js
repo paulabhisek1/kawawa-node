@@ -72,10 +72,12 @@ router.get('/favourite-songs', validateRequest.validate(songsValidationsSchema.a
 router.get('/downloaded-songs', validateRequest.validate(songsValidationsSchema.allRecentlyPlayed, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.allDownloadSongs); // See All Downloaded songs
 router.get('/search-landing-page', authenticationMiddleware.authenticateRequestAPI, songsController.searchLandingPage); // Search Landing Page
 router.get('/search', validateRequest.validate(songsValidationsSchema.searchSchema, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.search); // Search
+router.get('/search-playlist-files', validateRequest.validate(songsValidationsSchema.searchPlaylistFileSchema, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.playlistSongSearch); // Search Playlist Files
 
 // ################################### PLAYLISTS ########################################### //
 router.post('/create-playlist', validateRequest.validate(songsValidationsSchema.createPlaylist, 'body'), authenticationMiddleware.authenticateRequestAPI, songsController.createPlaylist); // Create Playlist
-router.post('/add-song-to-playlist', validateRequest.validate(songsValidationsSchema.addSongToPlaylist, 'body'), authenticationMiddleware.authenticateRequestAPI, songsController.addSongToPlaylist); // Add Song To Playlist
+router.put('/add-remove-song-to-playlist', validateRequest.validate(songsValidationsSchema.addSongToPlaylist, 'body'), authenticationMiddleware.authenticateRequestAPI, songsController.addRemoveSongToPlaylist); // Add Or Remove Song To Playlist
+router.put('/add-remove-podcast-to-playlist', validateRequest.validate(songsValidationsSchema.addSongToPlaylist, 'body'), authenticationMiddleware.authenticateRequestAPI, songsController.addRemovePodcastToPlaylist); // Add Or Remove Podcast To Playlist
 router.get('/playlist-list', validateRequest.validate(songsValidationsSchema.playlistList, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.playlistList); // Playlist List
 router.get('/playlist-songs', validateRequest.validate(songsValidationsSchema.playlistSongs, 'query'), authenticationMiddleware.authenticateRequestAPI, songsController.playlistSongs); // Playlist Songs
 

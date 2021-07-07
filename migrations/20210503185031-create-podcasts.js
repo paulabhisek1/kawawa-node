@@ -45,6 +45,9 @@ module.exports = {
       price: {
         type: Sequelize.INTEGER
       },
+      playedCount: {
+        type: Sequelize.INTEGER
+      },
       type: {
         type: Sequelize.STRING,
         defaultValue: 'podcast'
