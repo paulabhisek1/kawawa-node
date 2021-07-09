@@ -4,7 +4,7 @@ const UsersModel = require('../models/users')(sequelize, DataTypes);
 const CountryModel = require('../models/countries')(sequelize, DataTypes);
 const DonwloadModel = require('../models/downloads')(sequelize, DataTypes);
 const UserSubscriptionModel = require('../models/user_subscriptions')(sequelize, DataTypes);
-
+const UserSubscriptionPlanModel = require('../models/subscription_plans')(sequelize, DataTypes);
 
 // Associations
 UsersModel.belongsTo(CountryModel, { foreignKey: 'country_id' });
@@ -115,3 +115,19 @@ module.exports.createSubscription = (data, t = null) => {
             });
     })
 }
+
+
+// Find Country Id
+module.exports.fetchSubscriptionPlan = (whereData) => {
+    return new Promise((resolve, reject) => {
+        UserSubscriptionPlanModel.findAll({
+            where: whereData,
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
+        })
+    })
+}
+

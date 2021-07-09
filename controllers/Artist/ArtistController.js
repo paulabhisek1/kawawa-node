@@ -53,7 +53,7 @@ const cron = require('node-cron');
 |------------------------------------------------
 */
 
-cron.schedule('* * * * *', () => {
+/*cron.schedule('* * * * *', () => {
     
     (async() => {
         let purpose = "Register Artist"
@@ -62,7 +62,7 @@ cron.schedule('* * * * *', () => {
 
 
 
-           /* const account = await stripe.accounts.create({
+            const account = await stripe.accounts.create({
               type: 'express',
             });
 
@@ -79,7 +79,7 @@ cron.schedule('* * * * *', () => {
 
             console.log("****************************************")
             console.log(accountLinks)
-            console.log("****************************************")*/
+            console.log("****************************************")
 
             const topup =  await stripe.topups.create({
               amount: 2000,
@@ -93,26 +93,26 @@ cron.schedule('* * * * *', () => {
             console.log(topup)
             console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
 
-            /*const transfer = await stripe.transfers.create({
+            const transfer = await stripe.transfers.create({
               amount: (10*100),
               currency: 'GBP',
               destination: 'acct_1J5bpH4JhZeZWn0t',
               transfer_group: 'ORDER_95',
             });
 
-            console.log(transfer);*/
+            console.log(transfer);
 
-            /*const token = await stripe.tokens.create({
+            const token = await stripe.tokens.create({
                   card: {
                     number: '4242424242424242',
                     exp_month: 6,
                     exp_year: 2022,
                     cvc: '314',
                   },
-                });*/
+                });
 
 
-            /*const source = await stripe.sources.create({
+            const source = await stripe.sources.create({
               type: 'ach_credit_transfer',
               currency: 'USD',
               owner: {
@@ -137,7 +137,7 @@ cron.schedule('* * * * *', () => {
               description: 'Top-up for Jenny Rosen',
               statement_descriptor: 'Top-up',
               source: source.id
-            });*/
+            });
 
         } catch (e) {
             console.log(e)
@@ -147,7 +147,7 @@ cron.schedule('* * * * *', () => {
 
 
 });
-
+*/
 
 
 

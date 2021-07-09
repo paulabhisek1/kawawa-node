@@ -43,3 +43,14 @@ module.exports.listPodcastcategorySchema = Joi.object().keys({
     page: Joi.number().min(1).required(),
     search: Joi.string().required().allow('', null),
 });
+
+// Add Podcast Category Schema
+module.exports.addPrivacyPolicySchema = Joi.object().keys({
+    privacy_policy: Joi.string().required(),
+});
+
+
+// List Podcast Category Schema
+module.exports.listPrivacyPolicySchema = Joi.object().keys({
+    page: Joi.number().min(1).required(),
+});

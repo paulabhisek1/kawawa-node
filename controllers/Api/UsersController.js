@@ -827,3 +827,57 @@ module.exports.createSubscription = (req, res) => {
         }
     })()
 }
+
+
+
+
+/*
+|------------------------------------------------ 
+| API name          :  getSubscriptionPlan
+| Response          :  Respective response message in JSON format
+| Logic             :  Fetch Subscription Plan Details
+| Request URL       :  BASE_URL/api/subscription-plan
+| Request method    :  GET
+| Author            :  Jayanta Mondal
+|------------------------------------------------
+*/
+module.exports.getSubscriptionPlan = (req, res) => {
+    (async() => {
+        let purpose = "Fetch Subscription Plan";
+        try {
+            let userID = req.headers.userID;
+
+            let userCount = await userRepositories.count({ id: userID, is_active: 1 });
+            
+            if (userCount > 0) {
+                let userDetails = await userRepositories.findOne({ id: userID });
+
+                let subscriptionplan = await userRepositories.fetchSubscriptionPlan({ country_id: userDetails.country_id });
+                
+                return res.send({
+                    status: 200,
+                    msg: responseMessages.searchData,
+                    data: {
+                        subscriptionplan: subscriptionplan
+                    },
+                    purpose: purpose
+                })
+            } else {
+                return res.send({
+                    status: 500,
+                    msg: responseMessages.userNotFound,
+                    data: {},
+                    purpose: purpose
+                })
+            }
+        } catch (err) {
+            console.log("Fetch Subscription Plan Details ERROR : ", err);
+            return res.send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}

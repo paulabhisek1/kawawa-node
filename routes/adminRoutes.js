@@ -49,4 +49,7 @@ router.post('/podcast-category-add', authenticationMiddleware.authenticateAdminR
 router.get('/podcast-category-list', authenticationMiddleware.authenticateAdminRequestAPI, validateRequest.validate(adminValidationSchema.listPodcastcategorySchema, 'query'), adminController.listPodcastCategory); // List Podcast Category
 router.delete('/delete-podcast-category/:id', authenticationMiddleware.authenticateAdminRequestAPI, adminController.deletePodcastCategory); // Delete Podcast Category
 
+router.post('/privacy-policy-add', authenticationMiddleware.authenticateAdminRequestAPI, validateRequest.validate(adminValidationSchema.addPrivacyPolicySchema, 'body'), adminController.addPrivacyPolicy); // Add Podcast Category
+router.get('/privacy-policy', authenticationMiddleware.authenticateAdminRequestAPI, validateRequest.validate(adminValidationSchema.listPrivacyPolicySchema, 'query'), adminController.privacyPolicy); // List Podcast Category
+
 module.exports = router;

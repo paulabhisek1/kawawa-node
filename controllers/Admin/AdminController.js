@@ -1053,3 +1053,79 @@ module.exports.declineArtist = (req, res) => {
         }
     })()
 }
+
+
+/*
+|------------------------------------------------ 
+| API name          :  addPodcastCategory
+| Response          :  Respective response message in JSON format
+| Logic             :  Add Podcast Category
+| Request URL       :  BASE_URL/admin/poscast-category-add
+| Request method    :  POST
+| Author            :  Abhisek Paul
+|------------------------------------------------
+*/
+module.exports.addPrivacyPolicy = (req, res) => {
+    (async() => {
+        let purpose = "Add Privacy Policy";
+        try {
+            let body = req.body;
+            let saveData = {
+                privacy_policy: body.privacy_policy,
+            }
+
+            let privacyPolicy = await adminRepositories.savePrivacyPolicy({id:1},saveData);
+
+            return res.status(200).send({
+                status: 200,
+                msg: responseMessages.privacyPolicySave,
+                data: privacyPolicy,
+                purpose: purpose
+            })
+        } catch (err) {
+            console.log("Add Privacy Policy ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}
+
+/*
+|------------------------------------------------ 
+| API name          :  listPodcastCategory
+| Response          :  Respective response message in JSON format
+| Logic             :  Fetch Podcast Category List
+| Request URL       :  BASE_URL/admin/poscast-category-list
+| Request method    :  GET
+| Author            :  Abhisek Paul
+|------------------------------------------------
+*/
+
+module.exports.privacyPolicy = (req, res) => {
+    (async() => {
+        let purpose = "List Privacy Policy";
+        try {
+             
+            let privacyPolicy = await adminRepositories.privacyPolicy({id:1});
+            
+            return res.status(200).send({
+                status: 200,
+                msg: responseMessages.searchData,
+                data: privacyPolicy,
+                purpose: purpose
+            })
+        } catch (err) {
+            console.log("List Privacy Policy ERROR : ", err);
+            return res.status(500).send({
+                status: 500,
+                msg: responseMessages.serverError,
+                data: {},
+                purpose: purpose
+            })
+        }
+    })()
+}

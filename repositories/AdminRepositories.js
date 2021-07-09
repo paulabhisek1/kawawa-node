@@ -4,6 +4,7 @@ const AdminsModel = require('../models/admins')(sequelize, DataTypes);
 const CountryModel = require('../models/countries')(sequelize, DataTypes);
 const GenreModel = require('../models/genres')(sequelize, DataTypes);
 const PodcastCategoryModel = require('../models/podcast_categories')(sequelize, DataTypes);
+const CmsEntityModel = require('../models/cms_entities')(sequelize, DataTypes);
 
 // Find One
 module.exports.findOne = (whereData) => {
@@ -269,6 +270,41 @@ module.exports.deletePodcastCategory = (where, t = null) => {
             resolve(result)
         }).catch((err) => {
             reject(err);
+        })
+    })
+}
+
+
+
+// Update Privacy Policy
+module.exports.savePrivacyPolicy = (where, data, t = null) => {
+    return new Promise((resolve, reject) => {
+        let options = {
+                where: where
+            }
+            //if trunsaction exist
+        if (t != null) options.transaction = t;
+        CmsEntityModel.update(data, options).then((result) => {
+            resolve(result)
+        }).catch((err) => {
+            reject(err);
+        })
+    })
+}
+
+// privacy policy
+module.exports.privacyPolicy = (whereData) => {
+    return new Promise((resolve, reject) => {
+        CmsEntityModel.findOne({
+            where: whereData,
+            order: [
+                ['id', 'DESC']
+            ]
+        }).then(result => {
+            result = JSON.parse(JSON.stringify(result).replace(/\:null/gi, "\:\"\""));
+            resolve(result);
+        }).catch((error) => {
+            reject(error);
         })
     })
 }

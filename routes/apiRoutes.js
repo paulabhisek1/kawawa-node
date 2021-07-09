@@ -88,5 +88,6 @@ router.get('/podcast/all-recently-played', authenticationMiddleware.authenticate
 
 // ################################### SUBSCRIPTION ########################################### //
 router.post('/create-subscription', authenticationMiddleware.authenticateRequestAPI, validateRequest.validate(usersValidationSchema.userSubscriptionSchema, 'body'), usersController.createSubscription); //Create Subscription
+router.get('/subscription-plan', authenticationMiddleware.authenticateRequestAPI, usersController.getSubscriptionPlan); // Subscription Plan
 
 module.exports = router;

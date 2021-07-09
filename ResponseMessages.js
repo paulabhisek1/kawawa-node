@@ -93,5 +93,6 @@ module.exports = {
     searchData: `Data fetched successfully`,
     graphData: 'Artist graph data fetched successfully',
     artistDashboardData: 'Artist dashboard data fetched successfully',
-    subscriptiobCreated: 'Subscription created successfully'
+    subscriptiobCreated: 'Subscription created successfully',
+    privacyPolicySave: 'Privacy Policy saved successfully'
 }
